@@ -8,11 +8,13 @@ on:
     paths-ignore:
       - '.bumpversion.cfg'
       - 'setup.py'
-
+env:
+  PROJECT_SRC_DIR: ./movai_core_shared
 jobs:
   CI:
     uses: MOV-AI/.github/.github/workflows/py-workflow.yml@v1
     with:
+      working-directory: movai_core_shared
       deploy: 'false'
     secrets:
       auto_commit_user: ${{ secrets.RAISE_BOT_COMMIT_USER }}
