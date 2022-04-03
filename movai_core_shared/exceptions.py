@@ -12,7 +12,6 @@
 # The exceptions used by MOV.AI api
 
 
-
 class MovaiException(Exception):
     """General MovAI API exception occurred."""
 
