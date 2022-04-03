@@ -9,19 +9,23 @@
 import logging
 import sys
 from logging.handlers import TimedRotatingFileHandler
-from envvars import (MOVAI_LOGFILE_VERBOSITY_LEVEL,
-                                MOVAI_STDOUT_VERBOSITY_LEVEL,
-                                MOVAI_GENERAL_VERBOSITY_LEVEL)
+from envvars import (
+    MOVAI_LOGFILE_VERBOSITY_LEVEL,
+    MOVAI_STDOUT_VERBOSITY_LEVEL,
+    MOVAI_GENERAL_VERBOSITY_LEVEL,
+)
 
-LOG_FORMATTER_DATETIME = '%Y-%m-%d %H:%M:%S'
+LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 
 LOG_FORMATTER = logging.Formatter(
-    '[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(lineno)d]: %(message)s',
-    datefmt=LOG_FORMATTER_DATETIME)
+    "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(lineno)d]: %(message)s",
+    datefmt=LOG_FORMATTER_DATETIME,
+)
 
 LOG_FORMATTER_HTTP = logging.Formatter(
-    '[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(lineno)d]: %(message)s',
-    datefmt=LOG_FORMATTER_DATETIME)
+    "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(lineno)d]: %(message)s",
+    datefmt=LOG_FORMATTER_DATETIME,
+)
 
 
 def _get_console_handler():
@@ -38,7 +42,7 @@ def _get_file_handler():
     """
     Set up the file handler
     """
-    file_handler = TimedRotatingFileHandler(Log.LOG_FILE, when='midnight')
+    file_handler = TimedRotatingFileHandler(Log.LOG_FILE, when="midnight")
     file_handler.setFormatter(LOG_FORMATTER)
     file_handler.setLevel(MOVAI_LOGFILE_VERBOSITY_LEVEL)
     return file_handler
@@ -100,8 +104,6 @@ class LogAdapter(logging.LoggerAdapter):
         """
         raw_tags = dict(kwargs)
         raw_tags.update(self._tags)
-        tags = '|'.join([f'{k}:{v}' for k, v in raw_tags.items()])
-        kwargs = {
-            "extra": {"tags": raw_tags}
-        }
+        tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])
+        kwargs = {"extra": {"tags": raw_tags}}
         return "[{}] {}".format(tags, msg), kwargs
