@@ -5,11 +5,11 @@ from logging import DEBUG, NOTSET, WARNING
 
 # Setting for logging verbosity levels
 # Will be set only once at startup
-MOVAI_STDOUT_VERBOSITY_LEVEL = os.getenv("MOVAI_STDOUT_VERBOSITY_LEVEL", DEBUG)
-MOVAI_HEALTHNODE_VERBOSITY_LEVEL = os.getenv("MOVAI_HEALTHNODE_VERBOSITY_LEVEL", WARNING)
+MOVAI_STDOUT_VERBOSITY_LEVEL = int(os.getenv("MOVAI_STDOUT_VERBOSITY_LEVEL", str(DEBUG)))
+MOVAI_HEALTHNODE_VERBOSITY_LEVEL = int(os.getenv("MOVAI_HEALTHNODE_VERBOSITY_LEVEL", str(WARNING)))
 # default as NOTSET that will turn off the output for the addition log file
-MOVAI_LOGFILE_VERBOSITY_LEVEL = os.getenv("MOVAI_LOGFILE_VERBOSITY_LEVEL", NOTSET)
-MOVAI_GENERAL_VERBOSITY_LEVEL = os.getenv("MOVAI_GENERAL_VERBOSITY_LEVEL", DEBUG)
+MOVAI_LOGFILE_VERBOSITY_LEVEL = int(os.getenv("MOVAI_LOGFILE_VERBOSITY_LEVEL", str(NOTSET)))
+MOVAI_GENERAL_VERBOSITY_LEVEL = int(os.getenv("MOVAI_GENERAL_VERBOSITY_LEVEL", str(DEBUG)))
 
 # Read variables from current environment
 APP_PATH = os.getenv('APP_PATH')
@@ -77,7 +77,8 @@ ENVIRON_GDNODE_INJECT = {
 for (key, value) in ENVIRON_GDNODE_INJECT.items():
     ENVIRON_GDNODE[key] = value
 
-REST_SCOPES = "(Callback|Form|Flow|Node|GraphicScene|Package|StateMachine|Layout|User|Annotation|Application|Configuration|SharedDataTemplate|SharedDataEntry|TaskTemplate|TaskEntry|Role)"
+REST_SCOPES = ("(Callback|Form|Flow|Node|GraphicScene|Package|StateMachine|Layout|User|Annotation|Application|"
+               "Configuration|SharedDataTemplate|SharedDataEntry|TaskTemplate|TaskEntry|Role)")
 SCOPES_TO_TRACK = ['Node', 'Callback', 'Flow', 'StateMachine',
                    'Configuration', 'Annotation', 'Layout', 'GraphicScene', 'User', 'Role']
 

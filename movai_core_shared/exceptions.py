@@ -8,9 +8,9 @@
    - Tiago Paulino (tiago@mov.ai) - 2020
    - Dor Marous (Dor@mov.ai) - 2022
 """
-"""
-The exceptions used by MOV.AI api
-"""
+
+# The exceptions used by MOV.AI api
+
 
 
 class MovaiException(Exception):
