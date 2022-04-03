@@ -6,7 +6,8 @@
    Developers:
    - Dor Marous (Dor@mov.ai) - 2022
 """
-"""Constants"""
+
+# Constants
 ROS1_NODELET = 'ROS1/Nodelet'
 ROS1_NODE = 'ROS1/Node'
 ROS1_PLUGIN = 'ROS1/Plugin'
