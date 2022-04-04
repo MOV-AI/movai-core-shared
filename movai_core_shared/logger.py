@@ -106,4 +106,4 @@ class LogAdapter(logging.LoggerAdapter):
         raw_tags.update(self._tags)
         tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])
         kwargs = {"extra": {"tags": raw_tags}}
-        return "[{}] {}".format(tags, msg), kwargs
+        return f"[{tags}] {msg}", kwargs
