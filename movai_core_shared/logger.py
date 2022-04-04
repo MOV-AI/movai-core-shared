@@ -9,7 +9,7 @@
 import logging
 import sys
 from logging.handlers import TimedRotatingFileHandler
-from envvars import (
+from movai_core_shared.envvars import (
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
     MOVAI_STDOUT_VERBOSITY_LEVEL,
     MOVAI_GENERAL_VERBOSITY_LEVEL,
