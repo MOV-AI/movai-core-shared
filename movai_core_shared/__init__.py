@@ -7,7 +7,7 @@
    - Dor Marous (Dor@mov.ai) - 2022
 """
 
-import movai_core_shrared.consts
-import movai_core_shrared.envvars
-import movai_core_shrared.exceptions
-import movai_core_shrared.logger
+import movai_core_shared.consts
+import movai_core_shared.envvars
+import movai_core_shared.exceptions
+import movai_core_shared.logger
