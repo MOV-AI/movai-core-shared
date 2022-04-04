@@ -4,7 +4,7 @@
    Proprietary and confidential
 
    Developers:
-   - Dor Marous (Dor@mov.ai) - 2022
+   - Dor Marcous (Dor@mov.ai) - 2022
 """
 
 # Constants
