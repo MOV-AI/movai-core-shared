@@ -18,6 +18,7 @@ MOVAI_LOGFILE_VERBOSITY_LEVEL = int(
 MOVAI_GENERAL_VERBOSITY_LEVEL = int(
     os.getenv("MOVAI_GENERAL_VERBOSITY_LEVEL", str(DEBUG))
 )
+LOG_HTTP_HOST = os.environ.get('LOG_HTTP_HOST', 'http://health-node:8081')
 
 # Read variables from current environment
 APP_PATH = os.getenv("APP_PATH")
