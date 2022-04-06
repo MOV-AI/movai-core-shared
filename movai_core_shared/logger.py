@@ -11,8 +11,10 @@ import sys
 from logging.handlers import TimedRotatingFileHandler
 from movai_core_shared.envvars import (
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
+    MOVAI_HEALTHNODE_VERBOSITY_LEVEL,
     MOVAI_STDOUT_VERBOSITY_LEVEL,
     MOVAI_GENERAL_VERBOSITY_LEVEL,
+    LOG_HTTP_HOST,
 )
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
@@ -26,6 +28,63 @@ LOG_FORMATTER_HTTP = logging.Formatter(
     "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(lineno)d]: %(message)s",
     datefmt=LOG_FORMATTER_DATETIME,
 )
+
+
+class HealthNodeHandler(logging.handlers.HTTPHandler):
+
+    def __init__(self, url):
+        logging.Handler.__init__(self)
+
+        parsed_uri = urlparse(url)
+
+        self.host = parsed_uri.netloc
+        self.port = None
+
+        try:
+            self.host, self.port = self.host.split(':')
+        except ValueError:
+            # simply host, no port
+            pass
+
+        self.url = parsed_uri.path
+        self.method = 'POST'
+        self.secure = False
+        self.credentials = False
+
+    def emit(self, record):
+        """
+        Emit a record.
+        Send the record to the HealthNode API
+        """
+        threading.Thread(target=self._emit, args=(record,)).start()
+
+    def _emit(self, record):
+
+        try:
+            conn = http.client.HTTPConnection(self.host, port=self.port)
+
+            # Log data
+
+            data = self.mapLogRecord(record)
+            data = json.dumps(data)
+
+            headers = {
+                'Content-type': 'application/json',
+                'Content-length': str(len(data))
+            }
+
+            conn.request(self.method, self.url, data, headers)
+            conn.getresponse()  # can't do anything with the result
+
+        except Exception as e:
+            self.handleError(record)
+
+
+def _get_healthnode_handler():
+    _host_http_log_handler = f'{LOG_HTTP_HOST}/logs'
+    healthnode_handler = HealthNodeHandler(url=_host_http_log_handler)
+    healthnode_handler.setLevel(MOVAI_HEALTHNODE_VERBOSITY_LEVEL)
+    return healthnode_handler
 
 
 def _get_console_handler():
@@ -72,9 +131,128 @@ class Log:
             logger.addHandler(_get_console_handler())
         if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(_get_file_handler())
+        if MOVAI_HEALTHNODE_VERBOSITY_LEVEL != logging.NOTSET:
+            logger.addHandler(_get_healthnode_handler())
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
         logger.propagate = False
         return logger
+
+    @staticmethod
+    def get_logs(limit=1000, offset=0, level=None, tags=None, message=None, from_=None, to_=None, pagination=False,
+                 services=None):
+        """ Get logs from HealthNode """
+
+        url = f'{LOG_HTTP_HOST}/logs'
+        params = {
+            'limit': Logger.validate_limit(limit),
+            'offset': Logger.validate_limit(offset),
+        }
+
+        if level:
+            params['levels'] = Logger.validate_level(level)
+
+        if tags:
+            params['tags'] = Logger.validate_str_list(tags)
+
+        if message:
+            params['message'] = Logger.validate_message(message)
+
+        if from_:
+            params['from'] = int(Logger.validate_datetime(from_))
+
+        if to_:
+            params['to'] = int(Logger.validate_datetime(to_))
+
+        if services is not None:
+            params['services'] = services
+
+        try:
+            response = requests.get(url, params=params, timeout=5)
+            response.raise_for_status()
+        except Exception as e:
+            raise e
+
+        try:
+            content = response.json()
+        except Exception as e:
+            logger = Logger()
+            logger.error(message=str(e))
+            return []
+        else:
+            return content if pagination else content.get('data', [])
+
+    @staticmethod
+    def validate_limit(value):
+        try:
+            val = int(value)
+        except ValueError:
+            raise ValueError('invalid limit/offset value')
+        return val
+
+    @staticmethod
+    def validate_level(value):
+        try:
+            if isinstance(value, list):
+                values = [x.lower() for x in value]
+            elif isinstance(value, str):
+                values = [value]
+            else:
+                raise ValueError("level must be string or list of strings")
+
+            for val in values:
+                if val not in ['debug', 'info', 'warning', 'error', 'critical']:
+                    raise ValueError(val)
+
+            levels = ','.join(values)
+        except ValueError as e:
+            raise ValueError(f"invalid level: {str(e)}")
+        return levels
+
+    @staticmethod
+    def validate_str_list(value):
+        try:
+            value = [] if value is None else value
+            tags = ','.join(value)
+        except ValueError:
+            raise ValueError('invalid tags value')
+        return tags
+
+    @staticmethod
+    def validate_message(value):
+        return value
+
+    @staticmethod
+    def validate_datetime(value):
+        """ Validate if value is timestamp or datetime """
+        try:
+            dt_obj = datetime.fromtimestamp(int(value))
+        except (ValueError, TypeError):
+            try:
+                dt_obj = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+            except Exception:
+                raise ValueError('invalid datetime value, expected: <timestamp> | %Y-%m-%d %H:%M:%S')
+
+        return f'{dt_obj.timestamp():.0f}'
+
+    @staticmethod
+    def _find_between(s, start, end):
+        return (s.split(start))[1].split(end)[0]
+
+    @staticmethod
+    def _filter_data(*args, **kwargs):
+        # Get message stf from args or kwargs
+        try:
+            message = str(args[0]) % args[1:] if args else str(kwargs.get('message', '')) % args
+
+        except TypeError as e:
+            message = " ".join(args)
+
+        # Search and remove fields
+        fields = {**kwargs}
+        for k, v in fields.items():
+            if k in ['message', 'level', 'frame_info']:
+                del (kwargs[k])
+        return message
 
 
 class LogAdapter(logging.LoggerAdapter):
