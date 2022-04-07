@@ -137,6 +137,123 @@ class Log:
         logger.propagate = False
         return logger
 
+    @staticmethod
+    def get_logs(limit=1000, offset=0, level=None, tags=None, message=None, from_=None, to_=None, pagination=False,
+                 services=None):
+        """ Get logs from HealthNode """
+
+        url = f'{LOG_HTTP_HOST}/logs'
+        params = {
+            'limit': Logger.validate_limit(limit),
+            'offset': Logger.validate_limit(offset),
+        }
+
+        if level:
+            params['levels'] = Logger.validate_level(level)
+
+        if tags:
+            params['tags'] = Logger.validate_str_list(tags)
+
+        if message:
+            params['message'] = Logger.validate_message(message)
+
+        if from_:
+            params['from'] = int(Logger.validate_datetime(from_))
+
+        if to_:
+            params['to'] = int(Logger.validate_datetime(to_))
+
+        if services is not None:
+            params['services'] = services
+
+        try:
+            response = requests.get(url, params=params, timeout=5)
+            response.raise_for_status()
+        except Exception as e:
+            raise e
+
+        try:
+            content = response.json()
+        except Exception as e:
+            logger = Logger()
+            logger.error(message=str(e))
+            return []
+        else:
+            return content if pagination else content.get('data', [])
+
+    @staticmethod
+    def validate_limit(value):
+        try:
+            val = int(value)
+        except ValueError:
+            raise ValueError('invalid limit/offset value')
+        return val
+
+    @staticmethod
+    def validate_level(value):
+        try:
+            if isinstance(value, list):
+                values = [x.lower() for x in value]
+            elif isinstance(value, str):
+                values = [value]
+            else:
+                raise ValueError("level must be string or list of strings")
+
+            for val in values:
+                if val not in ['debug', 'info', 'warning', 'error', 'critical']:
+                    raise ValueError(val)
+
+            levels = ','.join(values)
+        except ValueError as e:
+            raise ValueError(f"invalid level: {str(e)}")
+        return levels
+
+    @staticmethod
+    def validate_str_list(value):
+        try:
+            value = [] if value is None else value
+            tags = ','.join(value)
+        except ValueError:
+            raise ValueError('invalid tags value')
+        return tags
+
+    @staticmethod
+    def validate_message(value):
+        return value
+
+    @staticmethod
+    def validate_datetime(value):
+        """ Validate if value is timestamp or datetime """
+        try:
+            dt_obj = datetime.fromtimestamp(int(value))
+        except (ValueError, TypeError):
+            try:
+                dt_obj = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+            except Exception:
+                raise ValueError('invalid datetime value, expected: <timestamp> | %Y-%m-%d %H:%M:%S')
+
+        return f'{dt_obj.timestamp():.0f}'
+
+    @staticmethod
+    def _find_between(s, start, end):
+        return (s.split(start))[1].split(end)[0]
+
+    @staticmethod
+    def _filter_data(*args, **kwargs):
+        # Get message stf from args or kwargs
+        try:
+            message = str(args[0]) % args[1:] if args else str(kwargs.get('message', '')) % args
+
+        except TypeError as e:
+            message = " ".join(args)
+
+        # Search and remove fields
+        fields = {**kwargs}
+        for k, v in fields.items():
+            if k in ['message', 'level', 'frame_info']:
+                del (kwargs[k])
+        return message
+
 
 class LogAdapter(logging.LoggerAdapter):
     """
