@@ -8,6 +8,12 @@
 """
 import logging
 import sys
+from datetime import datetime
+import json
+from urllib.parse import urlparse
+import http.client
+import threading
+import requests
 from logging.handlers import TimedRotatingFileHandler
 from movai_core_shared.envvars import (
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
@@ -144,24 +150,24 @@ class Log:
 
         url = f'{LOG_HTTP_HOST}/logs'
         params = {
-            'limit': Logger.validate_limit(limit),
-            'offset': Logger.validate_limit(offset),
+            'limit': Log.validate_limit(limit),
+            'offset': Log.validate_limit(offset),
         }
 
         if level:
-            params['levels'] = Logger.validate_level(level)
+            params['levels'] = Log.validate_level(level)
 
         if tags:
-            params['tags'] = Logger.validate_str_list(tags)
+            params['tags'] = Log.validate_str_list(tags)
 
         if message:
-            params['message'] = Logger.validate_message(message)
+            params['message'] = Log.validate_message(message)
 
         if from_:
-            params['from'] = int(Logger.validate_datetime(from_))
+            params['from'] = int(Log.validate_datetime(from_))
 
         if to_:
-            params['to'] = int(Logger.validate_datetime(to_))
+            params['to'] = int(Log.validate_datetime(to_))
 
         if services is not None:
             params['services'] = services
@@ -175,7 +181,7 @@ class Log:
         try:
             content = response.json()
         except Exception as e:
-            logger = Logger()
+            logger = Log.get_logger()
             logger.error(message=str(e))
             return []
         else:
