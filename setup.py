@@ -18,6 +18,6 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
     classifiers=["Programming Language :: Python :: 3"],
-    install_requires=[],
+    install_requires=["requests==2.22.0"],
     entry_points={},
 )

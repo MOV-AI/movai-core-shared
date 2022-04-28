@@ -24,7 +24,7 @@ from movai_core_shared.envvars import (
 )
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
-
+S_FORMATTER = '[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(tags)s][%(lineno)d]: %(message)s'
 LOG_FORMATTER = logging.Formatter(
     "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(lineno)d]: %(message)s",
     datefmt=LOG_FORMATTER_DATETIME,
@@ -92,12 +92,58 @@ def _get_healthnode_handler():
     healthnode_handler.setLevel(MOVAI_HEALTHNODE_VERBOSITY_LEVEL)
     return healthnode_handler
 
+class StdOutHandler(logging.StreamHandler):
+    _COLORS = {
+        logging.DEBUG: '\x1b[30;1m',  # light black (gray)
+        logging.INFO: '',  # default (white)
+        logging.WARNING: '\x1b[33;1m',  # yellow
+        logging.ERROR: '\x1b[31;1m',  # red
+        logging.CRITICAL: '\x1b[41;1m'  # bright red
+    }
+    _COLOR_RESET = '\u001b[0m'
+
+    def __init__(self, stream=None):
+        super().__init__(stream)
+
+    def emit(self, record):
+        try:
+            # Override the module and funcName with the ones
+            if hasattr(record.args,'module') and hasattr(record.args,'funcName') and hasattr(record.args,'lineno'):
+                record.module = record.args.get('module')
+                record.funcName = record.args.get('funcName')
+                record.lineno = record.args.get('lineno')
+
+            # Add/Remove Tags from log formatter
+            _formatter = S_FORMATTER
+            if isinstance(record.args, dict) and record.args.get('tags'):
+                tags = record.args.get('tags')
+                record.tags = '|'.join([f'{k}:{v}' for k, v in tags.items()])
+            else:
+                # if no tags are passed then update formatter
+                _formatter = _formatter.replace('[%(tags)s]', '')
+
+            log_format = logging.Formatter(
+                fmt=_formatter,
+                datefmt=LOG_FORMATTER_DATETIME
+            )
+            self.setFormatter(fmt=log_format)
+
+            msg = self.format(record)
+
+            stream = self.stream
+            stream.write(
+                self._COLORS.get(record.levelno, '') + msg + self._COLOR_RESET)
+            stream.write(self.terminator)
+            self.flush()
+        except Exception:
+            self.handleError(record)
+
 
 def _get_console_handler():
     """
     Set up the stdout handler
     """
-    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler = StdOutHandler(sys.stdout)
     console_handler.setFormatter(LOG_FORMATTER)
     console_handler.setLevel(MOVAI_STDOUT_VERBOSITY_LEVEL)
     return console_handler
