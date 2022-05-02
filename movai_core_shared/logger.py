@@ -143,7 +143,7 @@ def _get_console_handler():
     """
     Set up the stdout handler
     """
-    console_handler = StdOutHandler(sys.stdout)
+    console_handler = StdOutHandler()
     console_handler.setFormatter(LOG_FORMATTER)
     console_handler.setLevel(MOVAI_STDOUT_VERBOSITY_LEVEL)
     return console_handler
