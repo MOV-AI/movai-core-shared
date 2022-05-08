@@ -179,6 +179,8 @@ class Log:
         Get a logger instance
         """
         logger = logging.getLogger(logger_name)
+        if logger.hasHandlers():
+            logger.handlers = []
         if MOVAI_STDOUT_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(_get_console_handler())
         if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
