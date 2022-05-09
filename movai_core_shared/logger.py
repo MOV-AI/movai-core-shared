@@ -143,7 +143,7 @@ def _get_console_handler():
     """
     Set up the stdout handler
     """
-    console_handler = StdOutHandler(sys.stdout)
+    console_handler = StdOutHandler()
     console_handler.setFormatter(LOG_FORMATTER)
     console_handler.setLevel(MOVAI_STDOUT_VERBOSITY_LEVEL)
     return console_handler
@@ -179,6 +179,8 @@ class Log:
         Get a logger instance
         """
         logger = logging.getLogger(logger_name)
+        if logger.hasHandlers():
+            logger.handlers = []
         if MOVAI_STDOUT_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(_get_console_handler())
         if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
