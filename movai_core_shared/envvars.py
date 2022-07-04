@@ -107,3 +107,8 @@ SCOPES_TO_TRACK = [
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 JWT_EXPIRATION_DELTA = timedelta(seconds=3600)
 JWT_REFRESH_EXPIRATION_DELTA = timedelta(days=7)
+
+# Docker configuration
+DOCKERD_ATTEMPTS = os.getenv("DOCKERD_ATTEMPTS", 3)
+DOCKER_TIMEOUT = int(os.getenv("DOCKER_TIMEOUT", 30))
+DOCKER_REGISTRY = os.getenv("DOCKER_REGISTRY", "registry.cloud.mov.ai")
