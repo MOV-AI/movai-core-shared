@@ -45,6 +45,11 @@ ROS1_MOVAI_WS = os.getenv("ROS1_MOVAI_WS")
 ROS1_USER_WS = os.getenv("ROS1_USER_WS")
 ROS1_WS = ROS1_MOVAI_WS
 ROS2_DISTRO = "dashing"
+# ZMQ environment variables
+MSG_HANDLER_LOCAL_CONN = os.getenv("MSG_HANDLER_LOCAL_CONN", "ipc:///run/movai/comm/msg_handler_local_comm.ipc")
+MOVAI_ZMQ_TIMEOUT_MS = os.getenv("MOVAI_ZMQ_TIMEOUT_MS", 1000)
+
+
 
 # Custom vars
 ROS1_LIB = f"/opt/ros/{ROS_DISTRO}/lib"
