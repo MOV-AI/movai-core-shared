@@ -18,7 +18,7 @@ from movai_core_shared.envvars import (
     LOG_HTTP_HOST,
 )
 try:
-    from movai_core_enterprise import remote_logger
+    from movai_core_enterprise.message_client_handlers.remote_logger import get_remote_logger_client
     enterprise = True
 except ImportError:
     enterprise = False
@@ -126,7 +126,7 @@ class Log:
             logger.addHandler(_get_file_handler())
         if enterprise:
             if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
-                logger.addHandler(remote_logger.get_remote_logger_client())
+                logger.addHandler(get_remote_logger_client())
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
         logger.propagate = False
         return logger
