@@ -1,15 +1,15 @@
 """ Compilation of necessary environment variables to push to the database """
 import os
 from datetime import timedelta
-from logging import DEBUG, NOTSET, WARNING
+from logging import DEBUG, NOTSET, INFO
 
 # Setting for logging verbosity levels
 # Will be set only once at startup
 MOVAI_STDOUT_VERBOSITY_LEVEL = int(
     os.getenv("MOVAI_STDOUT_VERBOSITY_LEVEL", str(DEBUG))
 )
-MOVAI_HEALTHNODE_VERBOSITY_LEVEL = int(
-    os.getenv("MOVAI_HEALTHNODE_VERBOSITY_LEVEL", str(WARNING))
+MOVAI_FLEET_LOGS_VERBOSITY_LEVEL = int(
+    os.getenv("MOVAI_FLEET_LOGS_VERBOSITY_LEVEL", str(INFO))
 )
 # default as NOTSET that will turn off the output for the addition log file
 MOVAI_LOGFILE_VERBOSITY_LEVEL = int(
@@ -46,6 +46,11 @@ ROS1_MOVAI_WS = os.getenv("ROS1_MOVAI_WS")
 ROS1_USER_WS = os.getenv("ROS1_USER_WS")
 ROS1_WS = ROS1_MOVAI_WS
 ROS2_DISTRO = "dashing"
+# ZMQ environment variables
+MSG_HANDLER_LOCAL_CONN = os.getenv("MSG_HANDLER_LOCAL_CONN", "ipc:///run/movai/comm/msg_handler_local_comm.ipc")
+MOVAI_ZMQ_TIMEOUT_MS = os.getenv("MOVAI_ZMQ_TIMEOUT_MS", 1000)
+
+
 
 # Custom vars
 ROS1_LIB = f"/opt/ros/{ROS_DISTRO}/lib"

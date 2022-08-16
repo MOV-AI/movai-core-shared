@@ -7,21 +7,21 @@
    - Dor Marcous (dor@mov.ai) - 2022
 """
 import logging
-import sys
 from datetime import datetime
-import json
-from urllib.parse import urlparse
-import http.client
-import threading
 import requests
 from logging.handlers import TimedRotatingFileHandler
 from movai_core_shared.envvars import (
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
-    MOVAI_HEALTHNODE_VERBOSITY_LEVEL,
+    MOVAI_FLEET_LOGS_VERBOSITY_LEVEL,
     MOVAI_STDOUT_VERBOSITY_LEVEL,
     MOVAI_GENERAL_VERBOSITY_LEVEL,
     LOG_HTTP_HOST,
 )
+try:
+    from movai_core_enterprise.message_client_handlers.remote_logger import get_remote_logger_client
+    enterprise = True
+except ImportError:
+    enterprise = False
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 S_FORMATTER = '[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(tags)s][%(lineno)d]: %(message)s'
@@ -30,67 +30,6 @@ LOG_FORMATTER = logging.Formatter(
     datefmt=LOG_FORMATTER_DATETIME,
 )
 
-LOG_FORMATTER_HTTP = logging.Formatter(
-    "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(lineno)d]: %(message)s",
-    datefmt=LOG_FORMATTER_DATETIME,
-)
-
-
-class HealthNodeHandler(logging.handlers.HTTPHandler):
-
-    def __init__(self, url):
-        logging.Handler.__init__(self)
-
-        parsed_uri = urlparse(url)
-
-        self.host = parsed_uri.netloc
-        self.port = None
-
-        try:
-            self.host, self.port = self.host.split(':')
-        except ValueError:
-            # simply host, no port
-            pass
-
-        self.url = parsed_uri.path
-        self.method = 'POST'
-        self.secure = False
-        self.credentials = False
-
-    def emit(self, record):
-        """
-        Emit a record.
-        Send the record to the HealthNode API
-        """
-        threading.Thread(target=self._emit, args=(record,)).start()
-
-    def _emit(self, record):
-
-        try:
-            conn = http.client.HTTPConnection(self.host, port=self.port)
-
-            # Log data
-
-            data = self.mapLogRecord(record)
-            data = json.dumps(data)
-
-            headers = {
-                'Content-type': 'application/json',
-                'Content-length': str(len(data))
-            }
-
-            conn.request(self.method, self.url, data, headers)
-            conn.getresponse()  # can't do anything with the result
-
-        except Exception as e:
-            self.handleError(record)
-
-
-def _get_healthnode_handler():
-    _host_http_log_handler = f'{LOG_HTTP_HOST}/logs'
-    healthnode_handler = HealthNodeHandler(url=_host_http_log_handler)
-    healthnode_handler.setLevel(MOVAI_HEALTHNODE_VERBOSITY_LEVEL)
-    return healthnode_handler
 
 class StdOutHandler(logging.StreamHandler):
     _COLORS = {
@@ -185,8 +124,9 @@ class Log:
             logger.addHandler(_get_console_handler())
         if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(_get_file_handler())
-        if MOVAI_HEALTHNODE_VERBOSITY_LEVEL != logging.NOTSET:
-            logger.addHandler(_get_healthnode_handler())
+        if enterprise:
+            if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
+                logger.addHandler(get_remote_logger_client())
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
         logger.propagate = False
         return logger
