@@ -89,10 +89,7 @@ from movai_core_shared.envvars import (
     ENVIRON_GDNODE_INJECT,
     REST_SCOPES,
     SCOPES_TO_TRACK,
-    JWT_SECRET_KEY,
-    JWT_EXPIRATION_DELTA,
-    JWT_REFRESH_EXPIRATION_DELTA,
-)
+    )
 
 from movai_core_shared.exceptions import (
     MovaiException,
