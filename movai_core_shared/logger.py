@@ -7,8 +7,6 @@
    - Dor Marcous (dor@mov.ai) - 2022
 """
 import logging
-from datetime import datetime
-import requests
 from logging.handlers import TimedRotatingFileHandler
 from movai_core_shared.envvars import (
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
