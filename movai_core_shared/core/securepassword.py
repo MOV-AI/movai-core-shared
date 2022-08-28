@@ -6,15 +6,15 @@
    Developers:
    - Erez Zomer  (erez@mov.ai) - 2022
 """
+from movai_core_shared.logger import Log
+from movai_core_shared.exceptions import PasswordASCIIFormatError
+from movai_core_shared.core.secure import generate_secret_string
 from curses.ascii import isascii
 import hashlib
 import os
 import binascii
-from movai_core_shared.logger import Log
 from cryptography.fernet import Fernet
 from base64 import urlsafe_b64encode
-from movai.core.vault import JWT_SECRET_KEY
-from movai_core_shared.exceptions import PasswordASCIIFormatError
 
 LOGGER = Log.get_logger(__name__)
 
@@ -51,7 +51,9 @@ class SecurePassword:
     """A class for securing password by encryption or hashing.
     """
 
-    def __init__(self, secret: str = JWT_SECRET_KEY) -> None:
+    def __init__(self, secret: str = None) -> None:
+        if secret is None:
+            secret = generate_secret_string(32)
         key = urlsafe_b64encode(secret[:32].encode('ascii'))
         self.cipher_suite = Fernet(key)
 

@@ -1,14 +1,13 @@
-from movai_core_shared.core.securepassword import (SHA256PasswordHash,
-                                                   AESPasswordEncryption)
+from movai_core_shared.core.securepassword import SecurePassword
 import unittest
 from tests.login.raw_test_data import LDAP_PASSWORD
 
-
+TEST_KEY = "blablabla"
 class HashPasswordTester(unittest.TestCase):
 
     def setUp(self) -> None:
         super().__init__()
-        self.hash = SHA256PasswordHash()
+        self.secure = SecurePassword(TEST_KEY)
         self.init_passwords()
 
     def init_passwords(self) -> None:
@@ -16,13 +15,13 @@ class HashPasswordTester(unittest.TestCase):
         for i in range(2):
             password = f"{LDAP_PASSWORD}{i}"
             pair = {'pass': password,
-                    'hash': self.hash.create_salted_hash(password)}
+                    'hash': self.secure.create_salted_hash(password)}
             self.passwords.append(pair)
 
     def test_verify_password(self) -> int:
-        self.assertTrue(self.hash.verify_password(self.passwords[0]['pass'],
+        self.assertTrue(self.secure.verify_password(self.passwords[0]['pass'],
                                                   self.passwords[0]['hash']))
-        self.assertFalse(self.hash.verify_password(self.passwords[0]['pass'],
+        self.assertFalse(self.secure.verify_password(self.passwords[0]['pass'],
                                                    self.passwords[1]['hash']))
 
 
@@ -30,7 +29,7 @@ class EncryptedPasswords(unittest.TestCase):
 
     def setUp(self) -> None:
         super().__init__()
-        self.cipher = AESPasswordEncryption()
+        self.cipher = SecurePassword(TEST_KEY)
         self.password = LDAP_PASSWORD
         self.cipher_text = self.cipher.encrypt_password(self.password)
         self.plain_text = self.cipher.decrypt_password(self.cipher_text)
