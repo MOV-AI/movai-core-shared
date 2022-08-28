@@ -14,8 +14,7 @@ from movai_core_shared.envvars import (
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
     MOVAI_FLEET_LOGS_VERBOSITY_LEVEL,
     MOVAI_STDOUT_VERBOSITY_LEVEL,
-    MOVAI_GENERAL_VERBOSITY_LEVEL,
-    LOG_HTTP_HOST,
+    MOVAI_GENERAL_VERBOSITY_LEVEL
 )
 try:
     from movai_core_enterprise.message_client_handlers.remote_logger import get_remote_logger_client
