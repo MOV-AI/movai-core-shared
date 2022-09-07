@@ -8,17 +8,14 @@
 """
 import logging
 from logging.handlers import TimedRotatingFileHandler
+import threading
 from movai_core_shared.envvars import (
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
     MOVAI_FLEET_LOGS_VERBOSITY_LEVEL,
     MOVAI_STDOUT_VERBOSITY_LEVEL,
     MOVAI_GENERAL_VERBOSITY_LEVEL
 )
-try:
-    from movai_core_enterprise.message_client_handlers.remote_logger import get_remote_logger_client
-    enterprise = True
-except ImportError:
-    enterprise = False
+from .message_client import MessageClient
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 S_FORMATTER = '[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(tags)s][%(lineno)d]: %(message)s'
@@ -75,6 +72,61 @@ class StdOutHandler(logging.StreamHandler):
             self.handleError(record)
 
 
+class RemoteLogger(logging.StreamHandler):
+
+    def __init__(self):
+        """
+        Constructor
+        """
+        logging.StreamHandler.__init__(self, None)
+        self.client = MessageClient('logs', 'app_logs')
+
+    def emit(self, record):
+        """
+        Emit a record.
+        Send the record to the HealthNode API
+
+        Args:
+            record: The python log message data record
+
+        """
+        threading.Thread(target=self._emit, args=(record,)).start()
+
+    def _emit(self, record):
+        """
+        Builds a valid log message request from the python log record
+        and send it to the local message server
+
+        Args:
+            record: The Python log message data record
+
+        """
+        data = {'level': record.levelname, 'module': record.module, 'funcName': record.funcName,
+                'lineno': record.lineno, 'message': record.msg}
+        # get the Log data
+        log_time = record.created
+
+        log_data = {
+            'name': 'log',
+            'created': log_time,
+            'fields': data
+        }
+
+        self.client.send_request(log_data)
+
+
+def get_remote_logger_client():
+    """
+    Create a RemoteLogger object and return it
+
+    Returns: ReomoteLogger object
+
+    """
+    remote_logger_client = RemoteLogger()
+    remote_logger_client.setLevel(MOVAI_FLEET_LOGS_VERBOSITY_LEVEL)
+
+    return remote_logger_client
+
 def _get_console_handler():
     """
     Set up the stdout handler
@@ -121,12 +173,30 @@ class Log:
             logger.addHandler(_get_console_handler())
         if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(_get_file_handler())
-        if enterprise:
-            if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
-                logger.addHandler(get_remote_logger_client())
+        if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
+            logger.addHandler(get_remote_logger_client())
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
         logger.propagate = False
         return logger
+
+    @staticmethod
+    def set_remote_logger_level(logger: logging.Logger, level: int = logging.NOTSET):
+        for handler in logger.handlers:
+            if isinstance(handler, RemoteLogger):
+                if level in {logging.DEBUG, logging.INFO, logging.WARNING,
+                             logging.ERROR, logging.CRITICAL}:
+                    handler.setLevel(level)
+                break
+
+    @staticmethod
+    def get_remote_logger_level(logger: logging.Logger) -> int:
+        level = logging.NOTSET
+        for handler in logger.handlers:
+            if isinstance(handler, RemoteLogger):
+                level = handler.level
+                break
+
+        return level
 
     @staticmethod
     def _find_between(s, start, end):

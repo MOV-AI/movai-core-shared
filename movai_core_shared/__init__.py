@@ -106,6 +106,8 @@ from movai_core_shared.exceptions import (
 )
 from movai_core_shared.logger import Log, LogAdapter
 
+from movai_core_shared.message_client import MessageClient
+
 __all__ = [
     "Log",
     "MovaiException",
@@ -199,4 +201,5 @@ __all__ = [
     "TIMEOUT_PROCESS_SIGINT",
     "TIMEOUT_PROCESS_SIGTERM",
     "LogAdapter",
+    "MessageClient"
 ]
