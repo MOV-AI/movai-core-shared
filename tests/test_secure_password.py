@@ -1,8 +1,9 @@
 from movai_core_shared.core.securepassword import SecurePassword
+from movai_core_shared.core.secure import generate_secret_string
 import unittest
-from tests.login.raw_test_data import LDAP_PASSWORD
 
-TEST_KEY = "blablabla"
+
+TEST_KEY = generate_secret_string()
 class HashPasswordTester(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -13,7 +14,7 @@ class HashPasswordTester(unittest.TestCase):
     def init_passwords(self) -> None:
         self.passwords = []
         for i in range(2):
-            password = f"{LDAP_PASSWORD}{i}"
+            password = generate_secret_string()
             pair = {'pass': password,
                     'hash': self.secure.create_salted_hash(password)}
             self.passwords.append(pair)
@@ -30,7 +31,7 @@ class EncryptedPasswords(unittest.TestCase):
     def setUp(self) -> None:
         super().__init__()
         self.cipher = SecurePassword(TEST_KEY)
-        self.password = LDAP_PASSWORD
+        self.password = generate_secret_string()
         self.cipher_text = self.cipher.encrypt_password(self.password)
         self.plain_text = self.cipher.decrypt_password(self.cipher_text)
 
