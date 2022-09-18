@@ -86,8 +86,8 @@ for (key, value) in ENVIRON_GDNODE_INJECT.items():
     ENVIRON_GDNODE[key] = value
 
 REST_SCOPES = (
-    "(Callback|Form|Flow|Node|GraphicScene|Package|StateMachine|Layout|User|Annotation|Application|"
-    "Configuration|SharedDataTemplate|SharedDataEntry|TaskTemplate|TaskEntry|Role)"
+    "(Callback|Form|Flow|Node|GraphicScene|Package|StateMachine|Layout|Annotation|Application|"
+    "Configuration|SharedDataTemplate|SharedDataEntry|TaskTemplate|TaskEntry)"
 )
 SCOPES_TO_TRACK = [
     "Node",
@@ -97,9 +97,7 @@ SCOPES_TO_TRACK = [
     "Configuration",
     "Annotation",
     "Layout",
-    "GraphicScene",
-    "User",
-    "Role",
+    "GraphicScene"
 ]
 
 #LDAP vars
