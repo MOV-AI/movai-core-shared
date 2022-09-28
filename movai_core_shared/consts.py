@@ -14,7 +14,7 @@ ROS1_PLUGIN = "ROS1/Plugin"
 MOVAI_NODE = "MovAI/Node"
 MOVAI_STATE = "MovAI/State"
 MOVAI_SERVER = "MovAI/Server"
-
+DEFAULT_CALLBACK = "place_holder"
 ROS2_NODE = "ROS2/Node"
 ROS2_LIFECYCLENODE = "ROS2/LifecycleNode"
 
@@ -93,3 +93,6 @@ CONFIG_REGEX = r"\$\((param|config|var|flow)[^$)]+\)"
 
 TIMEOUT_PROCESS_SIGINT = 15
 TIMEOUT_PROCESS_SIGTERM = 2
+
+# Domains
+INTERNAL_DOMAIN = "internal"
