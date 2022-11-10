@@ -3,16 +3,6 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-requirements = []
-
-with open("requirements.txt", "r") as fh:
-    for line in fh.readlines(): 
-        if line != '\n':
-            if '\n' in line:
-                line = line.rstrip('\n')
-            requirements.append(str(line))
-
-
 setuptools.setup(
     name="movai-core-shared",
     version="1.0.1-0",
@@ -25,6 +15,9 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
     classifiers=["Programming Language :: Python :: 3"],
-    install_requires=[requirements],
+    install_requires=[
+        'cryptography==2.8',
+        'requests==2.22.0'
+    ],
     entry_points={},
 )
