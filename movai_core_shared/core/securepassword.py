@@ -6,15 +6,17 @@
    Developers:
    - Erez Zomer  (erez@mov.ai) - 2022
 """
-from movai_core_shared.logger import Log
-from movai_core_shared.exceptions import PasswordASCIIFormatError
-from movai_core_shared.core.secure import generate_secret_string
-from curses.ascii import isascii
 import hashlib
 import os
 import binascii
-from cryptography.fernet import Fernet
+
 from base64 import urlsafe_b64encode
+from curses.ascii import isascii
+from cryptography.fernet import Fernet
+
+from movai_core_shared.logger import Log
+from movai_core_shared.exceptions import PasswordASCIIFormatError
+from movai_core_shared.core.secure import generate_secret_string
 
 LOGGER = Log.get_logger(__name__)
 
