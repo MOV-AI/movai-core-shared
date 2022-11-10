@@ -48,6 +48,7 @@ from movai_core_shared.consts import (
     CONFIG_REGEX,
     TIMEOUT_PROCESS_SIGINT,
     TIMEOUT_PROCESS_SIGTERM,
+    INTERNAL_DOMAIN
 )
 from movai_core_shared.envvars import (
     MOVAI_STDOUT_VERBOSITY_LEVEL,
@@ -192,5 +193,6 @@ __all__ = [
     "CONFIG_REGEX",
     "TIMEOUT_PROCESS_SIGINT",
     "TIMEOUT_PROCESS_SIGTERM",
+    "INTERNAL_DOMAIN",
     "LogAdapter",
 ]
