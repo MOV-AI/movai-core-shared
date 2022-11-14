@@ -3,6 +3,12 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+requirements = [
+    "cryptography==2.8",
+    "requests==2.22.0"
+]
+
+
 setuptools.setup(
     name="movai-core-shared",
     version="1.0.1-0",
