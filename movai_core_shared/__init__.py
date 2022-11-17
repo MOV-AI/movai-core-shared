@@ -48,6 +48,7 @@ from movai_core_shared.consts import (
     CONFIG_REGEX,
     TIMEOUT_PROCESS_SIGINT,
     TIMEOUT_PROCESS_SIGTERM,
+    INTERNAL_DOMAIN
 )
 from movai_core_shared.envvars import (
     MOVAI_STDOUT_VERBOSITY_LEVEL,
@@ -89,10 +90,7 @@ from movai_core_shared.envvars import (
     ENVIRON_GDNODE_INJECT,
     REST_SCOPES,
     SCOPES_TO_TRACK,
-    JWT_SECRET_KEY,
-    JWT_EXPIRATION_DELTA,
-    JWT_REFRESH_EXPIRATION_DELTA,
-)
+    )
 
 from movai_core_shared.exceptions import (
     MovaiException,
@@ -155,9 +153,6 @@ __all__ = [
     "ENVIRON_GDNODE_INJECT",
     "REST_SCOPES",
     "SCOPES_TO_TRACK",
-    "JWT_SECRET_KEY",
-    "JWT_EXPIRATION_DELTA",
-    "JWT_REFRESH_EXPIRATION_DELTA",
     "ROS1_NODELET",
     "ROS1_NODE",
     "ROS1_PLUGIN",
@@ -198,5 +193,6 @@ __all__ = [
     "CONFIG_REGEX",
     "TIMEOUT_PROCESS_SIGINT",
     "TIMEOUT_PROCESS_SIGTERM",
+    "INTERNAL_DOMAIN",
     "LogAdapter",
 ]

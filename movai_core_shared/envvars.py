@@ -1,6 +1,5 @@
 """ Compilation of necessary environment variables to push to the database """
 import os
-from datetime import timedelta
 from logging import DEBUG, NOTSET, WARNING
 
 # Setting for logging verbosity levels
@@ -87,8 +86,8 @@ for (key, value) in ENVIRON_GDNODE_INJECT.items():
     ENVIRON_GDNODE[key] = value
 
 REST_SCOPES = (
-    "(Callback|Form|Flow|Node|GraphicScene|Package|StateMachine|Layout|User|Annotation|Application|"
-    "Configuration|SharedDataTemplate|SharedDataEntry|TaskTemplate|TaskEntry|Role)"
+    "(Callback|Form|Flow|Node|GraphicScene|Package|StateMachine|Layout|Annotation|Application|"
+    "Configuration|SharedDataTemplate|SharedDataEntry|TaskTemplate|TaskEntry)"
 )
 SCOPES_TO_TRACK = [
     "Node",
@@ -98,12 +97,19 @@ SCOPES_TO_TRACK = [
     "Configuration",
     "Annotation",
     "Layout",
-    "GraphicScene",
-    "User",
-    "Role",
+    "GraphicScene"
 ]
 
-# JWT Authentication
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-JWT_EXPIRATION_DELTA = timedelta(seconds=3600)
-JWT_REFRESH_EXPIRATION_DELTA = timedelta(days=7)
+#LDAP vars
+LDAP_SEARCH_TIME_LIMIT = int(os.getenv('LDAP_SEARCH_TIME_LIMIT', 10))
+LDAP_POOLING_LOOP_TIMEOUT = int(os.getenv('LDAP_POOLING_LOOP_TIMEOUT', 5))
+LDAP_CONNECTION_RECEIVE_TIMEOUT = int(os.getenv('LDAP_CONNECTION_RECEIVE_TIMEOUT', 5))
+LDAP_KEY_LENGTH = os.getenv('LDAP_KEY_LENGTH', 32)
+
+#Token Vars
+DEFAULT_JWT_ACCESS_DELTA_SECS = os.getenv('DEFAULT_JWT_ACCESS_DELTA_SECS', 3600)
+DEFAULT_JWT_REFRESH_DELTA_DAYS = os.getenv('DEFAULT_JWT_REFRESH_DELTA_DAYS', 7)
+
+#General Vars
+DEFAULT_ROLE_NAME = os.getenv('DEFAULT_ROLE_NAME', "ADMIN")
+FLEET_NAME = os.getenv('FLEET_NAME', "movai")
