@@ -21,9 +21,6 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
     classifiers=["Programming Language :: Python :: 3"],
-    install_requires=[
-        'cryptography==2.8',
-        'requests==2.22.0'
-    ],
+    install_requires=requirements
     entry_points={},
 )
