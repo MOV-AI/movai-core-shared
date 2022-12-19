@@ -1,6 +1,7 @@
 """ Compilation of necessary environment variables to push to the database """
 import os
 from logging import DEBUG, NOTSET, INFO
+from .consts import MESSAGE_SERVER_HOST
 
 # Setting for logging verbosity levels
 # Will be set only once at startup
@@ -45,10 +46,14 @@ ROS1_MOVAI_WS = os.getenv("ROS1_MOVAI_WS")
 ROS1_USER_WS = os.getenv("ROS1_USER_WS")
 ROS1_WS = ROS1_MOVAI_WS
 ROS2_DISTRO = "dashing"
-# ZMQ environment variables
-MSG_HANDLER_LOCAL_CONN = os.getenv("MSG_HANDLER_LOCAL_CONN", "ipc:///run/movai/msg_handler_local_comm.ipc")
-MOVAI_ZMQ_TIMEOUT_MS = os.getenv("MOVAI_ZMQ_TIMEOUT_MS", 1000)
 
+# message-server environment variables
+MSG_DISPATCHER_PORT = os.getenv("MSG_DISPATCHER_PORT", 8081)
+MSG_DISPATCHER_LOCAL_LISTENER = os.getenv("MSG_DISPATCHER_LOCAL_LISTENER", "ipc:///run/movai/msg_dispatcher_local_listener.ipc")
+MSG_DISPATCHER_REMOTE_LISTENER = os.getenv("MSG_DISPATCHER_REMOTE_LISTENER", f"tcp://0.0.0.0:{MSG_DISPATCHER_PORT}")
+MSG_CLIENT_LOCAL_CONN = f"tcp://{MESSAGE_SERVER_HOST}:{MSG_DISPATCHER_PORT}"
+MSG_CLIENT_REMOTE_CONN = f"tcp://{REDIS_MASTER_HOST}:{MSG_DISPATCHER_PORT}"
+MOVAI_ZMQ_TIMEOUT_MS = os.getenv("MOVAI_ZMQ_TIMEOUT_MS", 1000)
 
 
 # Custom vars
