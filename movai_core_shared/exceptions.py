@@ -248,3 +248,19 @@ class SecretKeyAlreadyExist(SecretKeyError):
 class ArgumentError(MovaiException):
     """The supplied argument is invalid.
     """
+
+class HandlerNotFoundException(MovaiException):
+    """The message has no suitable handler.
+    """
+
+class MetricException(MovaiException):
+    """Something is wrong with the metric.
+    """
+
+class UnknownRequestException(MovaiException):
+    """The request format is unknown.
+    """
+
+class ConfigurationDoesNotExist(DoesNotExist):
+    """The requested configuration could not be found.
+    """
