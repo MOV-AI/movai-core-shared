@@ -49,6 +49,7 @@ class ActiveFlowError(MovaiException):
     Raise when the command requires an active flow
     """
 
+
 class InitializationError(MovaiException):
     """Failure to initialize an object.
     """
@@ -113,6 +114,7 @@ class TokenError(LoginError):
     """General Token error
     """
 
+
 class InvalidToken(TokenError):
     """Failed to get access token.
     """
@@ -122,9 +124,11 @@ class TokenExpired(TokenError):
     """Token's signature has expired.
     """
 
+
 class TokenRevoked(TokenError):
     """Token have been revoked.
     """
+
 
 class AclObjectError(MovaiException):
     """a base class for AclObject model exceptions.
@@ -205,6 +209,7 @@ class RoleAlreadyExist(RoleError):
     """the requested role is already found in DB.
     """
 
+
 class PasswordError(MovaiException):
     """a base class for password exceptions.
     """
@@ -249,18 +254,27 @@ class ArgumentError(MovaiException):
     """The supplied argument is invalid.
     """
 
+
 class HandlerNotFoundException(MovaiException):
     """The message has no suitable handler.
     """
+
 
 class MetricException(MovaiException):
     """Something is wrong with the metric.
     """
 
+
 class UnknownRequestException(MovaiException):
     """The request format is unknown.
     """
 
+
 class ConfigurationDoesNotExist(DoesNotExist):
     """The requested configuration could not be found.
+    """
+
+
+class DBHandlerException(MovaiException):
+    """General exception in DBHandler.
     """
