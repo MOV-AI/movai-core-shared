@@ -102,5 +102,7 @@ INFLUXDB_HOST = "influxdb"
 MESSAGE_SERVER_HOST = "message-server"
 
 
-#DB_names:
-METRICS_DB = "metrics"
+#inluxdb DB names:
+INFLUX_LOGS_DB_NAME = "logs"
+INFLUX_METRICS_DB_NAME = "metrics"
+INFLUXDB_DB_NAMES = [INFLUX_LOGS_DB_NAME, INFLUX_METRICS_DB_NAME]
