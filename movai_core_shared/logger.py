@@ -6,10 +6,13 @@
    Developers:
    - Dor Marcous (dor@mov.ai) - 2022
 """
-import logging
 from datetime import datetime
-import requests
+import logging
 from logging.handlers import TimedRotatingFileHandler
+import threading
+import requests
+
+
 from movai_core_shared.envvars import (
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
     MOVAI_FLEET_LOGS_VERBOSITY_LEVEL,
@@ -17,11 +20,8 @@ from movai_core_shared.envvars import (
     MOVAI_GENERAL_VERBOSITY_LEVEL,
     LOG_HTTP_HOST,
 )
-try:
-    from movai_core_enterprise.message_client_handlers.remote_logger import get_remote_logger_client
-    enterprise = True
-except ImportError:
-    enterprise = False
+from movai_core_shared.core.message_client import MessageClient
+from movai_core_shared.common.config import is_enteprise
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 S_FORMATTER = '[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(tags)s][%(lineno)d]: %(message)s'
@@ -97,6 +97,72 @@ def _get_file_handler():
     file_handler.setLevel(MOVAI_LOGFILE_VERBOSITY_LEVEL)
     return file_handler
 
+class RemoteLogger(logging.StreamHandler):
+    """
+    This class implemets a log handler which sends
+    sends the data to message server for logging in influxdb.
+    """
+    _measurement = "app_logs"
+    def __init__(self):
+        """
+        Constructor
+        """
+        logging.StreamHandler.__init__(self, None)
+        self._message_client = MessageClient("logs")
+
+    def emit(self, record):
+        """
+        Emit a record.
+        Send the record to the HealthNode API
+
+        Args:
+            record: The python log message data record
+
+        """
+        threading.Thread(target=self._emit, args=(record,)).start()
+
+    def _emit(self, record):
+        """
+        Builds a valid log message request from the python log record
+        and send it to the local message server
+
+        Args:
+            record: The Python log message data record
+
+        """
+        log_data = {'level': record.levelname,
+                    'module': record.module,
+                    'funcName': record.funcName,
+                    'lineno': record.lineno,
+                    'message': record.msg}
+        #get the Log data
+#        log_time = record.created
+
+        data = {
+            "measurement": self._measurement,
+            "log_data": log_data
+        }
+
+        self._message_client.send_request(data, record.created)
+
+
+def get_remote_logger_client(log_level=logging.NOTSET):
+    """
+    Create a RemoteLogger object and return it
+
+    Args:
+        log_level: defines the remote logger log level default value is info
+
+    Returns: ReomoteLogger object
+
+    """
+    remote_logger_client = RemoteLogger()
+    if log_level in [logging.CRITICAL, logging.FATAL, logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]:
+        remote_logger_client.setLevel(log_level)
+    else:
+        remote_logger_client.setLevel(MOVAI_FLEET_LOGS_VERBOSITY_LEVEL)
+
+    return remote_logger_client
 
 class Log:
     """
@@ -124,7 +190,7 @@ class Log:
             logger.addHandler(_get_console_handler())
         if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(_get_file_handler())
-        if enterprise:
+        if is_enteprise():
             if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
                 logger.addHandler(get_remote_logger_client())
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
