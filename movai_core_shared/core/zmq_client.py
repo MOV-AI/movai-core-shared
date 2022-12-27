@@ -31,7 +31,6 @@ class ZmqClient:
         port: str = MOVAI_ZMQ_SOCKET,
         pub_key: str = "",
         name: str = "",
-        is_encrypted: bool = True,
         timeout_ms: int = 0,
     ) -> None:
         """Constractor for zmq client
@@ -39,9 +38,8 @@ class ZmqClient:
         Args:
             ip: the dest ip in string
             port: the dest port in string
-            pub_key: public key of the dest
+            pub_key: public key of the dest, default to "" which means no encryption
             name: name of the client, default for process id
-            is_encrypted: True to encrypte connection, default = True
             timeout_ms: timeout in miliseconds, to drop message, default = 0 to infinite timeout
 
         Returns:
@@ -59,7 +57,6 @@ class ZmqClient:
             addr = f"tcp://{ip}:{port}"
             if pub_key != "":
                 self.sock.curve_publickey = pub_key
-            if is_encrypted:
                 self.__my_pub, self.sock.curve_secretkey = create_certificates(
                     "/tmp/", "key"
                 )
@@ -78,7 +75,7 @@ class ZmqClient:
         """
         return self.__my_pub
 
-    def send_msg(self, msg: dict) -> dict:
+    def send_msg(self, msg: dict, wait_for_response=True) -> dict:
         """send fucntion
 
         send message to the zmq server
@@ -86,6 +83,7 @@ class ZmqClient:
 
         Args:
             msg: the message in dict
+            wait_for_response (bool): should it wait for response, or not, default True
 
         Returns:
             dict: response in dict
@@ -94,6 +92,8 @@ class ZmqClient:
             raw_data = json.dumps(msg).encode("utf8")
             self.sock.send(raw_data)
             msg_data = bytearray()
+            if not wait_for_response:
+                return "Didn't wait for response"
             response = self.sock.recv()
             msg_data.extend(response)
             response = json.loads(msg_data.decode())

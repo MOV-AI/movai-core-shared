@@ -24,6 +24,8 @@ LOG_HTTP_HOST = os.environ.get('LOG_HTTP_HOST', 'http://health-node:8081')
 # Read variables from current environment
 MOVAI_ZMQ_IP = os.getenv("MOVAI_ZMQ_IP", "0.0.0.0")
 MOVAI_ZMQ_SOCKET = os.getenv("MOVAI_ZMQ_SOCKET", "55555")
+MOVAI_ZMQ_TIMEOUT_MS = os.getenv("MOVAI_ZMQ_TIMEOUT_MS", "10000")
+MOVAI_MSG_SERVER_PORT = os.getenv("MOVAI_MSG_SERVER_PORT", "8082")
 APP_PATH = os.getenv("APP_PATH")
 APP_LOGS = os.getenv("APP_LOGS")
 LD_LIBRARY_PATH = os.getenv("LD_LIBRARY_PATH")
