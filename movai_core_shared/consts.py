@@ -96,3 +96,13 @@ TIMEOUT_PROCESS_SIGTERM = 2
 
 # Domains
 INTERNAL_DOMAIN = "internal"
+
+#container_names
+INFLUXDB_HOST = "influxdb"
+MESSAGE_SERVER_HOST = "message-server"
+
+
+#inluxdb DB names:
+INFLUX_LOGS_DB_NAME = "logs"
+INFLUX_METRICS_DB_NAME = "metrics"
+INFLUXDB_DB_NAMES = [INFLUX_LOGS_DB_NAME, INFLUX_METRICS_DB_NAME]
