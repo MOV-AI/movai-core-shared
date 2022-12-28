@@ -15,7 +15,6 @@ import os
 from stat import S_IRGRP, S_IROTH, S_IRUSR
 
 import zmq
-from movai_core_shared import Log
 from movai_core_shared.envvars import MOVAI_ZMQ_IP, MOVAI_ZMQ_SOCKET
 from zmq.asyncio import Context
 
@@ -44,28 +43,26 @@ class ZmqClient:
 
         Returns:
             None: None
+
+        Raise: 
+            OSError if the zmq socket failed to create
         """
-        self.log = Log.get_logger("zmq socket")
-        try:
-            self.ctx = zmq.Context()
-            self.sock = self.ctx.socket(zmq.DEALER)
-            if name == "":
-                name = f"uid_{os.getuid()}"
-            self.sock.identity = name.encode("utf8")
-            if timeout_ms != 0:
-                self.sock.setsockopt(zmq.RCVTIMEO, timeout_ms)
-            addr = f"tcp://{ip}:{port}"
-            if pub_key != "":
-                self.sock.curve_publickey = pub_key
-                self.__my_pub, self.sock.curve_secretkey = create_certificates(
-                    "/tmp/", "key"
-                )
-            else:
-                self.__my_pub = ""
-            self.sock.bind(addr)
-        except OSError as e:
-            self.log.error("failed to bind zmq socket")
-            self.log.error(e)
+        self.ctx = zmq.Context()
+        self.sock = self.ctx.socket(zmq.DEALER)
+        if name == "":
+            name = f"uid_{os.getuid()}"
+        self.sock.identity = name.encode("utf8")
+        if timeout_ms != 0:
+            self.sock.setsockopt(zmq.RCVTIMEO, timeout_ms)
+        addr = f"tcp://{ip}:{port}"
+        if pub_key != "":
+            self.sock.curve_publickey = pub_key
+            self.__my_pub, self.sock.curve_secretkey = create_certificates(
+                "/tmp/", "key"
+            )
+        else:
+            self.__my_pub = ""
+        self.sock.bind(addr)
 
     def get_pub_key(self) -> str:
         """Get the public key generate by this class
