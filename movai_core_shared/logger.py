@@ -97,7 +97,7 @@ def _get_file_handler():
     file_handler.setLevel(MOVAI_LOGFILE_VERBOSITY_LEVEL)
     return file_handler
 
-class RemoteLogger(logging.StreamHandler):
+class RemoteHandler(logging.StreamHandler):
     """
     This class implemets a log handler which sends
     sends the data to message server for logging in influxdb.
@@ -146,9 +146,9 @@ class RemoteLogger(logging.StreamHandler):
         self._message_client.send_request(data, record.created)
 
 
-def get_remote_logger_client(log_level=logging.NOTSET):
+def get_remote_handler(log_level=logging.NOTSET):
     """
-    Create a RemoteLogger object and return it
+    Create a RemoteHandler object and return it
 
     Args:
         log_level: defines the remote logger log level default value is info
@@ -156,7 +156,7 @@ def get_remote_logger_client(log_level=logging.NOTSET):
     Returns: ReomoteLogger object
 
     """
-    remote_logger_client = RemoteLogger()
+    remote_logger_client = RemoteHandler()
     if log_level in [logging.CRITICAL, logging.FATAL, logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]:
         remote_logger_client.setLevel(log_level)
     else:
@@ -192,7 +192,7 @@ class Log:
             logger.addHandler(_get_file_handler())
         if is_enteprise():
             if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
-                logger.addHandler(get_remote_logger_client())
+                logger.addHandler(get_remote_handler())
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
         logger.propagate = False
         return logger
@@ -202,7 +202,6 @@ class Log:
                  services=None):
         """ Get logs from HealthNode """
 
-        url = f'{LOG_HTTP_HOST}/logs'
         params = {
             'limit': Log.validate_limit(limit),
             'offset': Log.validate_limit(offset),
