@@ -7,13 +7,19 @@
    - Dor Marcous (dor@mov.ai) - 2022
 """
 from datetime import datetime
+import json
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import threading
 import requests
 
-
+from movai_core_shared.consts import (
+    LOGS_HANDLER_MSG_TYPE,
+    LOGS_QUERY_HANDLER_MSG_TYPE,
+    LOGS_MEASUREMENT
+)    
 from movai_core_shared.envvars import (
+    DEVICE_NAME,
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
     MOVAI_FLEET_LOGS_VERBOSITY_LEVEL,
     MOVAI_STDOUT_VERBOSITY_LEVEL,
@@ -108,7 +114,7 @@ class RemoteHandler(logging.StreamHandler):
         Constructor
         """
         logging.StreamHandler.__init__(self, None)
-        self._message_client = MessageClient("logs")
+        self._message_client = MessageClient(LOGS_HANDLER_MSG_TYPE)
 
     def emit(self, record):
         """
@@ -198,13 +204,22 @@ class Log:
         return logger
 
     @staticmethod
-    def get_logs(limit=1000, offset=0, level=None, tags=None, message=None, from_=None, to_=None, pagination=False,
+    def get_logs(limit=1000,
+                 offset=0,
+                 robots=[DEVICE_NAME],
+                 level=None,
+                 tags=None,
+                 message=None,
+                 from_=None,
+                 to_=None,
+                 pagination=False,
                  services=None):
         """ Get logs from HealthNode """
-
+        message_client = MessageClient(LOGS_QUERY_HANDLER_MSG_TYPE)
         params = {
             'limit': Log.validate_limit(limit),
             'offset': Log.validate_limit(offset),
+            "robots": robots
         }
 
         if level:
@@ -224,21 +239,14 @@ class Log:
 
         if services is not None:
             params['services'] = services
-
+        qurey_data = {"measurement": LOGS_MEASUREMENT,
+                      "query_data": params}
         try:
-            response = requests.get(url, params=params, timeout=5)
-            response.raise_for_status()
-        except Exception as e:
-            raise e
+            response = message_client.send_request(qurey_data, None, True)
+        except Exception as error:
+            raise error
 
-        try:
-            content = response.json()
-        except Exception as e:
-            logger = Log.get_logger()
-            logger.error(message=str(e))
-            return []
-        else:
-            return content if pagination else content.get('data', [])
+        return response if pagination else response.get('resp_data', [])
 
     @staticmethod
     def validate_limit(value):
