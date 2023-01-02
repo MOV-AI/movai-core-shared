@@ -60,7 +60,7 @@ class MessageClient:
         identity = f"{msg_type}_message_client_{random.getrandbits(24)}"
         self._zmq_client = ZMQClient(identity, MESSAGE_SERVER_LOCAL_ADDR)
 
-    def send_request(self, data: dict, creation_time: str = None) -> None:
+    def send_request(self, data: dict, creation_time: str = None, respose_required: bool = False) -> dict:
         """
         Wrap the data into a message request and sent it to the robot message server
 
@@ -77,9 +77,13 @@ class MessageClient:
             'request': {
                 'req_type': self._msg_type,
                 'created': creation_time,
+                "response_required": respose_required,
                 'req_data': data,
                 'robot_info': self._robot_info
             }
         }
 
         self._zmq_client.send(request)
+        if respose_required:
+            return self._zmq_client.recieve()
+        return {}
