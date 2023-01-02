@@ -14,7 +14,7 @@ import zmq.asyncio
 import zmq
 
 from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
-from movai_core_shared.exceptions import MessageError
+from movai_core_shared.exceptions import MessageError, MessageFormatError
 
 class ZMQClient:
     """Basic ZMQ Client
@@ -47,3 +47,30 @@ class ZMQClient:
             raise MessageError(f"Failed to decode message: {msg}") from error
 
         self._socket.send(data)
+
+    def recieve(self) -> dict:
+        """
+        Recieves a message response over ZeroMQ from the server.
+
+        Raises:
+            MessageFormatError: In case the response message format is wrong.
+
+        Returns:
+            dict: The response from the server.
+        
+        Raises:
+            MessageError: In case response is empty.
+        """
+        response = self._socket.recv_multipart()
+        index = len(response) - 1
+        buffer = response[index]
+
+        if buffer is None:
+            raise MessageError("Got an empty response!")
+
+        msg = json.loads(buffer)
+        # check for request in request
+        if "response" not in msg:
+            raise MessageFormatError(f"The message format is unknown: {msg}.")
+        response_msg = msg["response"]
+        return response_msg
