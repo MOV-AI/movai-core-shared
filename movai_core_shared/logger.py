@@ -19,12 +19,16 @@ from movai_core_shared.envvars import (
     MOVAI_STDOUT_VERBOSITY_LEVEL,
     MOVAI_GENERAL_VERBOSITY_LEVEL,
     LOG_HTTP_HOST,
+    DEVICE_NAME,
+    SERVICE_NAME,
 )
 from movai_core_shared.core.message_client import MessageClient
 from movai_core_shared.common.utils import is_enteprise
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
-S_FORMATTER = '[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(tags)s][%(lineno)d]: %(message)s'
+S_FORMATTER = (
+    "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(tags)s][%(lineno)d]: %(message)s"
+)
 LOG_FORMATTER = logging.Formatter(
     "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(lineno)d]: %(message)s",
     datefmt=LOG_FORMATTER_DATETIME,
@@ -33,13 +37,13 @@ LOG_FORMATTER = logging.Formatter(
 
 class StdOutHandler(logging.StreamHandler):
     _COLORS = {
-        logging.DEBUG: '\x1b[30;1m',  # light black (gray)
-        logging.INFO: '',  # default (white)
-        logging.WARNING: '\x1b[33;1m',  # yellow
-        logging.ERROR: '\x1b[31;1m',  # red
-        logging.CRITICAL: '\x1b[41;1m'  # bright red
+        logging.DEBUG: "\x1b[30;1m",  # light black (gray)
+        logging.INFO: "",  # default (white)
+        logging.WARNING: "\x1b[33;1m",  # yellow
+        logging.ERROR: "\x1b[31;1m",  # red
+        logging.CRITICAL: "\x1b[41;1m",  # bright red
     }
-    _COLOR_RESET = '\u001b[0m'
+    _COLOR_RESET = "\u001b[0m"
 
     def __init__(self, stream=None):
         super().__init__(stream)
@@ -47,31 +51,31 @@ class StdOutHandler(logging.StreamHandler):
     def emit(self, record):
         try:
             # Override the module and funcName with the ones
-            if hasattr(record.args,'module') and hasattr(record.args,'funcName') and hasattr(record.args,'lineno'):
-                record.module = record.args.get('module')
-                record.funcName = record.args.get('funcName')
-                record.lineno = record.args.get('lineno')
+            if (
+                hasattr(record.args, "module")
+                and hasattr(record.args, "funcName")
+                and hasattr(record.args, "lineno")
+            ):
+                record.module = record.args.get("module")
+                record.funcName = record.args.get("funcName")
+                record.lineno = record.args.get("lineno")
 
             # Add/Remove Tags from log formatter
             _formatter = S_FORMATTER
-            if isinstance(record.args, dict) and record.args.get('tags'):
-                tags = record.args.get('tags')
-                record.tags = '|'.join([f'{k}:{v}' for k, v in tags.items()])
+            if isinstance(record.args, dict) and record.args.get("tags"):
+                tags = record.args.get("tags")
+                record.tags = "|".join([f"{k}:{v}" for k, v in tags.items()])
             else:
                 # if no tags are passed then update formatter
-                _formatter = _formatter.replace('[%(tags)s]', '')
+                _formatter = _formatter.replace("[%(tags)s]", "")
 
-            log_format = logging.Formatter(
-                fmt=_formatter,
-                datefmt=LOG_FORMATTER_DATETIME
-            )
+            log_format = logging.Formatter(fmt=_formatter, datefmt=LOG_FORMATTER_DATETIME)
             self.setFormatter(fmt=log_format)
 
             msg = self.format(record)
 
             stream = self.stream
-            stream.write(
-                self._COLORS.get(record.levelno, '') + msg + self._COLOR_RESET)
+            stream.write(self._COLORS.get(record.levelno, "") + msg + self._COLOR_RESET)
             stream.write(self.terminator)
             self.flush()
         except Exception:
@@ -83,7 +87,9 @@ class RemoteHandler(logging.StreamHandler):
     This class implemets a log handler which sends
     sends the data to message server for logging in influxdb.
     """
+
     _measurement = "app_logs"
+
     def __init__(self):
         """
         Constructor
@@ -111,18 +117,24 @@ class RemoteHandler(logging.StreamHandler):
             record: The Python log message data record
 
         """
-        log_data = {'level': record.levelname,
-                    'module': record.module,
-                    'funcName': record.funcName,
-                    'lineno': record.lineno,
-                    'message': record.msg}
+        log_time = record.created
 
-        data = {
-            "measurement": self._measurement,
-            "log_data": log_data
+        log_tags = {"robot_name": DEVICE_NAME, "level": record.levelname, "service": SERVICE_NAME}
+
+        log_fields = {
+            "module": record.module,
+            "funcName": record.funcName,
+            "lineno": record.lineno,
+            "message": record.msg,
         }
 
-        self._message_client.send_request(data, record.created)
+        log_data = {
+            "measurement": self._measurement,
+            "log_tags": log_tags,
+            "log_fields": log_fields,
+        }
+
+        self._message_client.send_request(log_data, log_time)
 
 
 def _get_console_handler():
@@ -145,7 +157,6 @@ def _get_file_handler():
     return file_handler
 
 
-
 def get_remote_handler(log_level=logging.NOTSET):
     """
     Create a RemoteLogger object and return it
@@ -157,12 +168,20 @@ def get_remote_handler(log_level=logging.NOTSET):
 
     """
     remote_handler = RemoteHandler()
-    if log_level in [logging.CRITICAL, logging.FATAL, logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]:
+    if log_level in [
+        logging.CRITICAL,
+        logging.FATAL,
+        logging.ERROR,
+        logging.WARNING,
+        logging.INFO,
+        logging.DEBUG,
+    ]:
         remote_handler.setLevel(log_level)
     else:
         remote_handler.setLevel(MOVAI_FLEET_LOGS_VERBOSITY_LEVEL)
 
     return remote_handler
+
 
 class Log:
     """
@@ -192,39 +211,48 @@ class Log:
             logger.addHandler(_get_file_handler())
         if is_enteprise():
             if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
-                logger.addHandler(get_remote_logger_client())
+                logger.addHandler(get_remote_handler())
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
         logger.propagate = False
         return logger
 
     @staticmethod
-    def get_logs(limit=1000, offset=0, level=None, tags=None, message=None, from_=None, to_=None, pagination=False,
-                 services=None):
-        """ Get logs from HealthNode """
+    def get_logs(
+        limit=1000,
+        offset=0,
+        level=None,
+        tags=None,
+        message=None,
+        from_=None,
+        to_=None,
+        pagination=False,
+        services=None,
+    ):
+        """Get logs from HealthNode"""
 
-        url = f'{LOG_HTTP_HOST}/logs'
+        url = f"{LOG_HTTP_HOST}/logs"
         params = {
-            'limit': Log.validate_limit(limit),
-            'offset': Log.validate_limit(offset),
+            "limit": Log.validate_limit(limit),
+            "offset": Log.validate_limit(offset),
         }
 
         if level:
-            params['levels'] = Log.validate_level(level)
+            params["levels"] = Log.validate_level(level)
 
         if tags:
-            params['tags'] = Log.validate_str_list(tags)
+            params["tags"] = Log.validate_str_list(tags)
 
         if message:
-            params['message'] = Log.validate_message(message)
+            params["message"] = Log.validate_message(message)
 
         if from_:
-            params['from'] = int(Log.validate_datetime(from_))
+            params["from"] = int(Log.validate_datetime(from_))
 
         if to_:
-            params['to'] = int(Log.validate_datetime(to_))
+            params["to"] = int(Log.validate_datetime(to_))
 
         if services is not None:
-            params['services'] = services
+            params["services"] = services
 
         try:
             response = requests.get(url, params=params, timeout=5)
@@ -239,14 +267,14 @@ class Log:
             logger.error(message=str(e))
             return []
         else:
-            return content if pagination else content.get('data', [])
+            return content if pagination else content.get("data", [])
 
     @staticmethod
     def validate_limit(value):
         try:
             val = int(value)
         except ValueError:
-            raise ValueError('invalid limit/offset value')
+            raise ValueError("invalid limit/offset value")
         return val
 
     @staticmethod
@@ -260,10 +288,10 @@ class Log:
                 raise ValueError("level must be string or list of strings")
 
             for val in values:
-                if val not in ['debug', 'info', 'warning', 'error', 'critical']:
+                if val not in ["debug", "info", "warning", "error", "critical"]:
                     raise ValueError(val)
 
-            levels = ','.join(values)
+            levels = ",".join(values)
         except ValueError as e:
             raise ValueError(f"invalid level: {str(e)}")
         return levels
@@ -272,9 +300,9 @@ class Log:
     def validate_str_list(value):
         try:
             value = [] if value is None else value
-            tags = ','.join(value)
+            tags = ",".join(value)
         except ValueError:
-            raise ValueError('invalid tags value')
+            raise ValueError("invalid tags value")
         return tags
 
     @staticmethod
@@ -283,16 +311,18 @@ class Log:
 
     @staticmethod
     def validate_datetime(value):
-        """ Validate if value is timestamp or datetime """
+        """Validate if value is timestamp or datetime"""
         try:
             dt_obj = datetime.fromtimestamp(int(value))
         except (ValueError, TypeError):
             try:
-                dt_obj = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+                dt_obj = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
             except Exception:
-                raise ValueError('invalid datetime value, expected: <timestamp> | %Y-%m-%d %H:%M:%S')
+                raise ValueError(
+                    "invalid datetime value, expected: <timestamp> | %Y-%m-%d %H:%M:%S"
+                )
 
-        return f'{dt_obj.timestamp():.0f}'
+        return f"{dt_obj.timestamp():.0f}"
 
     @staticmethod
     def _find_between(s, start, end):
@@ -302,7 +332,7 @@ class Log:
     def _filter_data(*args, **kwargs):
         # Get message stf from args or kwargs
         try:
-            message = str(args[0]) % args[1:] if args else str(kwargs.get('message', '')) % args
+            message = str(args[0]) % args[1:] if args else str(kwargs.get("message", "")) % args
 
         except TypeError as e:
             message = " ".join(args)
@@ -310,8 +340,8 @@ class Log:
         # Search and remove fields
         fields = {**kwargs}
         for k, v in fields.items():
-            if k in ['message', 'level', 'frame_info']:
-                del (kwargs[k])
+            if k in ["message", "level", "frame_info"]:
+                del kwargs[k]
         return message
 
 
