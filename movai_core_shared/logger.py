@@ -21,7 +21,7 @@ from movai_core_shared.envvars import (
     LOG_HTTP_HOST,
 )
 from movai_core_shared.core.message_client import MessageClient
-from movai_core_shared.common.config import is_enteprise
+from movai_core_shared.common.utils import is_enteprise
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 S_FORMATTER = '[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(tags)s][%(lineno)d]: %(message)s'
@@ -78,26 +78,7 @@ class StdOutHandler(logging.StreamHandler):
             self.handleError(record)
 
 
-def _get_console_handler():
-    """
-    Set up the stdout handler
-    """
-    console_handler = StdOutHandler()
-    console_handler.setFormatter(LOG_FORMATTER)
-    console_handler.setLevel(MOVAI_STDOUT_VERBOSITY_LEVEL)
-    return console_handler
-
-
-def _get_file_handler():
-    """
-    Set up the file handler
-    """
-    file_handler = TimedRotatingFileHandler(Log.LOG_FILE, when="midnight")
-    file_handler.setFormatter(LOG_FORMATTER)
-    file_handler.setLevel(MOVAI_LOGFILE_VERBOSITY_LEVEL)
-    return file_handler
-
-class RemoteLogger(logging.StreamHandler):
+class RemoteHandler(logging.StreamHandler):
     """
     This class implemets a log handler which sends
     sends the data to message server for logging in influxdb.
@@ -135,8 +116,6 @@ class RemoteLogger(logging.StreamHandler):
                     'funcName': record.funcName,
                     'lineno': record.lineno,
                     'message': record.msg}
-        #get the Log data
-#        log_time = record.created
 
         data = {
             "measurement": self._measurement,
@@ -146,7 +125,28 @@ class RemoteLogger(logging.StreamHandler):
         self._message_client.send_request(data, record.created)
 
 
-def get_remote_logger_client(log_level=logging.NOTSET):
+def _get_console_handler():
+    """
+    Set up the stdout handler
+    """
+    console_handler = StdOutHandler()
+    console_handler.setFormatter(LOG_FORMATTER)
+    console_handler.setLevel(MOVAI_STDOUT_VERBOSITY_LEVEL)
+    return console_handler
+
+
+def _get_file_handler():
+    """
+    Set up the file handler
+    """
+    file_handler = TimedRotatingFileHandler(Log.LOG_FILE, when="midnight")
+    file_handler.setFormatter(LOG_FORMATTER)
+    file_handler.setLevel(MOVAI_LOGFILE_VERBOSITY_LEVEL)
+    return file_handler
+
+
+
+def get_remote_handler(log_level=logging.NOTSET):
     """
     Create a RemoteLogger object and return it
 
@@ -156,13 +156,13 @@ def get_remote_logger_client(log_level=logging.NOTSET):
     Returns: ReomoteLogger object
 
     """
-    remote_logger_client = RemoteLogger()
+    remote_handler = RemoteHandler()
     if log_level in [logging.CRITICAL, logging.FATAL, logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]:
-        remote_logger_client.setLevel(log_level)
+        remote_handler.setLevel(log_level)
     else:
-        remote_logger_client.setLevel(MOVAI_FLEET_LOGS_VERBOSITY_LEVEL)
+        remote_handler.setLevel(MOVAI_FLEET_LOGS_VERBOSITY_LEVEL)
 
-    return remote_logger_client
+    return remote_handler
 
 class Log:
     """
