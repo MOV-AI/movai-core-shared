@@ -41,6 +41,8 @@ class ZMQClient:
             msg (dict): The message request to be sent
 
         """
+        if not isinstance(msg, dict):
+            return
         try:
             data = json.dumps(msg).encode('utf8')
         except json.JSONDecodeError as error:
