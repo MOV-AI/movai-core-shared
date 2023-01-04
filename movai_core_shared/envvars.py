@@ -1,6 +1,7 @@
 """ Compilation of necessary environment variables to push to the database """
 import os
 from logging import DEBUG, NOTSET, INFO
+import socket
 from .consts import MESSAGE_SERVER_HOST
 
 # Setting for logging verbosity levels
@@ -124,3 +125,4 @@ DEFAULT_JWT_REFRESH_DELTA_DAYS = int(os.getenv('DEFAULT_JWT_REFRESH_DELTA_DAYS',
 DEFAULT_ROLE_NAME = os.getenv('DEFAULT_ROLE_NAME', "ADMIN")
 FLEET_NAME = os.getenv('FLEET_NAME', "movai")
 DEVICE_NAME = os.getenv('DEVICE_NAME', "UNDEFINED_ROBOT_NAME")
+SERVICE_NAME = os.getenv('HOSTNAME', socket.gethostname())
