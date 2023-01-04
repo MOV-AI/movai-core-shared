@@ -242,11 +242,12 @@ class Log:
         qurey_data = {"measurement": LOGS_MEASUREMENT,
                       "query_data": params}
         try:
-            response = message_client.send_request(qurey_data, None, True)
+            query_response = message_client.send_request(qurey_data, None, True)
+            response = query_response["data"]
         except Exception as error:
             raise error
 
-        return response if pagination else response.get('resp_data', [])
+        return response if pagination else response.get('data', [])
 
     @staticmethod
     def validate_limit(value):
