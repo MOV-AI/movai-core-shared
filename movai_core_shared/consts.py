@@ -115,6 +115,7 @@ METRICS_MEASUREMENT = "metric_logs"
 LOGS_HANDLER_MSG_TYPE = "logs"
 LOGS_QUERY_HANDLER_MSG_TYPE = "logs_query"
 METRICS_HANDLER_MSG_TYPE = "metrics"
+NOTIFICATIONS_HANDLER_MSG_TYPE = "notifications"
 
 #Message-Server metric types:
 ALERTS_HANDLER_METRIC_TYPE = "alerts"
