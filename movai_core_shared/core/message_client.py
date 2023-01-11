@@ -15,12 +15,7 @@ import time
 
 from movai_core_shared.core.zmq_client import ZMQClient
 from movai_core_shared.exceptions import ArgumentError
-from movai_core_shared.envvars import (
-    MESSAGE_SERVER_LOCAL_ADDR,
-    DEVICE_NAME,
-    FLEET_NAME
-)
-
+from movai_core_shared.envvars import MESSAGE_SERVER_LOCAL_ADDR, DEVICE_NAME, FLEET_NAME
 
 
 class MessageClient:
@@ -29,38 +24,40 @@ class MessageClient:
     It wraps the data into the message structure and send it to
     the message-server using ZMQClient.
     """
-    def __init__(self, msg_type: str) -> None:
+
+    def __init__(self, server_addr: str, robot_id: str = "") -> None:
         """
         constructor - initializes the object.
 
         Args:
             msg_type (str): The type of the message, this will affect which
             handler will be used to handle the request.
-        
+
         Raises:
             TypeError: In case the supplied argument is not in the correct type.
             ArgumentError: In case the supplied argument is None or an empty string.
 
         """
-        if not isinstance(msg_type, str):
-            raise TypeError("msg_type argument must be of type string!")
-        if msg_type is None or msg_type == "":
-            raise ArgumentError("msg_type argument must be a non empty string!")
-        self._msg_type = msg_type
-        #TODO: find a solution to import robot id without activating the logger.
-        self._robot_id = str(random.getrandbits(24))
-        self._robot_name = DEVICE_NAME
-        self._fleet = FLEET_NAME
+        if not isinstance(server_addr, str):
+            raise TypeError("server_addr argument must be of type string!")
+        if server_addr is None or server_addr == "":
+            raise ArgumentError("server_addr argument must be a non empty string!")
+        self._server_addr = server_addr
         self._robot_info = {
-            'fleet_name': self._fleet,
-            'robot_name': self._robot_name,
-            'robot_id': self._robot_id
+            "fleet_name": FLEET_NAME,
+            "robot_name": DEVICE_NAME,
+            "robot_id": robot_id
         }
-        random.seed() # setting the seed for the random number generator
-        identity = f"{msg_type}_message_client_{random.getrandbits(24)}"
-        self._zmq_client = ZMQClient(identity, MESSAGE_SERVER_LOCAL_ADDR)
+        random.seed()  # setting the seed for the random number generator
+        identity = f"{DEVICE_NAME}_message_client_{random.getrandbits(24)}"
+        self._zmq_client = ZMQClient(identity, self._server_addr)
 
-    def send_request(self, data: dict, creation_time: str = None, respose_required: bool = False) -> dict:
+    def send_request(self,
+                     msg_type: str,
+                     data: dict,
+                     creation_time: str = None,
+                     respose_required: bool = False
+    ) -> dict:
         """
         Wrap the data into a message request and sent it to the robot message server
 
@@ -74,12 +71,12 @@ class MessageClient:
             creation_time = time.time()
 
         request = {
-            'request': {
-                'req_type': self._msg_type,
-                'created': creation_time,
+            "request": {
+                "req_type": msg_type,
+                "created": creation_time,
                 "response_required": respose_required,
-                'req_data': data,
-                'robot_info': self._robot_info
+                "req_data": data,
+                "robot_info": self._robot_info,
             }
         }
 
@@ -87,3 +84,7 @@ class MessageClient:
         if respose_required:
             return self._zmq_client.recieve()
         return {}
+
+    def foraward_request(self, request_msg: dict):
+        request = {"request": request_msg}
+        self._zmq_client.send(request)
