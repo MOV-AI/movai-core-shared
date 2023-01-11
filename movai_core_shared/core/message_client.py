@@ -48,7 +48,7 @@ class MessageClient:
             raise ArgumentError("msg_type argument must be a non empty string!")
         self._msg_type = msg_type
         #TODO: find a solution to import robot id without activating the logger.
-        self._robot_id = str(random.getrandbits(24))
+        self._robot_id = ""
         self._robot_name = DEVICE_NAME
         self._fleet = FLEET_NAME
         self._robot_info = {
