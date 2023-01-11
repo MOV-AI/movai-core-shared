@@ -24,12 +24,13 @@ from movai_core_shared.envvars import (
     MOVAI_FLEET_LOGS_VERBOSITY_LEVEL,
     MOVAI_STDOUT_VERBOSITY_LEVEL,
     MOVAI_GENERAL_VERBOSITY_LEVEL,
-    LOG_HTTP_HOST,
+    MESSAGE_SERVER_LOCAL_ADDR,
+    MESSAGE_SERVER_REMOTE_ADDR,
     DEVICE_NAME,
     SERVICE_NAME,
 )
 from movai_core_shared.core.message_client import MessageClient
-from movai_core_shared.common.utils import is_enteprise
+from movai_core_shared.common.utils import is_enteprise, is_manager
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 S_FORMATTER = (
@@ -101,7 +102,7 @@ class RemoteHandler(logging.StreamHandler):
         Constructor
         """
         logging.StreamHandler.__init__(self, None)
-        self._message_client = MessageClient(LOGS_HANDLER_MSG_TYPE)
+        self._message_client = MessageClient(MESSAGE_SERVER_LOCAL_ADDR)
 
     def emit(self, record):
         """
@@ -140,7 +141,7 @@ class RemoteHandler(logging.StreamHandler):
             "log_fields": log_fields,
         }
 
-        self._message_client.send_request(log_data, log_time)
+        self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data, log_time)
 
 
 def _get_console_handler():
@@ -233,8 +234,12 @@ class Log:
                  to_=None,
                  pagination=False,
                  services=None):
-        """ Get logs from HealthNode """
-        message_client = MessageClient(LOGS_QUERY_HANDLER_MSG_TYPE)
+        """ Get logs from message-server """
+        server_addr = MESSAGE_SERVER_REMOTE_ADDR
+        if is_manager():
+            server_addr = MESSAGE_SERVER_LOCAL_ADDR
+
+        message_client = MessageClient(server_addr)
         params = {
             'limit': Log.validate_limit(limit),
             'offset': Log.validate_limit(offset),
@@ -261,7 +266,7 @@ class Log:
         qurey_data = {"measurement": LOGS_MEASUREMENT,
                       "query_data": params}
         try:
-            query_response = message_client.send_request(qurey_data, None, True)
+            query_response = message_client.send_request(LOGS_QUERY_HANDLER_MSG_TYPE, qurey_data, None, True)
             response = query_response["data"]
         except Exception as error:
             raise error
