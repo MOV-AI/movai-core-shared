@@ -85,6 +85,12 @@ class MessageClient:
             return self._zmq_client.recieve()
         return {}
 
-    def foraward_request(self, request_msg: dict):
+    def foraward_request(self, request_msg: dict) -> None:
+        """forwards a request to different message-server (This function does 
+        not adds the meta-data info as send_request does).
+
+        Args:
+            request_msg (dict): The request to forward.
+        """
         request = {"request": request_msg}
         self._zmq_client.send(request)

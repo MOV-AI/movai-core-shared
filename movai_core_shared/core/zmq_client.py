@@ -17,10 +17,17 @@ from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
 from movai_core_shared.exceptions import MessageError, MessageFormatError
 
 class ZMQClient:
-    """Basic ZMQ Client
+    """A very basic implementation of ZMQ Client
     """
     def __init__(self, identity: str, server: str) -> None:
-        # ZMQ settings:
+        """Initializes the object and the connection to the serrver.
+
+        Args:
+            identity (str): A unique idenetity which will be used by 
+                the server to identify the client.
+            server (str): The server addr and port in the form:
+                'tcp://server_addr:port'
+        """
         self._identity = identity.encode("utf-8")
         zmq_ctx = zmq.Context()
         self._socket = zmq_ctx.socket(zmq.DEALER)
@@ -35,11 +42,10 @@ class ZMQClient:
 
     def send(self, msg: dict) -> None:
         """
-        Send the message request over ZeroMQ to the local robot message server
+        Send the message request over ZeroMQ to the local robot message server.
 
         Args:
             msg (dict): The message request to be sent
-
         """
         if not isinstance(msg, dict):
             return
@@ -56,12 +62,10 @@ class ZMQClient:
 
         Raises:
             MessageFormatError: In case the response message format is wrong.
+            MessageError: In case response is empty.
 
         Returns:
             dict: The response from the server.
-        
-        Raises:
-            MessageError: In case response is empty.
         """
         response = self._socket.recv_multipart()
         index = len(response) - 1

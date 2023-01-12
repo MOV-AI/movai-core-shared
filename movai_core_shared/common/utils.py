@@ -13,7 +13,7 @@ import socket
 from movai_core_shared.envvars import REDIS_MASTER_HOST
 
 def is_manager() -> bool:
-    """Tell the process if its running on the manager host machine.
+    """Identify if this robot is the manager host machine.
 
     Returns:
         bool: true if the fuction runs on a manager host machine, false otherwise.
@@ -21,7 +21,7 @@ def is_manager() -> bool:
     return REDIS_MASTER_HOST in (None, "redis-master")
 
 def is_enteprise() -> bool:
-    """This function check the existence of the movai_core_enterprise package.
+    """Check the existence of the movai_core_enterprise package.
 
     Returns:
         bool: True if import succeeds, False otherwise.
