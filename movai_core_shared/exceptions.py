@@ -255,17 +255,25 @@ class ArgumentError(MovaiException):
     """
 
 
-class HandlerNotFoundException(MovaiException):
+class HandlerNotFoundError(MovaiException):
     """The message has no suitable handler.
     """
 
 
-class MetricException(MovaiException):
+class MessageError(MovaiException):
+    """There are missing keys in the message."""
+
+
+class MessageFormatError(MessageError):
+    """There are missing keys in the message."""
+
+
+class MetricError(MessageError):
     """Something is wrong with the metric.
     """
 
 
-class UnknownRequestException(MovaiException):
+class UnknownRequestError(MovaiException):
     """The request format is unknown.
     """
 
@@ -275,6 +283,6 @@ class ConfigurationDoesNotExist(DoesNotExist):
     """
 
 
-class DBHandlerException(MovaiException):
+class DBHandlerError(MovaiException):
     """General exception in DBHandler.
     """

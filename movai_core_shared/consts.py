@@ -106,3 +106,16 @@ MESSAGE_SERVER_HOST = "message-server"
 INFLUX_LOGS_DB_NAME = "logs"
 INFLUX_METRICS_DB_NAME = "metrics"
 INFLUXDB_DB_NAMES = [INFLUX_LOGS_DB_NAME, INFLUX_METRICS_DB_NAME]
+
+#inluxdb measurements names:
+LOGS_MEASUREMENT = "app_logs"
+METRICS_MEASUREMENT = "metric_logs"
+
+#Message-Server msgs types:
+LOGS_HANDLER_MSG_TYPE = "logs"
+LOGS_QUERY_HANDLER_MSG_TYPE = "logs_query"
+METRICS_HANDLER_MSG_TYPE = "metrics"
+NOTIFICATIONS_HANDLER_MSG_TYPE = "notifications"
+
+#Message-Server metric types:
+ALERTS_HANDLER_METRIC_TYPE = "alerts"
