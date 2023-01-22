@@ -126,3 +126,11 @@ DEFAULT_ROLE_NAME = os.getenv('DEFAULT_ROLE_NAME', "ADMIN")
 FLEET_NAME = os.getenv('FLEET_NAME', "movai")
 DEVICE_NAME = os.getenv('DEVICE_NAME', "UNDEFINED_ROBOT_NAME")
 SERVICE_NAME = os.getenv('HOSTNAME', socket.gethostname())
+
+#SMTP Vars
+SMTP_EMAIL = os.getenv('SMTP_EMAIL', "do-not-reply@mov.ai")
+SMTP_HOST = os.getenv('SMTP_HOST')
+SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
+SMTP_USER = os.getenv('SMTP_USER')
+SMTP_PASS = os.getenv('SMTP_PASS')
+
