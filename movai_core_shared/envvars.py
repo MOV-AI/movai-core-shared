@@ -134,3 +134,4 @@ SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
 SMTP_USER = os.getenv('SMTP_USER')
 SMTP_PASS = os.getenv('SMTP_PASS')
 
+AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY', "")
