@@ -9,17 +9,20 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2022
 """
-import asyncio
-import zmq.asyncio
 import json
 import os
-from stat import S_IRGRP, S_IROTH, S_IRUSR
 
-import zmq
-from movai_core_shared.envvars import MOVAI_ZMQ_IP, MOVAI_ZMQ_SOCKET
-from zmq.asyncio import Context
-from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
-from movai_core_shared.exceptions import MessageError, MessageFormatError
+import zmq.asyncio
+
+from movai_core_shared.core.secure import create_client_keys
+from movai_core_shared.envvars import (
+    MOVAI_ZMQ_TIMEOUT_MS
+)
+from movai_core_shared.exceptions import (
+    MessageError,
+    MessageFormatError
+)
+
 
 
 
@@ -30,18 +33,18 @@ class ZMQClient:
 
     def __init__(
         self,
-        ip: str = MOVAI_ZMQ_IP,
-        port: str = MOVAI_ZMQ_SOCKET,
-        pub_key: str = "",
-        identity: str = "",
+        server_ip: str = "",
+        server_port: str = "",
+        server_pub_key: str = "",
+        identity: str = f"uid_{os.getuid()}",
         timeout_ms: int = MOVAI_ZMQ_TIMEOUT_MS,
     ) -> None:
         """Constractor for zmq client
 
         Args:
-            ip: the dest ip in string
-            port: the dest port in string
-            pub_key: public key of the dest, default to "" which means no encryption
+            server_ip: the dest ip in string
+            server_port: the dest port in string
+            server_pub_key: public key of the dest, default to "" which means no encryption
             name: name of the client, default for process id
             timeout_ms: timeout in miliseconds, to drop message, default = 0 to infinite timeout
 
@@ -52,28 +55,23 @@ class ZMQClient:
             OSError if the zmq socket failed to create
         """
         self.ctx = zmq.Context()
-        #self.sock = self.ctx.socket(zmq.DEALER)
-        self.sock = self.ctx.socket(zmq.DEALER)
-        if identity == "":
-            identity = f"uid_{os.getuid()}"
-        self.sock.identity = identity.encode("utf8")
+        self._socket = self.ctx.socket(zmq.DEALER)
+        self._socket.identity = identity.encode("utf8")
         if timeout_ms != 0:
-            self.sock.setsockopt(zmq.RCVTIMEO, timeout_ms)
-        addr = f"tcp://{ip}:{port}"
-        if pub_key != "":
-            self.sock.curve_serverkey = pub_key.encode("utf8")
-            self.__my_pub, self.sock.curve_secretkey = create_certificates(
-                "/tmp/", "key"
-            )
-            self.sock.curve_publickey = self.__my_pub
+            self._socket.setsockopt(zmq.RCVTIMEO, timeout_ms)
+        addr = f"tcp://{server_ip}:{server_port}"
+        if server_pub_key != "":
+            self._socket.curve_serverkey = server_pub_key
+            self._my_pub, self._socket.curve_secretkey = create_client_keys("/tmp/", identity)
+            self._socket.curve_publickey = self._my_pub
         else:
-            self.__my_pub = ""
-        self.sock.connect(addr)
+            self._my_pub = ""
+        self._socket.connect(addr)
 
     def __del__(self):
         """closes the socket when the object is destroyed.
         """
-        self.sock.close()
+        self._socket.close()
 
     def get_pub_key(self) -> str:
         """Get the public key generate by this class
@@ -81,9 +79,9 @@ class ZMQClient:
         Returns:
             str: the public key
         """
-        return self.__my_pub
+        return self._my_pub
 
-    def send_msg(self, msg: dict, wait_for_response=True) -> dict:
+    def send_msg(self, msg: dict) -> dict:
         """send fucntion
 
         send message to the zmq server
@@ -98,14 +96,8 @@ class ZMQClient:
         """
         try:
             raw_data = json.dumps(msg).encode("utf8")
-            self.sock.send(raw_data)
-            msg_data = bytearray()
-            if not wait_for_response:
-                return "Didn't wait for response"
-            response = self.sock.recv()
-            msg_data.extend(response)
-            response = json.loads(msg_data.decode())
-
+            self._socket.send(raw_data)
+            response = {"info": "sent message successfully."}
         except FileNotFoundError:
             response = {"error": "can't send to server, check that it is running"}
         except OSError as err:
@@ -120,26 +112,27 @@ class ZMQClient:
             }
         return response
 
+    def rcv_msg(self) -> dict:
+        """
+        Recieves a message response over ZeroMQ from the server.
 
-def create_certificates(key_dir, name):
-    """Create zmq certificates.
-    Returns the file paths to the public and secret certificate files.
-    """
-    base_filename = os.path.join(key_dir, name)
-    if os.path.exists(f"{base_filename}.public") and os.path.exists(
-        f"{base_filename}.secret"
-    ):
-        with open(base_filename + ".public", "r", encoding="utf8") as f:
-            public_key = f.readlines()[0].encode("utf8")
-        with open(base_filename + ".secret", "r", encoding="utf8") as f:
-            secret_key = f.readlines()[0].encode("utf8")
-    else:
-        public_key, secret_key = zmq.curve_keypair()
-        with open(base_filename + ".public", "w", encoding="utf8") as f:
-            f.write(public_key.decode("utf8"))
-            os.chmod(base_filename + ".public", S_IRUSR | S_IRGRP | S_IROTH)
-        with open(base_filename + ".secret", "w", encoding="utf8") as f:
-            f.write(secret_key.decode("utf8"))
-            os.chmod(base_filename + ".secret", S_IRUSR)
+        Raises:
+            MessageFormatError: In case the response message format is wrong.
+            MessageError: In case response is empty.
 
-    return public_key, secret_key
+        Returns:
+            dict: The response from the server.
+        """
+        response = self._socket.recv_multipart()
+        index = len(response) - 1
+        buffer = response[index]
+
+        if buffer is None:
+            raise MessageError("Got an empty response!")
+
+        msg = json.loads(buffer)
+        # check for request in request
+        if "response" not in msg:
+            raise MessageFormatError(f"The message format is unknown: {msg}.")
+        response_msg = msg["response"]
+        return response_msg
