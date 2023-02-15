@@ -17,16 +17,13 @@ from movai_core_shared.consts import (
     LOGS_HANDLER_MSG_TYPE,
     LOGS_QUERY_HANDLER_MSG_TYPE,
     LOGS_MEASUREMENT
-)    
+)
 from movai_core_shared.envvars import (
     DEVICE_NAME,
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
     MOVAI_FLEET_LOGS_VERBOSITY_LEVEL,
     MOVAI_STDOUT_VERBOSITY_LEVEL,
     MOVAI_GENERAL_VERBOSITY_LEVEL,
-    MESSAGE_SERVER_LOCAL_ADDR,
-    MESSAGE_SERVER_REMOTE_ADDR,
-    DEVICE_NAME,
     SERVICE_NAME,
 )
 from movai_core_shared.core.message_client import MessageClient
@@ -102,7 +99,7 @@ class RemoteHandler(logging.StreamHandler):
         Constructor
         """
         logging.StreamHandler.__init__(self, None)
-        self._message_client = MessageClient(MESSAGE_SERVER_LOCAL_ADDR)
+        self._message_client = MessageClient.get_local_message_client("")
 
     def emit(self, record):
         """
@@ -234,12 +231,27 @@ class Log:
                  to_=None,
                  pagination=False,
                  services=None):
-        """ Get logs from message-server """
-        server_addr = MESSAGE_SERVER_REMOTE_ADDR
-        if is_manager():
-            server_addr = MESSAGE_SERVER_LOCAL_ADDR
+        """Query logs from message server (This function is limited to run only
+        on the manager robot.)
 
-        message_client = MessageClient(server_addr)
+        Args:
+            limit (int, optional): limits the amount of results returned. Defaults to 1000.
+            offset (int, optional): offsets the results. Defaults to 0.
+            robots (_type_, optional): The names of the robots to query. Defaults to None.
+            level (_type_, optional): The log level to query. Defaults to None.
+            tags (_type_, optional): Which Tags to use in the query. Defaults to None.
+            message (_type_, optional): The message to query from logs. Defaults to None.
+            from_ (_type_, optional): The start time to the query. Defaults to None.
+            to_ (_type_, optional): The end time to the query. Defaults to None.
+            pagination (bool, optional): use pagination. Defaults to False.
+            services (_type_, optional): The names of the services to query. Defaults to None.
+
+        Returns:
+            dict: The query results. None if the robot is not the manager.
+        """
+        if not is_manager():
+            return None
+        message_client = MessageClient.get_local_message_client("")
         params = {
             'limit': Log.validate_limit(limit),
             'offset': Log.validate_limit(offset),
@@ -265,11 +277,9 @@ class Log:
             params['services'] = services
         qurey_data = {"measurement": LOGS_MEASUREMENT,
                       "query_data": params}
-        try:
-            query_response = message_client.send_request(LOGS_QUERY_HANDLER_MSG_TYPE, qurey_data, None, True)
-            response = query_response["data"]
-        except Exception as error:
-            raise error
+
+        query_response = message_client.send_request(LOGS_QUERY_HANDLER_MSG_TYPE, qurey_data, None, True)
+        response = query_response["data"]
 
         return response if pagination else response.get('data', [])
 

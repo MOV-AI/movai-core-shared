@@ -13,9 +13,14 @@
 import random
 import time
 
+from movai_core_shared.consts import MESSAGE_SERVER_HOST
 from movai_core_shared.core.zmq_client import ZMQClient
 from movai_core_shared.exceptions import ArgumentError
-from movai_core_shared.envvars import DEVICE_NAME, FLEET_NAME
+from movai_core_shared.envvars import (
+    DEVICE_NAME,
+    FLEET_NAME,
+    MESSAGE_SERVER_INTERNAL_PORT
+)
 
 
 class MessageClient:
@@ -25,7 +30,11 @@ class MessageClient:
     the message-server using ZMQClient.
     """
 
-    def __init__(self, server_addr: str, robot_id: str = "") -> None:
+    def __init__(self,
+                 server_ip: str,
+                 server_port: int,
+                 public_key: str,
+                 robot_id: str = "") -> None:
         """
         constructor - initializes the object.
 
@@ -38,11 +47,17 @@ class MessageClient:
             ArgumentError: In case the supplied argument is None or an empty string.
 
         """
-        if not isinstance(server_addr, str):
-            raise TypeError("server_addr argument must be of type string!")
-        if server_addr is None or server_addr == "":
-            raise ArgumentError("server_addr argument must be a non empty string!")
-        self._server_addr = server_addr
+        if not isinstance(server_ip, str):
+            raise TypeError("server_ip argument must be of type string!")
+        if server_ip is None or server_ip == "":
+            raise ArgumentError("server_ip argument must be a non empty string!")
+        if not isinstance(server_port, int):
+            raise TypeError("server_port argument must be of type integer!")
+        if server_port is None or server_port == 0:
+            raise ArgumentError("server_port argument must be a non zero integer!")
+        if not isinstance(public_key, str):
+            raise TypeError("public_key argument must be of type string!")
+        public_key = public_key
         self._robot_info = {
             "fleet_name": FLEET_NAME,
             "robot_name": DEVICE_NAME,
@@ -50,7 +65,7 @@ class MessageClient:
         }
         random.seed()  # setting the seed for the random number generator
         identity = f"{DEVICE_NAME}_message_client_{random.getrandbits(24)}"
-        self._zmq_client = ZMQClient(identity, self._server_addr)
+        self._zmq_client = ZMQClient(server_ip, server_port, public_key, identity)
 
     def send_request(self,
                      msg_type: str,
@@ -80,9 +95,9 @@ class MessageClient:
             }
         }
 
-        self._zmq_client.send(request)
+        self._zmq_client.send_msg(request)
         if respose_required:
-            return self._zmq_client.recieve()
+            return self._zmq_client.rcv_msg()
         return {}
 
     def foraward_request(self, request_msg: dict) -> None:
@@ -93,4 +108,24 @@ class MessageClient:
             request_msg (dict): The request to forward.
         """
         request = {"request": request_msg}
-        self._zmq_client.send(request)
+        self._zmq_client.send_msg(request)
+
+    @staticmethod
+    def get_local_message_client(robot_id: str):
+        """Returns an MessageClient object configured to connect 
+        to the local message-server
+
+        Args:
+            robot_id (str): The robot id of the client.
+
+        Returns:
+            MessageClient: A MessageClient object.
+        """
+        try:
+            client = MessageClient(MESSAGE_SERVER_HOST,
+                                   MESSAGE_SERVER_INTERNAL_PORT,
+                                   "",
+                                   robot_id)
+            return client
+        except Exception:
+            return None
