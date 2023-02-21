@@ -273,6 +273,11 @@ class MetricError(MessageError):
     """
 
 
+class QueryError(MovaiException):
+    """Something is wrong with the metric.
+    """
+
+
 class UnknownRequestError(MovaiException):
     """The request format is unknown.
     """
