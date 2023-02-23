@@ -15,7 +15,11 @@ import time
 
 from movai_core_shared.core.zmq_client import ZMQClient
 from movai_core_shared.exceptions import ArgumentError
-from movai_core_shared.envvars import DEVICE_NAME, FLEET_NAME
+from movai_core_shared.envvars import (
+    DEVICE_NAME,
+    FLEET_NAME,
+    SERVICE_NAME
+)
 
 
 class MessageClient:
@@ -46,6 +50,7 @@ class MessageClient:
         self._robot_info = {
             "fleet_name": FLEET_NAME,
             "robot_name": DEVICE_NAME,
+            "service_name": SERVICE_NAME,
             "robot_id": robot_id
         }
         random.seed()  # setting the seed for the random number generator

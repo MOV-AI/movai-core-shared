@@ -263,10 +263,14 @@ class Log:
 
         if services is not None:
             params['services'] = services
-        qurey_data = {"measurement": LOGS_MEASUREMENT,
-                      "query_data": params}
+        query_data = {
+            "measurement": LOGS_MEASUREMENT,
+            "query_data": params,
+            'count_field': "message"
+        }
+        
         try:
-            query_response = message_client.send_request(LOGS_QUERY_HANDLER_MSG_TYPE, qurey_data, None, True)
+            query_response = message_client.send_request(LOGS_QUERY_HANDLER_MSG_TYPE, query_data, None, True)
             response = query_response["data"]
         except Exception as error:
             raise error
