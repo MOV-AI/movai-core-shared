@@ -6,101 +6,51 @@
    Developers:
    - Dor Marcous (dor@mov.ai) - 2022
 """
-import logging
-import sys
 from datetime import datetime
 import json
-from urllib.parse import urlparse
-import http.client
+import logging
+from logging.handlers import TimedRotatingFileHandler
 import threading
 import requests
-from logging.handlers import TimedRotatingFileHandler
+
+from movai_core_shared.consts import (
+    LOGS_HANDLER_MSG_TYPE,
+    LOGS_QUERY_HANDLER_MSG_TYPE,
+    LOGS_MEASUREMENT
+)    
 from movai_core_shared.envvars import (
+    DEVICE_NAME,
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
-    MOVAI_HEALTHNODE_VERBOSITY_LEVEL,
+    MOVAI_FLEET_LOGS_VERBOSITY_LEVEL,
     MOVAI_STDOUT_VERBOSITY_LEVEL,
     MOVAI_GENERAL_VERBOSITY_LEVEL,
-    LOG_HTTP_HOST,
+    MESSAGE_SERVER_LOCAL_ADDR,
+    MESSAGE_SERVER_REMOTE_ADDR,
+    DEVICE_NAME,
+    SERVICE_NAME,
 )
+from movai_core_shared.core.message_client import MessageClient
+from movai_core_shared.common.utils import is_enteprise, is_manager
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
-S_FORMATTER = '[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(tags)s][%(lineno)d]: %(message)s'
+S_FORMATTER = (
+    "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(tags)s][%(lineno)d]: %(message)s"
+)
 LOG_FORMATTER = logging.Formatter(
     "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(lineno)d]: %(message)s",
     datefmt=LOG_FORMATTER_DATETIME,
 )
 
-LOG_FORMATTER_HTTP = logging.Formatter(
-    "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(lineno)d]: %(message)s",
-    datefmt=LOG_FORMATTER_DATETIME,
-)
-
-
-class HealthNodeHandler(logging.handlers.HTTPHandler):
-
-    def __init__(self, url):
-        logging.Handler.__init__(self)
-
-        parsed_uri = urlparse(url)
-
-        self.host = parsed_uri.netloc
-        self.port = None
-
-        try:
-            self.host, self.port = self.host.split(':')
-        except ValueError:
-            # simply host, no port
-            pass
-
-        self.url = parsed_uri.path
-        self.method = 'POST'
-        self.secure = False
-        self.credentials = False
-
-    def emit(self, record):
-        """
-        Emit a record.
-        Send the record to the HealthNode API
-        """
-        threading.Thread(target=self._emit, args=(record,)).start()
-
-    def _emit(self, record):
-
-        try:
-            conn = http.client.HTTPConnection(self.host, port=self.port)
-
-            # Log data
-
-            data = self.mapLogRecord(record)
-            data = json.dumps(data)
-
-            headers = {
-                'Content-type': 'application/json',
-                'Content-length': str(len(data))
-            }
-
-            conn.request(self.method, self.url, data, headers)
-            conn.getresponse()  # can't do anything with the result
-
-        except Exception as e:
-            self.handleError(record)
-
-
-def _get_healthnode_handler():
-    _host_http_log_handler = f'{LOG_HTTP_HOST}/logs'
-    healthnode_handler = HealthNodeHandler(url=_host_http_log_handler)
-    healthnode_handler.setLevel(MOVAI_HEALTHNODE_VERBOSITY_LEVEL)
-    return healthnode_handler
 
 class StdOutHandler(logging.StreamHandler):
     _COLORS = {
-        logging.DEBUG: '\x1b[30;1m',  # light black (gray)
-        logging.INFO: '',  # default (white)
-        logging.WARNING: '\x1b[33;1m',  # yellow
-        logging.ERROR: '\x1b[31;1m',  # red
-        logging.CRITICAL: '\x1b[41;1m'  # bright red
+        logging.DEBUG: "\x1b[30;1m",  # light black (gray)
+        logging.INFO: "",  # default (white)
+        logging.WARNING: "\x1b[33;1m",  # yellow
+        logging.ERROR: "\x1b[31;1m",  # red
+        logging.CRITICAL: "\x1b[41;1m",  # bright red
     }
-    _COLOR_RESET = '\u001b[0m'
+    _COLOR_RESET = "\u001b[0m"
 
     def __init__(self, stream=None):
         super().__init__(stream)
@@ -108,35 +58,90 @@ class StdOutHandler(logging.StreamHandler):
     def emit(self, record):
         try:
             # Override the module and funcName with the ones
-            if hasattr(record.args,'module') and hasattr(record.args,'funcName') and hasattr(record.args,'lineno'):
-                record.module = record.args.get('module')
-                record.funcName = record.args.get('funcName')
-                record.lineno = record.args.get('lineno')
+            if (
+                hasattr(record.args, "module")
+                and hasattr(record.args, "funcName")
+                and hasattr(record.args, "lineno")
+            ):
+                record.module = record.args.get("module")
+                record.funcName = record.args.get("funcName")
+                record.lineno = record.args.get("lineno")
 
             # Add/Remove Tags from log formatter
             _formatter = S_FORMATTER
-            if isinstance(record.args, dict) and record.args.get('tags'):
-                tags = record.args.get('tags')
-                record.tags = '|'.join([f'{k}:{v}' for k, v in tags.items()])
+            if isinstance(record.args, dict) and record.args.get("tags"):
+                tags = record.args.get("tags")
+                record.tags = "|".join([f"{k}:{v}" for k, v in tags.items()])
             else:
                 # if no tags are passed then update formatter
-                _formatter = _formatter.replace('[%(tags)s]', '')
+                _formatter = _formatter.replace("[%(tags)s]", "")
 
-            log_format = logging.Formatter(
-                fmt=_formatter,
-                datefmt=LOG_FORMATTER_DATETIME
-            )
+            log_format = logging.Formatter(fmt=_formatter, datefmt=LOG_FORMATTER_DATETIME)
             self.setFormatter(fmt=log_format)
 
             msg = self.format(record)
 
             stream = self.stream
-            stream.write(
-                self._COLORS.get(record.levelno, '') + msg + self._COLOR_RESET)
+            stream.write(self._COLORS.get(record.levelno, "") + msg + self._COLOR_RESET)
             stream.write(self.terminator)
             self.flush()
         except Exception:
             self.handleError(record)
+
+
+class RemoteHandler(logging.StreamHandler):
+    """
+    This class implemets a log handler which sends
+    sends the data to message server for logging in influxdb.
+    """
+
+    _measurement = "app_logs"
+
+    def __init__(self):
+        """
+        Constructor
+        """
+        logging.StreamHandler.__init__(self, None)
+        self._message_client = MessageClient(MESSAGE_SERVER_LOCAL_ADDR)
+
+    def emit(self, record):
+        """
+        Emit a record.
+        Send the record to the HealthNode API
+
+        Args:
+            record: The python log message data record
+
+        """
+        threading.Thread(target=self._emit, args=(record,)).start()
+
+    def _emit(self, record):
+        """
+        Builds a valid log message request from the python log record
+        and send it to the local message server
+
+        Args:
+            record: The Python log message data record
+
+        """
+        log_time = record.created
+
+        log_tags = {"robot_name": DEVICE_NAME, "level": record.levelname, "service": SERVICE_NAME}
+
+        log_fields = {
+            "module": record.module,
+            "funcName": record.funcName,
+            "lineno": record.lineno,
+            "message": record.msg,
+        }
+
+        log_data = {
+            "measurement": self._measurement,
+            "log_tags": log_tags,
+            "log_fields": log_fields,
+        }
+
+        self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data, log_time)
 
 
 def _get_console_handler():
@@ -157,6 +162,32 @@ def _get_file_handler():
     file_handler.setFormatter(LOG_FORMATTER)
     file_handler.setLevel(MOVAI_LOGFILE_VERBOSITY_LEVEL)
     return file_handler
+
+
+def get_remote_handler(log_level=logging.NOTSET):
+    """
+    Create a RemoteHandler object and return it
+
+    Args:
+        log_level: defines the remote logger log level default value is info
+
+    Returns: ReomoteLogger object
+
+    """
+    remote_handler = RemoteHandler()
+    if log_level in [
+        logging.CRITICAL,
+        logging.FATAL,
+        logging.ERROR,
+        logging.WARNING,
+        logging.INFO,
+        logging.DEBUG,
+    ]:
+        remote_handler.setLevel(log_level)
+    else:
+        remote_handler.setLevel(MOVAI_FLEET_LOGS_VERBOSITY_LEVEL)
+
+    return remote_handler
 
 
 class Log:
@@ -185,62 +216,73 @@ class Log:
             logger.addHandler(_get_console_handler())
         if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(_get_file_handler())
-        if MOVAI_HEALTHNODE_VERBOSITY_LEVEL != logging.NOTSET:
-            logger.addHandler(_get_healthnode_handler())
+        if is_enteprise():
+            if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
+                logger.addHandler(get_remote_handler())
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
         logger.propagate = False
         return logger
 
     @staticmethod
-    def get_logs(limit=1000, offset=0, level=None, tags=None, message=None, from_=None, to_=None, pagination=False,
+    def get_logs(limit=1000,
+                 offset=0,
+                 robots=None,
+                 level=None,
+                 tags=None,
+                 message=None,
+                 from_=None,
+                 to_=None,
+                 pagination=False,
                  services=None):
-        """ Get logs from HealthNode """
+        """ Get logs from message-server """
+        server_addr = MESSAGE_SERVER_REMOTE_ADDR
+        if is_manager():
+            server_addr = MESSAGE_SERVER_LOCAL_ADDR
 
-        url = f'{LOG_HTTP_HOST}/logs'
+        message_client = MessageClient(server_addr)
         params = {
             'limit': Log.validate_limit(limit),
             'offset': Log.validate_limit(offset),
+            "robots": robots
         }
 
         if level:
-            params['levels'] = Log.validate_level(level)
+            params["levels"] = Log.validate_level(level)
 
         if tags:
-            params['tags'] = Log.validate_str_list(tags)
+            params["tags"] = Log.validate_str_list(tags)
 
         if message:
-            params['message'] = Log.validate_message(message)
+            params["message"] = Log.validate_message(message)
 
         if from_:
-            params['from'] = int(Log.validate_datetime(from_))
+            params["from"] = int(Log.validate_datetime(from_))
 
         if to_:
-            params['to'] = int(Log.validate_datetime(to_))
+            params["to"] = int(Log.validate_datetime(to_))
 
         if services is not None:
             params['services'] = services
-
+        query_data = {
+            "measurement": LOGS_MEASUREMENT,
+            "query_data": params,
+            'count_field': "message"
+        }
+        
         try:
-            response = requests.get(url, params=params, timeout=5)
-            response.raise_for_status()
-        except Exception as e:
-            raise e
+            query_response = message_client.send_request(LOGS_QUERY_HANDLER_MSG_TYPE, query_data, None, True)
+            response = query_response["data"]
+        except Exception as error:
+            raise error
 
-        try:
-            content = response.json()
-        except Exception as e:
-            logger = Log.get_logger()
-            logger.error(message=str(e))
-            return []
-        else:
-            return content if pagination else content.get('data', [])
+        return response if pagination else response.get('data', [])
 
     @staticmethod
     def validate_limit(value):
         try:
             val = int(value)
         except ValueError:
-            raise ValueError('invalid limit/offset value')
+            raise ValueError("invalid limit/offset value")
         return val
 
     @staticmethod
@@ -254,10 +296,10 @@ class Log:
                 raise ValueError("level must be string or list of strings")
 
             for val in values:
-                if val not in ['debug', 'info', 'warning', 'error', 'critical']:
+                if val not in ["debug", "info", "warning", "error", "critical"]:
                     raise ValueError(val)
 
-            levels = ','.join(values)
+            levels = ",".join(values)
         except ValueError as e:
             raise ValueError(f"invalid level: {str(e)}")
         return levels
@@ -266,9 +308,9 @@ class Log:
     def validate_str_list(value):
         try:
             value = [] if value is None else value
-            tags = ','.join(value)
+            tags = ",".join(value)
         except ValueError:
-            raise ValueError('invalid tags value')
+            raise ValueError("invalid tags value")
         return tags
 
     @staticmethod
@@ -277,16 +319,18 @@ class Log:
 
     @staticmethod
     def validate_datetime(value):
-        """ Validate if value is timestamp or datetime """
+        """Validate if value is timestamp or datetime"""
         try:
             dt_obj = datetime.fromtimestamp(int(value))
         except (ValueError, TypeError):
             try:
-                dt_obj = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+                dt_obj = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
             except Exception:
-                raise ValueError('invalid datetime value, expected: <timestamp> | %Y-%m-%d %H:%M:%S')
+                raise ValueError(
+                    "invalid datetime value, expected: <timestamp> | %Y-%m-%d %H:%M:%S"
+                )
 
-        return f'{dt_obj.timestamp():.0f}'
+        return f"{dt_obj.timestamp():.0f}"
 
     @staticmethod
     def _find_between(s, start, end):
@@ -296,7 +340,7 @@ class Log:
     def _filter_data(*args, **kwargs):
         # Get message stf from args or kwargs
         try:
-            message = str(args[0]) % args[1:] if args else str(kwargs.get('message', '')) % args
+            message = str(args[0]) % args[1:] if args else str(kwargs.get("message", "")) % args
 
         except TypeError as e:
             message = " ".join(args)
@@ -304,8 +348,8 @@ class Log:
         # Search and remove fields
         fields = {**kwargs}
         for k, v in fields.items():
-            if k in ['message', 'level', 'frame_info']:
-                del (kwargs[k])
+            if k in ["message", "level", "frame_info"]:
+                del kwargs[k]
         return message
 
 
