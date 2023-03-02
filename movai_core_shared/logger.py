@@ -11,16 +11,15 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 import threading
 
+from movai_core_shared.common.utils import get_package_version
 
 from movai_core_shared.consts import (
     LOGS_HANDLER_MSG_TYPE,
     LOGS_QUERY_HANDLER_MSG_TYPE,
     LOGS_MEASUREMENT,
-    MAX_LOG_QUERY,
-    MIN_LOG_QUERY,
-    DEFAULT_LOG_LIMIT,
-    DEFAULT_LOG_OFFSET
-)
+    SYSLOG_MEASUREMENT,
+    PID
+)    
 from movai_core_shared.envvars import (
     DEVICE_NAME,
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
@@ -29,7 +28,6 @@ from movai_core_shared.envvars import (
     MOVAI_GENERAL_VERBOSITY_LEVEL,
     MESSAGE_SERVER_LOCAL_ADDR,
     MESSAGE_SERVER_REMOTE_ADDR,
-    DEVICE_NAME,
     SERVICE_NAME,
 )
 from movai_core_shared.core.message_client import MessageClient
@@ -45,6 +43,18 @@ LOG_FORMATTER = logging.Formatter(
     datefmt=LOG_FORMATTER_DATETIME,
 )
 
+SEVERETY_CODES = {
+    "EMERGENCY": 0,
+    "ALERT": 1,
+    "CRITICAL": 2,
+    "ERROR": 3,
+    "WARNING": 4,
+    "NOTICE": 5,
+    "INFO": 6,
+    "DEBUG": 7
+}
+
+VERSION = get_package_version("movai-core-shared")
 
 class StdOutHandler(logging.StreamHandler):
     _COLORS = {
@@ -99,8 +109,6 @@ class RemoteHandler(logging.StreamHandler):
     sends the data to message server for logging in influxdb.
     """
 
-    _measurement = "app_logs"
-
     def __init__(self):
         """
         Constructor
@@ -135,20 +143,45 @@ class RemoteHandler(logging.StreamHandler):
         if hasattr(record, "tags"):
             log_tags.update(record.tags)
 
+        syslog_tags = {
+            "appname": SERVICE_NAME,
+            "facility":"console",
+            "host": DEVICE_NAME,
+            "hostname": DEVICE_NAME,
+            "severity": record.levelname
+        }
+
         log_fields = {
             "module": record.module,
             "funcName": record.funcName,
             "lineno": record.lineno,
             "message": record.msg,
         }
+        
+        syslog_fields = {
+            "facility_code": 14,
+            "message": record.msg,
+            "procid": PID,
+            "severity_code": SEVERETY_CODES[record.levelname],
+            "timestamp": log_time,
+            "version": VERSION
+        }
+        
 
         log_data = {
-            "measurement": self._measurement,
+            "measurement": LOGS_MEASUREMENT,
             "log_tags": log_tags,
             "log_fields": log_fields,
         }
+        
+        syslog_data = {
+            "measurement": SYSLOG_MEASUREMENT,
+            "log_tags": syslog_tags,
+            "log_fields": syslog_fields,
+        }
 
         self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data)
+        self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, syslog_data)
 
 
 def _get_console_handler():
