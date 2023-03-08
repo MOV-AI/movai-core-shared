@@ -269,7 +269,10 @@ class Log:
             params['service'] = service
 
         if kwrargs:
-            params["tag"] = kwrargs
+            if "tags" in kwrargs:
+                params["tag"] = kwrargs["tags"]
+            else:
+                params["tag"] = kwrargs
 
         query_data = {
             "measurement": LOGS_MEASUREMENT,
