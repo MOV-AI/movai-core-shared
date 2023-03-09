@@ -16,8 +16,11 @@ import requests
 from movai_core_shared.consts import (
     LOGS_HANDLER_MSG_TYPE,
     LOGS_QUERY_HANDLER_MSG_TYPE,
-    LOGS_MEASUREMENT
-)    
+    LOGS_MEASUREMENT,
+    MAX_LOG_QUERY,
+    MIN_LOG_QUERY,
+    DEFAULT_LOG_LIMIT,
+)
 from movai_core_shared.envvars import (
     DEVICE_NAME,
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
@@ -126,9 +129,7 @@ class RemoteHandler(logging.StreamHandler):
         """
         log_time = record.created
 
-        log_tags = {"robot": DEVICE_NAME,
-                    "level": record.levelname,
-                    "service": SERVICE_NAME}
+        log_tags = {"robot": DEVICE_NAME, "level": record.levelname, "service": SERVICE_NAME}
 
         if hasattr(record, "tags"):
             log_tags.update(record.tags)
@@ -228,128 +229,6 @@ class Log:
         logger.propagate = False
         return logger
 
-    @staticmethod
-    def get_logs(limit=1000,
-                 offset=0,
-                 robot=None,
-                 level=None,
-                 message=None,
-                 from_=None,
-                 to_=None,
-                 pagination=False,
-                 service=None,
-                 **kwrargs):
-        """ Get logs from message-server """
-        server_addr = MESSAGE_SERVER_REMOTE_ADDR
-        if is_manager():
-            server_addr = MESSAGE_SERVER_LOCAL_ADDR
-
-        message_client = MessageClient(server_addr)
-        params = {
-            'limit': Log.validate_limit(limit),
-            'offset': Log.validate_limit(offset),
-        }
-
-        if robot is not None:
-            params["robot"] = robot
-
-        if level is not None:
-            params["level"] = level
-
-        if message is not None:
-            params["message"] = Log.validate_message(message)
-
-        if from_ is not None:
-            params["from"] = int(Log.validate_datetime(from_))
-
-        if to_ is not None:
-            params["to"] = int(Log.validate_datetime(to_))
-
-        if service is not None:
-            params['service'] = service
-
-        if kwrargs:
-            if "tags" in kwrargs:
-                params["tag"] = kwrargs["tags"]
-            else:
-                params["tag"] = kwrargs
-
-        query_data = {
-            "measurement": LOGS_MEASUREMENT,
-            "query_data": params,
-            'count_field': "message"
-        }
-
-        try:
-            query_response = message_client.send_request(LOGS_QUERY_HANDLER_MSG_TYPE, query_data, None, True)
-            response = query_response["data"]
-        except Exception as error:
-            raise error
-
-        return response if pagination else response.get('data', [])
-
-    @staticmethod
-    def validate_limit(value: int) -> int:
-        """Validates the limmit.
-
-        Args:
-            value (int): The limit to validate
-
-        Raises:
-            ValueError: in case limit can not be casted to int.
-
-        Returns:
-            int: The validated limit.
-        """
-        try:
-            val = int(value)
-        except ValueError:
-            raise ValueError("Invalid limit/offset value")
-        return val
-
-    @staticmethod
-    def validate_message(value: str) -> str:
-        """Validates the message
-
-        Args:
-            value (str): A message to validate
-
-        Raises:
-            ValueError: In case message is not a string.
-
-        Returns:
-            str: The message.
-        """
-        if not isinstance(value, str):
-            raise ValueError("Invalid message, message must be a string.")
-        return value
-
-    @staticmethod
-    def validate_datetime(value: int) -> str:
-        """Validate if value is timestamp or datetime
-
-        Args:
-            value (int): The datetime to validate
-
-        Raises:
-            ValueError: In case value isn't a time format.
-
-        Returns:
-            int: a timestamp value.
-        """
-        try:
-            dt_obj = datetime.fromtimestamp(int(value))
-        except (ValueError, TypeError):
-            try:
-                dt_obj = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
-            except Exception:
-                raise ValueError(
-                    "invalid datetime value, expected: <timestamp> | %Y-%m-%d %H:%M:%S"
-                )
-
-        return f"{dt_obj.timestamp():.0f}"
-
-
 
 class LogAdapter(logging.LoggerAdapter):
     """
@@ -381,3 +260,151 @@ class LogAdapter(logging.LoggerAdapter):
         tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])
         kwargs = {"extra": {"tags": raw_tags}}
         return f"[{tags}] {msg}", kwargs
+
+
+class LogsQuery:
+    """A class for querying logs"""
+
+    _min_val = MIN_LOG_QUERY
+    _max_val = MAX_LOG_QUERY
+
+    @classmethod
+    def validate_value(cls, filter_name: str, value: int) -> int:
+        """Validates the limmit.
+
+        Args:
+            filter_name (str): Which filter called the validation function.
+            value (int): The limit to validate.
+            alternate_value (int): an alternative value in case of error.
+
+        Raises:
+            ValueError: in case limit can not be casted to int.
+
+        Returns:
+            int: The validated limit.
+        """
+        try:
+            val = int(value)
+        except ValueError:
+            raise ValueError(f"{value} is Invalid {filter_name} value")
+
+        if val < cls._min_val:
+            raise ValueError(f"{filter_name} value: {value} must be greater than {cls._min_val}")
+        elif val > cls._max_val:
+            raise ValueError(f"{filter_name} value: {value} must be lower than {cls._max_val}")
+
+        return val
+
+    @classmethod
+    def validate_message(cls, value: str) -> str:
+        """Validates the message
+
+        Args:
+            value (str): A message to validate
+
+        Raises:
+            ValueError: In case message is not a string.
+
+        Returns:
+            str: The message.
+        """
+        if not isinstance(value, str):
+            raise ValueError("Invalid message, message must be a string.")
+        return value
+
+    @classmethod
+    def validate_datetime(cls, value: int) -> str:
+        """Validate if value is timestamp or datetime
+
+        Args:
+            value (int): The datetime to validate
+
+        Raises:
+            ValueError: In case value isn't a time format.
+
+        Returns:
+            int: a timestamp value.
+        """
+        try:
+            dt_obj = datetime.fromtimestamp(int(value))
+        except (ValueError, TypeError):
+            try:
+                dt_obj = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+            except Exception:
+                raise ValueError(
+                    "invalid datetime value, expected: <timestamp> | %Y-%m-%d %H:%M:%S"
+                )
+
+        return f"{dt_obj.timestamp():.0f}"
+
+    @classmethod
+    def get_logs(
+        cls,
+        limit=1000,
+        offset=0,
+        robot=None,
+        level=None,
+        message=None,
+        from_=None,
+        to_=None,
+        pagination=False,
+        service=None,
+        **kwrargs,
+    ):
+        """Get logs from message-server"""
+        server_addr = MESSAGE_SERVER_REMOTE_ADDR
+        if is_manager():
+            server_addr = MESSAGE_SERVER_LOCAL_ADDR
+
+        message_client = MessageClient(server_addr)
+        params = {}
+
+        if limit is None:
+            params["limit"] = DEFAULT_LOG_LIMIT
+        else:
+            params["limit"] = cls.validate_value("limit", limit)
+
+        if offset is None:
+            params["offset"] = 0
+        else:
+            params["offset"] = cls.validate_value("offset", offset)
+
+        if robot is not None:
+            params["robot"] = robot
+
+        if level is not None:
+            params["level"] = level
+
+        if message is not None:
+            params["message"] = cls.validate_message(message)
+
+        if from_ is not None:
+            params["from"] = int(cls.validate_datetime(from_))
+
+        if to_ is not None:
+            params["to"] = int(cls.validate_datetime(to_))
+
+        if service is not None:
+            params["service"] = service
+
+        if kwrargs:
+            if "tags" in kwrargs:
+                params["tag"] = kwrargs["tags"]
+            else:
+                params["tag"] = kwrargs
+
+        query_data = {
+            "measurement": LOGS_MEASUREMENT,
+            "query_data": params,
+            "count_field": "message",
+        }
+
+        try:
+            query_response = message_client.send_request(
+                LOGS_QUERY_HANDLER_MSG_TYPE, query_data, None, True
+            )
+            response = query_response["data"]
+        except Exception as error:
+            raise error
+
+        return response if pagination else response.get("data", [])
