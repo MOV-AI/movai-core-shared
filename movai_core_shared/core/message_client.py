@@ -48,10 +48,10 @@ class MessageClient:
             raise ArgumentError("server_addr argument must be a non empty string!")
         self._server_addr = server_addr
         self._robot_info = {
-            "fleet_name": FLEET_NAME,
-            "robot_name": DEVICE_NAME,
-            "service_name": SERVICE_NAME,
-            "robot_id": robot_id
+            "fleet": FLEET_NAME,
+            "robot": DEVICE_NAME,
+            "service": SERVICE_NAME,
+            "id": robot_id
         }
         random.seed()  # setting the seed for the random number generator
         identity = f"{DEVICE_NAME}_message_client_{random.getrandbits(24)}"
