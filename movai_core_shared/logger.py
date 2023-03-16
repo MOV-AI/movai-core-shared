@@ -7,11 +7,10 @@
    - Dor Marcous (dor@mov.ai) - 2022
 """
 from datetime import datetime
-import json
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import threading
-import requests
+
 
 from movai_core_shared.consts import (
     LOGS_HANDLER_MSG_TYPE,
@@ -35,6 +34,7 @@ from movai_core_shared.envvars import (
 )
 from movai_core_shared.core.message_client import MessageClient
 from movai_core_shared.common.utils import is_enteprise, is_manager
+from movai_core_shared.common.time import validate_time
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 S_FORMATTER = (
@@ -374,10 +374,10 @@ class LogsQuery:
             params["message"] = cls.validate_message(message)
 
         if fromDate is not None:
-            params["fromDate"] = cls.validate_datetime(fromDate)
+            params["fromDate"] = validate_time(fromDate)
 
         if toDate is not None:
-            params["toDate"] = cls.validate_datetime(toDate)
+            params["toDate"] = validate_time(toDate)
 
         if services is not None:
             params["service"] = services
