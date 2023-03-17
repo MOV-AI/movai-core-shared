@@ -291,3 +291,7 @@ class ConfigurationDoesNotExist(DoesNotExist):
 class DBHandlerError(MovaiException):
     """General exception in DBHandler.
     """
+
+class TimeError(MovaiException):
+    """The supplied time is not a timestamp
+    """
