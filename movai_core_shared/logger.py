@@ -12,11 +12,16 @@ from logging.handlers import TimedRotatingFileHandler
 import threading
 
 from movai_core_shared.common.utils import get_package_version
+from movai_core_shared.common.time import current_timestamp_int
 
 from movai_core_shared.consts import (
+    DEFAULT_LOG_LIMIT,
+    DEFAULT_LOG_OFFSET,
     LOGS_HANDLER_MSG_TYPE,
     LOGS_QUERY_HANDLER_MSG_TYPE,
     LOGS_MEASUREMENT,
+    MIN_LOG_QUERY,
+    MAX_LOG_QUERY,
     SYSLOG_MEASUREMENT,
     PID
 )    
@@ -163,7 +168,7 @@ class RemoteHandler(logging.StreamHandler):
             "message": record.msg,
             "procid": PID,
             "severity_code": SEVERETY_CODES[record.levelname],
-            "timestamp": log_time,
+            "timestamp": current_timestamp_int(),
             "version": VERSION
         }
         
