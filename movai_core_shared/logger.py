@@ -128,7 +128,9 @@ class RemoteHandler(logging.StreamHandler):
             record: The Python log message data record
 
         """
-        log_tags = {"robot": DEVICE_NAME, "level": record.levelname, "service": SERVICE_NAME}
+        log_tags = {"robot": DEVICE_NAME,
+                    "level": record.levelname,
+                    "service": SERVICE_NAME}
 
         if hasattr(record, "tags"):
             log_tags.update(record.tags)
@@ -249,6 +251,7 @@ class LogAdapter(logging.LoggerAdapter):
     def __init__(self, logger, **kwargs):
         super().__init__(logger, None)
         self._tags = kwargs
+        self._tags["runtime"] = True
 
     def process(self, msg, kwargs):
         """
