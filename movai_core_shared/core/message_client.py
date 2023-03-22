@@ -73,7 +73,7 @@ class MessageClient:
         # Add tags to the request data
 
         if creation_time is None:
-            creation_time = time.time()
+            creation_time = time.time_ns()
 
         request = {
             "request": {
