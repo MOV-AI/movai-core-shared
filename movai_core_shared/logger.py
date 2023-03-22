@@ -7,11 +7,10 @@
    - Dor Marcous (dor@mov.ai) - 2022
 """
 from datetime import datetime
-import json
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import threading
-import requests
+
 
 from movai_core_shared.consts import (
     LOGS_HANDLER_MSG_TYPE,
@@ -20,6 +19,7 @@ from movai_core_shared.consts import (
     MAX_LOG_QUERY,
     MIN_LOG_QUERY,
     DEFAULT_LOG_LIMIT,
+    DEFAULT_LOG_OFFSET
 )
 from movai_core_shared.envvars import (
     DEVICE_NAME,
@@ -34,6 +34,7 @@ from movai_core_shared.envvars import (
 )
 from movai_core_shared.core.message_client import MessageClient
 from movai_core_shared.common.utils import is_enteprise, is_manager
+from movai_core_shared.common.time import validate_time
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 S_FORMATTER = (
@@ -127,9 +128,9 @@ class RemoteHandler(logging.StreamHandler):
             record: The Python log message data record
 
         """
-        log_time = record.created
-
-        log_tags = {"robot": DEVICE_NAME, "level": record.levelname, "service": SERVICE_NAME}
+        log_tags = {"robot": DEVICE_NAME,
+                    "level": record.levelname,
+                    "service": SERVICE_NAME}
 
         if hasattr(record, "tags"):
             log_tags.update(record.tags)
@@ -147,7 +148,7 @@ class RemoteHandler(logging.StreamHandler):
             "log_fields": log_fields,
         }
 
-        self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data, log_time)
+        self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data)
 
 
 def _get_console_handler():
@@ -250,6 +251,7 @@ class LogAdapter(logging.LoggerAdapter):
     def __init__(self, logger, **kwargs):
         super().__init__(logger, None)
         self._tags = kwargs
+        self._tags["runtime"] = True
 
     def process(self, msg, kwargs):
         """
@@ -335,21 +337,21 @@ class LogsQuery:
                     "invalid datetime value, expected: <timestamp> | %Y-%m-%d %H:%M:%S"
                 )
 
-        return f"{dt_obj.timestamp():.0f}"
+        return int(dt_obj.timestamp())
 
     @classmethod
     def get_logs(
         cls,
-        limit=1000,
-        offset=0,
-        robot=None,
+        limit=DEFAULT_LOG_LIMIT,
+        offset=DEFAULT_LOG_OFFSET,
+        robots=None,
+        services=None,
         level=None,
         message=None,
-        from_=None,
-        to_=None,
+        fromDate=None,
+        toDate=None,
         pagination=False,
-        service=None,
-        **kwrargs,
+        **kwrargs
     ):
         """Get logs from message-server"""
         server_addr = MESSAGE_SERVER_REMOTE_ADDR
@@ -359,18 +361,14 @@ class LogsQuery:
         message_client = MessageClient(server_addr)
         params = {}
 
-        if limit is None:
-            params["limit"] = DEFAULT_LOG_LIMIT
-        else:
+        if limit is not None:
             params["limit"] = cls.validate_value("limit", limit)
 
-        if offset is None:
-            params["offset"] = 0
-        else:
+        if offset is not None:
             params["offset"] = cls.validate_value("offset", offset)
 
-        if robot is not None:
-            params["robot"] = robot
+        if robots is not None:
+            params["robot"] = robots
 
         if level is not None:
             params["level"] = level
@@ -378,14 +376,14 @@ class LogsQuery:
         if message is not None:
             params["message"] = cls.validate_message(message)
 
-        if from_ is not None:
-            params["from"] = int(cls.validate_datetime(from_))
+        if fromDate is not None:
+            params["fromDate"] = validate_time(fromDate)
 
-        if to_ is not None:
-            params["to"] = int(cls.validate_datetime(to_))
+        if toDate is not None:
+            params["toDate"] = validate_time(toDate)
 
-        if service is not None:
-            params["service"] = service
+        if services is not None:
+            params["service"] = services
 
         if kwrargs:
             if "tags" in kwrargs:
