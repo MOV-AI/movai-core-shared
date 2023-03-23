@@ -141,9 +141,10 @@ class RemoteHandler(logging.StreamHandler):
             record: The Python log message data record
 
         """
-        log_tags = {"robot": DEVICE_NAME,
-                    "level": record.levelname,
-                    "service": SERVICE_NAME}
+        log_tags = {
+            "robot": DEVICE_NAME,
+            "level": record.levelname,
+            "service": SERVICE_NAME}
 
         if hasattr(record, "tags"):
             log_tags.update(record.tags)
@@ -162,8 +163,11 @@ class RemoteHandler(logging.StreamHandler):
             "lineno": record.lineno,
             "message": record.msg,
         }
-        
+
         syslog_fields = {
+            "module": record.module,
+            "funcName": record.funcName,
+            "lineno": record.lineno,
             "facility_code": 14,
             "message": record.msg,
             "procid": PID,
@@ -171,14 +175,13 @@ class RemoteHandler(logging.StreamHandler):
             "timestamp": current_timestamp_int(),
             "version": VERSION
         }
-        
 
         log_data = {
             "measurement": LOGS_MEASUREMENT,
             "log_tags": log_tags,
             "log_fields": log_fields,
         }
-        
+
         syslog_data = {
             "measurement": SYSLOG_MEASUREMENT,
             "log_tags": syslog_tags,
