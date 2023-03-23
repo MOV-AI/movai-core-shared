@@ -251,7 +251,6 @@ class LogAdapter(logging.LoggerAdapter):
     def __init__(self, logger, **kwargs):
         super().__init__(logger, None)
         self._tags = kwargs
-        self._tags["runtime"] = True
 
     def process(self, msg, kwargs):
         """
