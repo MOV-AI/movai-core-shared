@@ -34,6 +34,7 @@ from movai_core_shared.envvars import (
     MESSAGE_SERVER_LOCAL_ADDR,
     MESSAGE_SERVER_REMOTE_ADDR,
     SERVICE_NAME,
+    SYSLOG_ENABLED
 )
 from movai_core_shared.core.message_client import MessageClient
 from movai_core_shared.common.utils import is_enteprise, is_manager
@@ -189,7 +190,8 @@ class RemoteHandler(logging.StreamHandler):
         }
 
         self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data)
-        self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, syslog_data)
+        if SYSLOG_ENABLED:
+            self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, syslog_data)
 
 
 def _get_console_handler():
