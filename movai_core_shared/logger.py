@@ -10,6 +10,7 @@ from datetime import datetime
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import threading
+import syslog
 
 from movai_core_shared.common.utils import get_package_version
 from movai_core_shared.common.time import current_timestamp_int
@@ -49,9 +50,6 @@ LOG_FORMATTER = logging.Formatter(
     datefmt=LOG_FORMATTER_DATETIME,
 )
 
-import syslog
-
-syslog.LOG
 SEVERETY_CODES_MAPPING = {
     "CRITICAL": syslog.LOG_CRIT,
     "ERROR": syslog.LOG_ERR,
