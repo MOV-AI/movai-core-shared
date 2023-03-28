@@ -49,15 +49,15 @@ LOG_FORMATTER = logging.Formatter(
     datefmt=LOG_FORMATTER_DATETIME,
 )
 
-SEVERETY_CODES = {
-    "EMERGENCY": 0,
-    "ALERT": 1,
-    "CRITICAL": 2,
-    "ERROR": 3,
-    "WARNING": 4,
-    "NOTICE": 5,
-    "INFO": 6,
-    "DEBUG": 7
+import syslog
+
+syslog.LOG
+SEVERETY_CODES_MAPPING = {
+    "CRITICAL": syslog.LOG_CRIT,
+    "ERROR": syslog.LOG_ERR,
+    "WARNING": syslog.LOG_WARNING,
+    "INFO": syslog.LOG_INFO,
+    "DEBUG": syslog.LOG_DEBUG
 }
 
 VERSION = get_package_version("movai-core-shared")
@@ -172,7 +172,7 @@ class RemoteHandler(logging.StreamHandler):
             "facility_code": 14,
             "message": record.msg,
             "procid": PID,
-            "severity_code": SEVERETY_CODES[record.levelname],
+            "severity_code": SEVERETY_CODES_MAPPING[record.levelname],
             "timestamp": current_timestamp_int(),
             "version": VERSION
         }
