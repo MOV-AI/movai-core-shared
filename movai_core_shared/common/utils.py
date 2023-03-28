@@ -10,6 +10,7 @@
    - Erez Zomer (erez@mov.ai) - 2022
 """
 import socket
+from pkg_resources import get_distribution
 from movai_core_shared.envvars import REDIS_MASTER_HOST
 
 def is_manager() -> bool:
@@ -54,3 +55,7 @@ def get_ip_address() -> str:
     hostname = socket.gethostname()
     ip_addr = socket.gethostbyname(hostname)
     return ip_addr
+
+
+def get_package_version(package_name: str) -> str:
+    return get_distribution(package_name).version
