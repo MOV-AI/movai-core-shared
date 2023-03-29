@@ -24,6 +24,7 @@ LOG_HTTP_HOST = os.environ.get('LOG_HTTP_HOST', 'http://health-node:8081')
 # Read variables from current environment
 APP_PATH = os.getenv("APP_PATH")
 APP_LOGS = os.getenv("APP_LOGS")
+SYSLOG_ENABLED = os.getenv("SYSLOG_ENABLED", True)
 LD_LIBRARY_PATH = os.getenv("LD_LIBRARY_PATH")
 MOVAI_HOME = os.getenv("MOVAI_HOME")
 PATH = os.getenv("PATH")

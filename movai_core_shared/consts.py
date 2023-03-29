@@ -6,6 +6,10 @@
    Developers:
    - Dor Marcous (Dor@mov.ai) - 2022
 """
+from os import getpid
+
+#system
+PID = getpid()
 
 # Constants
 MAX_LOG_QUERY = 1000000
@@ -112,6 +116,7 @@ INFLUX_METRICS_DB_NAME = "metrics"
 INFLUXDB_DB_NAMES = [INFLUX_LOGS_DB_NAME, INFLUX_METRICS_DB_NAME]
 
 #inluxdb measurements names:
+SYSLOG_MEASUREMENT = "syslog"
 LOGS_MEASUREMENT = "app_logs"
 METRICS_MEASUREMENT = "metric_logs"
 
