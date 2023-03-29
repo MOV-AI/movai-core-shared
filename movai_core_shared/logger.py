@@ -299,9 +299,8 @@ class LogAdapter(logging.LoggerAdapter):
         """
         raw_tags = dict(kwargs)
         raw_tags.update(self._tags)
-        tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])
         kwargs = {"extra": {"tags": raw_tags}}
-        return f"[{tags}] {msg}", kwargs
+        return f"{msg}", kwargs
 
 
 class LogsQuery:
