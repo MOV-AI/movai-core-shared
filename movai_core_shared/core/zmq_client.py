@@ -51,10 +51,9 @@ class ZMQClient:
             return
         try:
             data = json.dumps(msg).encode('utf8')
-        except json.JSONDecodeError as error:
-            raise MessageError(f"Failed to decode message: {msg}") from error
-
-        self._socket.send(data)
+            self._socket.send(data)
+        except (json.JSONDecodeError, TypeError) as error:
+            pass
 
     def recieve(self) -> dict:
         """
