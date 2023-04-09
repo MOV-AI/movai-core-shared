@@ -16,6 +16,7 @@ from movai_core_shared.common.utils import get_package_version
 from movai_core_shared.common.time import current_timestamp_int
 
 from movai_core_shared.consts import (
+    ROBOTICS_LOGGER,
     DEFAULT_LOG_LIMIT,
     DEFAULT_LOG_OFFSET,
     LOGS_HANDLER_MSG_TYPE,
@@ -59,6 +60,17 @@ SEVERETY_CODES_MAPPING = {
 }
 
 VERSION = get_package_version("movai-core-shared")
+
+STD_LOG_LEVLES = [
+    logging.CRITICAL,
+    logging.FATAL,
+    logging.ERROR,
+    logging.WARNING,
+    logging.INFO,
+    logging.DEBUG,
+]
+
+ROBOTICS_LOG_LEVEL = logging.DEBUG + 1
 
 class StdOutHandler(logging.StreamHandler):
     _COLORS = {
@@ -223,14 +235,7 @@ def get_remote_handler(log_level=logging.NOTSET):
 
     """
     remote_handler = RemoteHandler()
-    if log_level in [
-        logging.CRITICAL,
-        logging.FATAL,
-        logging.ERROR,
-        logging.WARNING,
-        logging.INFO,
-        logging.DEBUG,
-    ]:
+    if log_level in STD_LOG_LEVLES:
         remote_handler.setLevel(log_level)
     else:
         remote_handler.setLevel(MOVAI_FLEET_LOGS_VERBOSITY_LEVEL)
@@ -253,20 +258,27 @@ class Log:
         Log.LOG_FILE = name
 
     @staticmethod
-    def get_logger(logger_name: str):
+    def get_logger(logger_name: str, robo_debug: bool=False):
         """
         Get a logger instance
         """
         logger = logging.getLogger(logger_name)
         if logger.hasHandlers():
-            logger.handlers = []
-        if MOVAI_STDOUT_VERBOSITY_LEVEL != logging.NOTSET:
+            logger.handlers = []            
+        if MOVAI_STDOUT_VERBOSITY_LEVEL in STD_LOG_LEVLES:
             logger.addHandler(_get_console_handler())
-        if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
+        elif MOVAI_STDOUT_VERBOSITY_LEVEL == ROBOTICS_LOG_LEVEL and logger_name == ROBOTICS_LOGGER:
+                logger.addHandler(_get_console_handler())
+        if MOVAI_LOGFILE_VERBOSITY_LEVEL in STD_LOG_LEVLES:
+            logger.addHandler(_get_file_handler())
+        elif MOVAI_STDOUT_VERBOSITY_LEVEL == ROBOTICS_LOG_LEVEL and logger_name == ROBOTICS_LOGGER:
             logger.addHandler(_get_file_handler())
         if is_enteprise():
-            if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
+            if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL in STD_LOG_LEVLES:
                 logger.addHandler(get_remote_handler())
+            elif MOVAI_FLEET_LOGS_VERBOSITY_LEVEL == ROBOTICS_LOG_LEVEL and logger_name == ROBOTICS_LOGGER:
+                logger.addHandler(get_remote_handler())
+
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
         logger.propagate = False
         return logger
