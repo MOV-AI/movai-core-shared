@@ -10,6 +10,7 @@
    - Erez Zomer (erez@mov.ai) - 2022
 """
 import json
+from logging import getLogger
 import zmq.asyncio
 import zmq
 
@@ -28,12 +29,14 @@ class ZMQClient:
             server (str): The server addr and port in the form:
                 'tcp://server_addr:port'
         """
+        self._logger = getLogger(self.__class__.__name__)
         self._identity = identity.encode("utf-8")
         zmq_ctx = zmq.Context()
         self._socket = zmq_ctx.socket(zmq.DEALER)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
         self._socket.connect(server)
+        self._logger.info(f"successfully connected to {server}")
 
     def __del__(self):
         """closes the socket when the object is destroyed.
@@ -52,8 +55,9 @@ class ZMQClient:
         try:
             data = json.dumps(msg).encode('utf8')
             self._socket.send(data)
+            self._logger.debug(f"{self.__class__.__name__} successfully sent the following message:\n{data}.")
         except (json.JSONDecodeError, TypeError) as error:
-            pass
+            self._logger.error(f"Got {error} while trying to send message")
 
     def recieve(self) -> dict:
         """
