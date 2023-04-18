@@ -55,7 +55,6 @@ class ZMQClient:
         try:
             data = json.dumps(msg).encode('utf8')
             self._socket.send(data)
-            self._logger.debug(f"{self.__class__.__name__} successfully sent the following message:\n{data}.")
         except (json.JSONDecodeError, TypeError) as error:
             self._logger.error(f"Got an {error} while trying to send message")
 
