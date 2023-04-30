@@ -103,6 +103,12 @@ from movai_core_shared.exceptions import (
     ActiveFlowError,
 )
 from movai_core_shared.logger import Log, LogAdapter
+from movai_core_shared.recovery import (
+    RecoveryStates,
+    RECOVERY_STATE_KEY,
+    RECOVERY_TIMEOUT_IN_SECS,
+    RECOVERY_RESPONSE_KEY,
+)
 
 __all__ = [
     "Log",
@@ -195,4 +201,8 @@ __all__ = [
     "TIMEOUT_PROCESS_SIGTERM",
     "INTERNAL_DOMAIN",
     "LogAdapter",
+    "RecoveryStates",
+    "RECOVERY_STATE_KEY",
+    "RECOVERY_TIMEOUT_IN_SECS",
+    "RECOVERY_RESPONSE_KEY",
 ]
