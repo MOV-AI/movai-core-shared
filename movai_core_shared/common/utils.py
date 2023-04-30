@@ -58,4 +58,12 @@ def get_ip_address() -> str:
 
 
 def get_package_version(package_name: str) -> str:
+    """Gets the verison of a package
+
+    Args:
+        package_name (str): The package to extract the version
+
+    Returns:
+        str: The version of the package.
+    """
     return get_distribution(package_name).version
