@@ -102,3 +102,15 @@ class MessageClient:
         if request_msg["response_required"]:
             return self._zmq_client.recieve()
         return {}
+
+    def send_msg(self, data, **kwargs) -> None:
+        """sends a simple message as raw data, wan't wait for response
+
+        Args:
+            data (_type_): _description_
+        """
+        msg = {
+            "data": data
+        }
+        msg.update(kwargs)
+        self._zmq_client.send(msg)
