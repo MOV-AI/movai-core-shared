@@ -15,6 +15,7 @@ MOVAI_GENERAL_VERBOSITY_LEVEL = int(os.getenv("MOVAI_GENERAL_VERBOSITY_LEVEL", s
 LOG_HTTP_HOST = os.environ.get("LOG_HTTP_HOST", "http://health-node:8081")
 
 # Read variables from current environment
+MOVAI_FLOW_PORT = os.getenv("MOVAI_ZMQ_SOCKET", "9999")
 APP_PATH = os.getenv("APP_PATH")
 APP_LOGS = os.getenv("APP_LOGS")
 SYSLOG_ENABLED = os.getenv("SYSLOG_ENABLED", "False").lower() in ("true", "1", "t")
@@ -135,11 +136,15 @@ DEFAULT_JWT_ACCESS_DELTA_SECS = int(os.getenv("DEFAULT_JWT_ACCESS_DELTA_SECS", "
 DEFAULT_JWT_REFRESH_DELTA_DAYS = int(os.getenv("DEFAULT_JWT_REFRESH_DELTA_DAYS", "7"))
 
 # General Vars
-
 DEFAULT_ROLE_NAME = os.getenv("DEFAULT_ROLE_NAME", ADMIN_ROLE)
 FLEET_NAME = os.getenv("FLEET_NAME", "movai")
 DEVICE_NAME = os.getenv("DEVICE_NAME", "UNDEFINED_ROBOT_NAME")
 SERVICE_NAME = os.getenv("HOSTNAME", socket.gethostname())
+
+# Docker configuration
+DOCKERD_ATTEMPTS = os.getenv("DOCKERD_ATTEMPTS", 3)
+DOCKER_TIMEOUT = int(os.getenv("DOCKER_TIMEOUT", 30))
+DOCKER_REGISTRY = os.getenv("DOCKER_REGISTRY", "registry.cloud.mov.ai")
 
 # SMTP Vars
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "do-not-reply@mov.ai")
