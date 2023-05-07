@@ -49,6 +49,10 @@ class ActiveFlowError(MovaiException):
     Raise when the command requires an active flow
     """
 
+class RunError(MovaiException):
+    """
+    Run error elements exception
+    """
 
 class InitializationError(MovaiException):
     """Failure to initialize an object.
