@@ -6,16 +6,18 @@
    Developers:
    - Dor Marcous (dor@mov.ai) - 2022
 """
+import sys
 from datetime import datetime
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import threading
 import syslog
-
+import traceback
 from movai_core_shared.common.utils import get_package_version
 from movai_core_shared.common.time import current_timestamp_int
 
 from movai_core_shared.consts import (
+    USER_LOG_TAG,
     DEFAULT_LOG_LIMIT,
     DEFAULT_LOG_OFFSET,
     LOGS_HANDLER_MSG_TYPE,
@@ -292,6 +294,35 @@ class LogAdapter(logging.LoggerAdapter):
     def __init__(self, logger, **kwargs):
         super().__init__(logger, None)
         self._tags = kwargs
+        self._tags[USER_LOG_TAG] = True
+
+    def _exc_tb(self):
+        """ get latest exception (if any) and format it
+        only works "inside" an `except` block"""
+        etype, exc, tb = sys.exc_info()
+        if exc is None:
+            # no exception
+            return ''
+        return '\n' + str.join('', traceback.format_exception(etype, exc, tb)).strip().replace("%",
+                                                                                               "%%")  # final new line
+
+    @staticmethod
+    def get_message(*args, **kwargs):
+        if "message" in kwargs:
+            message = kwargs.get('message', '')
+        elif "msg" in kwargs:
+            message = kwargs.get('msg', '')
+        else:
+            message = str(args[0])
+        return message
+
+    def error(self, *args, **kwargs):
+        new_msg = self.get_message(*args, **kwargs) + self._exc_tb()
+        super().error(new_msg, **kwargs)
+
+    def critical(self, *args, **kwargs):
+        new_msg = self.get_message(*args, **kwargs) + self._exc_tb()
+        super().critical(new_msg, **kwargs)
 
     def process(self, msg, kwargs):
         """
