@@ -36,7 +36,6 @@ class ZMQClient:
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
         self._socket.connect(server)
-        self._logger.info(f"successfully connected to {server}")
 
     def __del__(self):
         """closes the socket when the object is destroyed.

@@ -12,6 +12,7 @@ from os import getpid
 PID = getpid()
 
 # Constants
+USER_LOG_TAG = "user_log"
 MAX_LOG_QUERY = 1000000
 MIN_LOG_QUERY = 0
 DEFAULT_LOG_LIMIT = 1000
