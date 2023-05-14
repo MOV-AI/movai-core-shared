@@ -47,6 +47,5 @@ def test_logger(caplog):
         logger.info("test logger info e:{e}")
         check_trackback(caplog, False)
         logger.critical("last")
-        breakpoint()
         check_trackback(caplog, True)
     assert True
