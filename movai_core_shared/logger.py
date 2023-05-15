@@ -27,6 +27,7 @@ from movai_core_shared.consts import (
     MIN_LOG_QUERY,
     MAX_LOG_QUERY,
     SYSLOG_MEASUREMENT,
+    SYSLOGS_HANDLER_MSG_TYPE,
     PID,
 )
 from movai_core_shared.envvars import (
@@ -190,7 +191,7 @@ class RemoteHandler(logging.StreamHandler):
 
         self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data)
         if SYSLOG_ENABLED:
-            self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, syslog_data)
+            self._message_client.send_request(SYSLOGS_HANDLER_MSG_TYPE, syslog_data)
 
 
 def _get_console_handler():
