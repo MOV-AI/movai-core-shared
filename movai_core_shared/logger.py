@@ -145,6 +145,9 @@ class RemoteHandler(logging.StreamHandler):
             record: The Python log message data record
 
         """
+        if isinstance(record.msg, Exception):
+            record.msg = str(record.msg)
+
         log_tags = {"robot": DEVICE_NAME, "level": record.levelname, "service": SERVICE_NAME}
 
         if hasattr(record, "tags"):
