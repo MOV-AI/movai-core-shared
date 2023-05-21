@@ -15,7 +15,7 @@ class BaseCommand(ABC):
             self.execute(**kwargs)
             sys.exit(0)
         except Exception as e:
-            self.log.error(e)
+            self.log.error(str(e))
             sys.exit(1)
 
     @abstractmethod
