@@ -14,11 +14,11 @@ from logging.handlers import TimedRotatingFileHandler
 import threading
 import syslog
 import traceback
+
 from movai_core_shared.common.utils import get_package_version
 from movai_core_shared.common.time import current_timestamp_int
 
 from movai_core_shared.consts import (
-    USER_LOG_TAG,
     DEFAULT_LOG_LIMIT,
     DEFAULT_LOG_OFFSET,
     LOGS_HANDLER_MSG_TYPE,
@@ -145,11 +145,11 @@ class RemoteHandler(logging.StreamHandler):
             record: The Python log message data record
 
         """
+        if isinstance(record.msg, Exception):
+            record.msg = str(record.msg)
+
         log_tags = {"robot": DEVICE_NAME, "level": record.levelname, "service": SERVICE_NAME}
-
-        if hasattr(record, "tags"):
-            log_tags.update(record.tags)
-
+        
         syslog_tags = {
             "appname": SERVICE_NAME,
             "facility": "console",
@@ -157,6 +157,11 @@ class RemoteHandler(logging.StreamHandler):
             "hostname": DEVICE_NAME,
             "severity": record.levelname,
         }
+
+        if hasattr(record, "tags"):
+            log_tags.update(record.tags)
+            syslog_tags.update(record.tags)
+        
 
         log_fields = {
             "module": record.module,
@@ -294,7 +299,6 @@ class LogAdapter(logging.LoggerAdapter):
     def __init__(self, logger, **kwargs):
         super().__init__(logger, None)
         self._tags = kwargs
-        self._tags[USER_LOG_TAG] = True
 
     def _exc_tb(self):
         """get latest exception (if any) and format it
@@ -314,17 +318,17 @@ class LogAdapter(logging.LoggerAdapter):
             message = kwargs.get("msg", "")
         else:
             message = str(args[0])
-        message, _ = self.process(message, kwargs)
+        message, kwargs = self.process(message, kwargs)
         message += self._exc_tb()
-        return message
+        return message, kwargs
 
     def error(self, *args, **kwargs):
-        new_msg = self.get_message(*args, **kwargs)
-        self.logger.error(new_msg, stacklevel=2)
+        new_msg, kwargs = self.get_message(*args, **kwargs)
+        self.logger.error(new_msg, stacklevel=2, **kwargs)
 
     def critical(self, *args, **kwargs):
-        new_msg = self.get_message(*args, **kwargs)
-        self.logger.critical(new_msg, stacklevel=2)
+        new_msg, kwargs = self.get_message(*args, **kwargs)
+        self.logger.critical(new_msg, stacklevel=2, **kwargs)
 
     def process(self, msg, kwargs):
         """
