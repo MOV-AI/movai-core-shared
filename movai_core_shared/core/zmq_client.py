@@ -41,7 +41,7 @@ class ZMQClient:
         """closes the socket when the object is destroyed.
         """
         # Close all sockets associated with this context and then terminate the context.
-        sel.zmq_ctx.destroy()
+        self.zmq_ctx.destroy()
 
     def send(self, msg: dict) -> None:
         """
