@@ -31,8 +31,8 @@ class ZMQClient:
         """
         self._logger = getLogger(self.__class__.__name__)
         self._identity = identity.encode("utf-8")
-        zmq_ctx = zmq.Context()
-        self._socket = zmq_ctx.socket(zmq.DEALER)
+        self.zmq_ctx = zmq.Context()
+        self._socket = self.zmq_ctx.socket(zmq.DEALER)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
         self._socket.connect(server)
@@ -41,6 +41,7 @@ class ZMQClient:
         """closes the socket when the object is destroyed.
         """
         self._socket.close()
+        sel.zmq_ctx.destroy()
 
     def send(self, msg: dict) -> None:
         """
