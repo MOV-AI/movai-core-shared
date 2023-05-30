@@ -20,6 +20,15 @@ import zmq.asyncio
 from movai_core_shared.exceptions import UnknownRequestError
 from movai_core_shared.logger import Log
 
+def display_request(request: dict, tab: str):
+    if not isinstance(request, dict):
+        return
+    
+    for key, val in request.items():
+        if isinstance(val, dict):
+            print(f"{key}:")
+            display_request(val, "/t")
+    
 class ZMQServer:
     """
     This class is a base class for any ZMQ server.
@@ -42,8 +51,66 @@ class ZMQServer:
         self._debug = debug
         self._loop = asyncio.get_event_loop()
         self._running = False
+        self._ctx = None
         self._socket = None
         self._poller = None
+
+    def _set_context(self) -> None:
+        """Initializes the zmq context."""
+        self._ctx = zmq.asyncio.Context()
+        self._socket = self._ctx.socket(zmq.ROUTER)
+        if self._socket is None:
+            raise zmq.ZMQError(msg= "Failed to create socket")
+
+    def _bind(self) -> None:
+        """Binds the zmq socket to the appropriate file/address."""
+        self._socket.bind(self._addr)
+        self._logger.info(f"{self.__class__.__name__} is listening on {self._addr}")
+
+    async def _accept(self) -> None:
+        """accepts new connections requests to zmq."""
+        if self._debug:
+            self._logger.debug("Accepting new request.")
+        request = await self._socket.recv_multipart()
+        if self._debug:
+            self._logger.debug(f"request:\n{request}")
+        await self._handle(request, self._socket)
+
+    async def _handle(self, msg_buffer) -> None:
+        # receive data
+        index = len(msg_buffer) - 1
+        buffer = msg_buffer[index]
+
+        if buffer is None:
+            self._logger.warning("Request has no buffer, can't handle request.")
+            return
+
+        request_msg = json.loads(buffer)
+        # check for request in request
+        if "request" not in request_msg:
+            raise UnknownRequestError(f"The message format is unknown: {request_msg}.")
+
+        request = request_msg.get("request")
+        # validate request and and handler
+        #self._validate_request(request)
+        #self._validate_handler(request)
+        # Handel the received request message
+        response = await self._handle_request(request)
+        # check if the client is expecting a response
+        response_required = request.get("response_required")
+        if response_required:
+            await self._handle_response(self._socket, msg_buffer, response)
+
+
+    def _close(self) -> None:
+        """close the zmq socket."""
+        self._socket.close()
+        self._ctx.destroy()
+
+    def __del__(self):
+        """closes the socket when the object is destroyed.
+        """
+        self._close()
 
     def init_server(self):
         """Initializes the server to listen on the specified address.
@@ -58,10 +125,10 @@ class ZMQServer:
         try:
             self._bind()
         except OSError as error:
-            self._logger.error(f"failed to bind socket: {error}")
+            self._logger.error(f"failed to bind socket on address {self._addr}")
+            self._logger.error(str(error))
             self._close()
             return 1
-        
 
     def run(self) -> int:
         """The main message dispatch loop.
@@ -86,57 +153,6 @@ class ZMQServer:
 
         # End while self._running
         self._close()
-
-    async def _handle(self, msg_buffer, socket) -> None:
-        # receive data
-        index = len(msg_buffer) - 1
-        buffer = msg_buffer[index]
-
-        if buffer is None:
-            self._logger.warning("Request has no buffer, can't handle request.")
-            return
-
-        request_msg = json.loads(buffer)
-        # check for request in request
-        if "request" not in request_msg:
-            raise UnknownRequestError(f"The message format is unknown: {request_msg}.")
-
-        request = request_msg.get("request")
-        # validate request and and handler
-        #self._validate_request(request)
-        #self._validate_handler(request)
-        # Handel the received request message
-        response = await self._handle_request(request)
-        # check if the client is expecting a response
-        response_required = request.get("response_required")
-        if response_required:
-            await self._handle_response(socket, msg_buffer, response)
-
-    def _set_context(self) -> None:
-        """Initializes the zmq context."""
-        context = zmq.asyncio.Context()
-        self._socket = context.socket(zmq.ROUTER)
-
-    def _bind(self) -> None:
-        """Binds the zmq socket to the appropriate file/address."""
-        self._socket.bind(self._addr)
-        self._logger.info(f"{self.__class__.__name__} is listening on {self._addr}")
-
-    async def _accept(self) -> None:
-        """accepts new connections requests to zmq."""
-        if self._socket is not None:
-            
-            request = await self._socket.recv_multipart()
-            if self._debug:
-                self._logger.debug("Accepting new request.")
-                self._logger.debug(f"request:\n{request}")
-            await asyncio.create_task(self._handle(request, self._socket))
-        else:
-            self._logger.warning("Cannot accept new requests, socket is not initialized.")
-
-    def _close(self) -> None:
-        """close the zmq socket."""
-        self._socket.close()
 
     def _handle_response(self, socket, msg_buffer, response) -> None:
         """Send a response to the client.
