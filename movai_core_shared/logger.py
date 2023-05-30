@@ -29,6 +29,7 @@ from movai_core_shared.consts import (
     SYSLOG_MEASUREMENT,
     SYSLOGS_HANDLER_MSG_TYPE,
     PID,
+    USER_LOG_TAG
 )
 from movai_core_shared.envvars import (
     DEVICE_NAME,
