@@ -245,40 +245,6 @@ def get_remote_handler(log_level=logging.NOTSET):
     return remote_handler
 
 
-class Log:
-    """
-    A static class to help create logger instances
-    """
-
-    LOG_FILE = "movai.log"
-
-    @staticmethod
-    def set_log_file(name: str):
-        """
-        Set the name of the file we write the log
-        """
-        Log.LOG_FILE = name
-
-    @staticmethod
-    def get_logger(logger_name: str):
-        """
-        Get a logger instance
-        """
-        logger = logging.getLogger(logger_name)
-        if logger.hasHandlers():
-            logger.handlers = []
-        if MOVAI_STDOUT_VERBOSITY_LEVEL != logging.NOTSET:
-            logger.addHandler(_get_console_handler())
-        if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
-            logger.addHandler(_get_file_handler())
-        if is_enteprise():
-            if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
-                logger.addHandler(get_remote_handler())
-        logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
-        logger.propagate = False
-        return logger
-
-
 class LogAdapter(logging.LoggerAdapter):
     """
     A LogAdapter used to expose the logger inside a callback, we should
@@ -340,6 +306,67 @@ class LogAdapter(logging.LoggerAdapter):
         kwargs = {"extra": {"tags": raw_tags}}
         return f"[{tags}] {msg}", kwargs
 
+
+class Log:
+    """
+    A static class to help create logger instances
+    """
+
+    LOG_FILE = "movai.log"
+
+    @staticmethod
+    def set_log_file(name: str):
+        """
+        Set the name of the file we write the log
+        """
+        Log.LOG_FILE = name
+
+    @staticmethod
+    def get_logger(logger_name: str):
+        """
+        Get a logger instance
+        """
+        logger = logging.getLogger(logger_name)
+        if logger.hasHandlers():
+            logger.handlers = []
+        if MOVAI_STDOUT_VERBOSITY_LEVEL != logging.NOTSET:
+            logger.addHandler(_get_console_handler())
+        if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
+            logger.addHandler(_get_file_handler())
+        if is_enteprise():
+            if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
+                logger.addHandler(get_remote_handler())
+        logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
+        logger.propagate = False
+        return logger
+
+    @classmethod
+    def get_user_logger(cls, logger_name: str, **tags: dict) -> LogAdapter:
+        """Add 'user_log=True' tag to the logger.
+
+        Args:
+            logger_name (str): The name of the logger.
+
+        Returns:
+            LogAdapter: A logger with tags.
+        """
+        tags[USER_LOG_TAG] = True
+        user_logger = LogAdapter(cls.get_logger(logger_name), **tags)
+        return user_logger
+
+    @classmethod
+    def get_callback_logger(cls, logger_name: str, node_name: str, callback_name: str) -> LogAdapter:
+        """Adds 'user_log=True', 'node' and 'callback' tags to the logger.
+
+        Args:
+            logger_name (str): The name of the logger.
+
+        Returns:
+            LogAdapter: A logger with tags.
+        """
+        logger = cls.get_user_logger(logger_name, node=node_name, callback=callback_name)
+        return logger
+    
 
 class LogsQuery:
     """A class for querying logs"""
