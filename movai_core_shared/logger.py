@@ -29,7 +29,7 @@ from movai_core_shared.consts import (
     SYSLOG_MEASUREMENT,
     SYSLOGS_HANDLER_MSG_TYPE,
     PID,
-    USER_LOG_TAG
+    USER_LOG_TAG,
 )
 from movai_core_shared.envvars import (
     DEVICE_NAME,
@@ -150,7 +150,7 @@ class RemoteHandler(logging.StreamHandler):
             record.msg = str(record.msg)
 
         log_tags = {"robot": DEVICE_NAME, "level": record.levelname, "service": SERVICE_NAME}
-        
+
         syslog_tags = {
             "appname": SERVICE_NAME,
             "facility": "console",
@@ -162,7 +162,6 @@ class RemoteHandler(logging.StreamHandler):
         if hasattr(record, "tags"):
             log_tags.update(record.tags)
             syslog_tags.update(record.tags)
-        
 
         log_fields = {
             "module": record.module,
@@ -356,7 +355,9 @@ class Log:
         return user_logger
 
     @classmethod
-    def get_callback_logger(cls, logger_name: str, node_name: str, callback_name: str) -> LogAdapter:
+    def get_callback_logger(
+        cls, logger_name: str, node_name: str, callback_name: str
+    ) -> LogAdapter:
         """Adds 'user_log=True', 'node' and 'callback' tags to the logger.
 
         Args:
@@ -367,7 +368,7 @@ class Log:
         """
         logger = cls.get_user_logger(logger_name, node=node_name, callback=callback_name)
         return logger
-    
+
 
 class LogsQuery:
     """A class for querying logs"""
