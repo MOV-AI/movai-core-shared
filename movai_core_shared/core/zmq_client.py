@@ -10,7 +10,7 @@
    - Erez Zomer (erez@mov.ai) - 2022
 """
 import json
-from logging import getLogger
+import logging
 import zmq.asyncio
 import zmq
 
@@ -20,7 +20,7 @@ from movai_core_shared.exceptions import MessageError, MessageFormatError
 class ZMQClient:
     """A very basic implementation of ZMQ Client
     """
-    def __init__(self, identity: str, server: str) -> None:
+    def __init__(self, identity: str, server_addr: str) -> None:
         """Initializes the object and the connection to the serrver.
 
         Args:
@@ -29,13 +29,14 @@ class ZMQClient:
             server (str): The server addr and port in the form:
                 'tcp://server_addr:port'
         """
-        self._logger = getLogger(self.__class__.__name__)
+        self._logger = logging.getLogger(self.__class__.__name__)
         self._identity = identity.encode("utf-8")
+        self._addr = server_addr
         self.zmq_ctx = zmq.Context()
         self._socket = self.zmq_ctx.socket(zmq.DEALER)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
-        self._socket.connect(server)
+        self._socket.connect(self._addr)
 
     def __del__(self):
         """closes the socket when the object is destroyed.
