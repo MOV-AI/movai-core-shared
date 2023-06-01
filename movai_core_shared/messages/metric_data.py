@@ -20,7 +20,7 @@ metrics request fields:
 from typing import Optional
 
 from pydantic import BaseModel
-from dal.messages.general_data import Request
+from movai_core_shared.messages.general_data import Request
 
 
 class MetricData(BaseModel):
