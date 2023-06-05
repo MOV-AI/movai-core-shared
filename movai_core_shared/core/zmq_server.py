@@ -59,11 +59,11 @@ class ZMQServer(ABC):
         while self._running:
             try:
                 if self._debug:
-                    self._logger.debug("Waiting for new requests.")
+                    self._logger.debug("Waiting for new requests.\n")
                 request = await self._socket.recv_multipart()
                 asyncio.create_task(self._handle(request))
             except Exception as error:
-                self._logger.error(str(error))
+                self._logger.error(f"ZMQServer Error: {str(error)}")
                 continue
 
     async def _handle(self, msg_buffer) -> None:
@@ -81,7 +81,7 @@ class ZMQServer(ABC):
         
         if self._debug:
             general_request = Request(**request)
-            self._logger.debug(general_request)
+            self._logger.debug(general_request.__str__())
         
         response = await self.handle_request(request)
         response_required = request.get("response_required")
