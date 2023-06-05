@@ -112,5 +112,10 @@ class MessageClient:
         msg = {
             "data": data
         }
+        
+        if "data" in kwargs:
+            kwargs.pop("data")
+        
         msg.update(kwargs)
+        
         self._zmq_client.send(msg)
