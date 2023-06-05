@@ -34,5 +34,6 @@ class Request(BaseModel):
         response_required: {self.response_required}
         robot_info: {self.robot_info.__str__()}
         created: {self.created}
-        ==========================================================================================="""
+        ===========================================================================================
+        """
         return text
