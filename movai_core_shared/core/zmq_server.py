@@ -17,7 +17,6 @@ import logging
 import zmq
 import zmq.asyncio
 
-
 from movai_core_shared.exceptions import UnknownRequestError
 from movai_core_shared.messages.general_data import Request
 
@@ -26,18 +25,22 @@ class ZMQServer(ABC):
     """
     This class is a base class for any ZMQ server.
     """
-    def __init__(self, server_name: str, bind_addr: str, debug: bool = False) -> None:
+    def __init__(self, server_name: str, bind_addr: str, new_loop: bool = False, debug: bool = False) -> None:
         """Constructor"""
         if not isinstance(server_name, str):
             raise ValueError("server name must be of type string.")
         if not isinstance(bind_addr, str):
             raise ValueError("bind address must be of type string.")
+        if not isinstance(new_loop, bool):
+            raise ValueError("new_loop must be of type bool.")
         if not isinstance(debug, bool):
             raise ValueError("debug must be of type bool.")
         self._name = server_name
         self._addr = bind_addr
         self._logger = logging.getLogger(server_name)
+        self._new_loop = new_loop
         self._debug = debug
+        self._initialized = False
         self._running = False
         self._ctx = None
         self._socket = None
@@ -101,6 +104,9 @@ class ZMQServer(ABC):
         """close the zmq socket."""
         self._socket.close()
         self._ctx.destroy()
+        self._socket = None
+        self._ctx = None
+        self._initialized = False
 
     def __del__(self):
         """closes the socket when the object is destroyed.
@@ -110,6 +116,10 @@ class ZMQServer(ABC):
     def init_server(self):
         """Initializes the server to listen on the specified address.
         """
+        if self._initialized:
+            self._logger.error("Server is already initialized.")
+            return
+        
         try:
             self._set_context()
         except OSError:
@@ -118,11 +128,10 @@ class ZMQServer(ABC):
 
         try:
             self._bind()
+            self._initialized = True
         except OSError as error:
             self._logger.error(f"failed to bind socket on address {self._addr}")
-            self._logger.error(str(error))
-            self._close()
-            return 1
+            raise
 
     def run(self) -> int:
         """The main message dispatch loop.
@@ -130,11 +139,14 @@ class ZMQServer(ABC):
         Returns:
             int: 1 in case of exception.
         """
+        self.init_server()
         self._running = True
         sys.stdout.flush()
         self._logger.info(f"{self.__class__.__name__} is running!!!")
-        asyncio.run(self._accept())
-        self._close()
+        if self._new_loop:
+            asyncio.run(self._accept())
+        else:
+            asyncio.create_task(self._accept())
 
     def stop(self):
         """Stops the server from running.
