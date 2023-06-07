@@ -11,9 +11,9 @@
 """
 import json
 from logging import getLogger
+import threading
 import zmq.asyncio
 import zmq
-import threading
 
 from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
 from movai_core_shared.exceptions import MessageError, MessageFormatError
@@ -57,9 +57,8 @@ class ZMQClient:
             return
         try:
             data = json.dumps(msg).encode("utf8")
-            self.lock.acquire()
-            self._socket.send(data)
-            self.lock.release()
+            with self.lock:
+                self._socket.send(data)
         except (json.JSONDecodeError, TypeError) as error:
             self._logger.error(f"Got an {error} while trying to send message")
 
@@ -74,9 +73,8 @@ class ZMQClient:
         Returns:
             dict: The response from the server.
         """
-        self.lock.acquire()
-        response = self._socket.recv_multipart()
-        self.lock.release()
+        with self.lock:
+            response = self._socket.recv_multipart()
         index = len(response) - 1
         buffer = response[index]
 
