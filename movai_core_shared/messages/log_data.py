@@ -141,6 +141,23 @@ class LogRequest(Request):
         ==========================================================================================="""
         return text
 
+    def get_client_log_format(self) -> dict:
+        """Returns a dict with the format used to send to frontend.
+
+        Returns:
+            dict: A dictionary with the required fields.
+        """
+        log_msg = {
+            "time": self.created,
+            "robot": self.robot_info.robot,
+            "service": self.robot_info.service,
+            "module": self.req_data.log_fields.module,
+            "lineno": self.req_data.log_fields.lineno,
+            "funcName": self.req_data.log_fields.funcName,
+            "level": self.req_data.log_tags.level,
+            "message": self.req_data.log_fields.message
+            }
+        return log_msg
 
 class SyslogRequest(Request):
     req_data: SyslogData
