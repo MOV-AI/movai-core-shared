@@ -13,18 +13,20 @@ import json
 from logging import getLogger
 import zmq.asyncio
 import zmq
+import threading
 
 from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
 from movai_core_shared.exceptions import MessageError, MessageFormatError
 
+
 class ZMQClient:
-    """A very basic implementation of ZMQ Client
-    """
+    """A very basic implementation of ZMQ Client"""
+
     def __init__(self, identity: str, server: str) -> None:
         """Initializes the object and the connection to the serrver.
 
         Args:
-            identity (str): A unique idenetity which will be used by 
+            identity (str): A unique idenetity which will be used by
                 the server to identify the client.
             server (str): The server addr and port in the form:
                 'tcp://server_addr:port'
@@ -36,10 +38,10 @@ class ZMQClient:
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
         self._socket.connect(server)
+        self.lock = threading.Lock()
 
     def __del__(self):
-        """closes the socket when the object is destroyed.
-        """
+        """closes the socket when the object is destroyed."""
         # Close all sockets associated with this context and then terminate the context.
         self._socket.close()
         self.zmq_ctx.term()
@@ -54,8 +56,10 @@ class ZMQClient:
         if not isinstance(msg, dict):
             return
         try:
-            data = json.dumps(msg).encode('utf8')
+            data = json.dumps(msg).encode("utf8")
+            self.lock.acquire()
             self._socket.send(data)
+            self.lock.release()
         except (json.JSONDecodeError, TypeError) as error:
             self._logger.error(f"Got an {error} while trying to send message")
 
@@ -70,7 +74,9 @@ class ZMQClient:
         Returns:
             dict: The response from the server.
         """
+        self.lock.acquire()
         response = self._socket.recv_multipart()
+        self.lock.release()
         index = len(response) - 1
         buffer = response[index]
 
