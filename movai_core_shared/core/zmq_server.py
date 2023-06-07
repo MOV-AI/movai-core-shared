@@ -9,83 +9,64 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2023
 """
+from abc import ABC, abstractmethod
 import asyncio
 import sys
 import json
-from logging import Logger
+import logging
+import zmq
 import zmq.asyncio
 
 
 from movai_core_shared.exceptions import UnknownRequestError
-from movai_core_shared.logger import Log
+from movai_core_shared.messages.general_data import Request
 
-class ZMQServer:
+    
+class ZMQServer(ABC):
     """
     This class is a base class for any ZMQ server.
     """
-    def __init__(self, server_name: str, bind_addr: str, logger: Logger = None) -> None:
+    def __init__(self, server_name: str, bind_addr: str, debug: bool = False) -> None:
         """Constructor"""
         if not isinstance(server_name, str):
             raise ValueError("server name must be of type string.")
         if not isinstance(bind_addr, str):
             raise ValueError("bind address must be of type string.")
-        if logger is None:
-            logger = Log.get_logger(server_name)
-        if not isinstance(logger, Logger):
-            raise ValueError("logger must be of type logging.Logger.")
+        if not isinstance(debug, bool):
+            raise ValueError("debug must be of type bool.")
         self._name = server_name
         self._addr = bind_addr
-        self._logger = logger
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+        self._logger = logging.getLogger(server_name)
+        self._debug = debug
         self._running = False
+        self._ctx = None
         self._socket = None
-        self._poller = None
 
-    def init_server(self):
-        """Initializes the server to listen on the specified address.
-        """
-        try:
-            self._set_context()
+    def _set_context(self) -> None:
+        """Initializes the zmq context."""
+        self._ctx = zmq.asyncio.Context()
+        self._socket = self._ctx.socket(zmq.ROUTER)
+        if self._socket is None:
+            raise zmq.ZMQError(msg= "Failed to create socket")
 
-        except OSError:  # aka any socket error
-            self._logger.error("failed to create server socket")
-            return 1
+    def _bind(self) -> None:
+        """Binds the zmq socket to the appropriate file/address."""
+        self._socket.bind(self._addr)
+        self._logger.info(f"{self.__class__.__name__} is listening on {self._addr}")
 
-        # bind
-        try:
-            self._bind()
-
-        except OSError as error:
-            self._logger.error(f"failed to bind socket: {error}")
-            self._close()
-            return 1
-        
-
-    async def run(self) -> int:
-        """The main message dispatch loop.
-
-        Returns:
-            int: 1 in case of exception.
-        """
-        self._running = True        
-
-        # flush stdout
-        sys.stdout.flush()
-        self._logger.debug(f"{self.__class__.__name__} is running!!!")
+    async def _accept(self) -> None:
+        """accepts new connections requests to zmq."""
         while self._running:
-            # accept new request
             try:
-                await self._accept()
+                if self._debug:
+                    self._logger.debug("Waiting for new requests.\n")
+                request = await self._socket.recv_multipart()
+                asyncio.create_task(self._handle(request))
             except Exception as error:
-                self._logger.error(error)
+                self._logger.error(f"ZMQServer Error: {str(error)}")
                 continue
 
-        # End while self._running
-        self._close()
-
-    async def _handle(self, msg_buffer, socket) -> None:
-        # receive data
+    async def _handle(self, msg_buffer) -> None:
         index = len(msg_buffer) - 1
         buffer = msg_buffer[index]
 
@@ -94,61 +75,80 @@ class ZMQServer:
             return
 
         request_msg = json.loads(buffer)
-        # check for request in request
         if "request" not in request_msg:
             raise UnknownRequestError(f"The message format is unknown: {request_msg}.")
-
         request = request_msg.get("request")
-        # validate request and and handler
-        self._validate_request(request)
-        self._validate_handler(request)
-        # Handel the received request message
-        response = await self._handle_request(request)
-        # check if the client is expecting a response
+        
+        if self._debug:
+            general_request = Request(**request)
+            self._logger.debug(general_request.__str__())
+        
+        response = await self.handle_request(request)
         response_required = request.get("response_required")
         if response_required:
-            await self._handle_response(socket, msg_buffer, response)
+            if response.get("response") is None:
+                response = {"response": response}
+            response = await self.handle_response(response)
+            index = len(msg_buffer) - 1
+            msg_buffer[index] = json.dumps(response).encode("utf8")
+            self._socket.send_multipart(msg_buffer)
+            if self._debug:
+                self._logger.debug(f"{self._name} successfully sent a respone.")
+                
 
-    def _set_context(self) -> None:
-        """Initializes the zmq context."""
-        context = zmq.Context()
-        self._socket = context.socket(zmq.ROUTER)
-
-    def _bind(self) -> None:
-        """Binds the zmq socket to the appropriate file/address."""
-        self._logger.debug(f"Going to listen on {self._addr}")
-        self._socket.bind(self._addr)
-
-    async def _accept(self) -> None:
-        """accepts new connections requests to zmq."""
-        if self._socket is not None:
-            self._logger.debug("Waiting for new requests.")
-            request = await self._socket.recv_multipart()
-            self._logger.debug("Accepting new request.")
-            self._logger.debug(f"request:\n{request}")
-            await asyncio.create_task(self._handle(request, self._socket))
-        else:
-            self._logger.warning("Cannot accept new requests, socket is not initialized.")
 
     def _close(self) -> None:
         """close the zmq socket."""
         self._socket.close()
+        self._ctx.destroy()
 
-    def _handle_response(self, socket, msg_buffer, response) -> None:
-        """Send a response to the client.
+    def __del__(self):
+        """closes the socket when the object is destroyed.
+        """
+        self._close()
+
+    def init_server(self):
+        """Initializes the server to listen on the specified address.
+        """
+        try:
+            self._set_context()
+        except OSError:
+            self._logger.error("failed to create server socket")
+            return 1
+
+        try:
+            self._bind()
+        except OSError as error:
+            self._logger.error(f"failed to bind socket on address {self._addr}")
+            self._logger.error(str(error))
+            self._close()
+            return 1
+
+    def run(self) -> int:
+        """The main message dispatch loop.
+
+        Returns:
+            int: 1 in case of exception.
+        """
+        self._running = True
+        sys.stdout.flush()
+        self._logger.info(f"{self.__class__.__name__} is running!!!")
+        asyncio.run(self._accept())
+        self._close()
+
+    def stop(self):
+        """Stops the server from running.
+        """
+        self._running = False
+
+    async def handle_response(self, response) -> dict:
+        """Handles the response before it is sent back to the client.
 
         Args:
-            socket: The socket allocated for communicating with the robot
-            msg_buffer: The buffer for sending the response message
-            response: The response message
+            response: The response dict.
         """
-        if response.get("response") is None:
-            response = {"response": response}
-        # send the response back to the client
-        index = len(msg_buffer) - 1
-        msg_buffer[index] = json.dumps(response).encode("utf8")
-        socket.send_multipart(msg_buffer)
-        self._logger.debug(f"{self._name} successfully sent a respone.")
+        pass
 
-    async def _handle_request(self, request: dict):
+    @abstractmethod
+    async def handle_request(self, request: dict) -> dict:
         pass

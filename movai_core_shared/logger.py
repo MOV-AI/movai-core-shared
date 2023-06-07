@@ -14,11 +14,11 @@ from logging.handlers import TimedRotatingFileHandler
 import threading
 import syslog
 import traceback
+
 from movai_core_shared.common.utils import get_package_version
 from movai_core_shared.common.time import current_timestamp_int
 
 from movai_core_shared.consts import (
-    USER_LOG_TAG,
     DEFAULT_LOG_LIMIT,
     DEFAULT_LOG_OFFSET,
     LOGS_HANDLER_MSG_TYPE,
@@ -29,6 +29,7 @@ from movai_core_shared.consts import (
     SYSLOG_MEASUREMENT,
     SYSLOGS_HANDLER_MSG_TYPE,
     PID,
+    USER_LOG_TAG,
 )
 from movai_core_shared.envvars import (
     DEVICE_NAME,
@@ -145,10 +146,10 @@ class RemoteHandler(logging.StreamHandler):
             record: The Python log message data record
 
         """
-        log_tags = {"robot": DEVICE_NAME, "level": record.levelname, "service": SERVICE_NAME}
+        if isinstance(record.msg, Exception):
+            record.msg = str(record.msg)
 
-        if hasattr(record, "tags"):
-            log_tags.update(record.tags)
+        log_tags = {"robot": DEVICE_NAME, "level": record.levelname, "service": SERVICE_NAME}
 
         syslog_tags = {
             "appname": SERVICE_NAME,
@@ -157,6 +158,10 @@ class RemoteHandler(logging.StreamHandler):
             "hostname": DEVICE_NAME,
             "severity": record.levelname,
         }
+
+        if hasattr(record, "tags"):
+            log_tags.update(record.tags)
+            syslog_tags.update(record.tags)
 
         log_fields = {
             "module": record.module,
@@ -240,6 +245,68 @@ def get_remote_handler(log_level=logging.NOTSET):
     return remote_handler
 
 
+class LogAdapter(logging.LoggerAdapter):
+    """
+    A LogAdapter used to expose the logger inside a callback, we should
+    not need to use this adapter outside a callback.
+
+    py_logger = Log.get_logger("logn ame")
+    logger = LogAdapter(py_logger, tag1="value", tag2="value")
+
+    Usage:
+        logger.debug(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
+        logger.info(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
+        logger.warning(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
+        logger.error(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
+        logger.critical(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
+
+    """
+
+    def __init__(self, logger, **kwargs):
+        super().__init__(logger, None)
+        self._tags = kwargs
+
+    def _exc_tb(self):
+        """get latest exception (if any) and format it
+        only works "inside" an `except` block"""
+        etype, exc, tb = sys.exc_info()
+        if exc is None:
+            # no exception
+            return ""
+        return "\n" + str.join("", traceback.format_exception(etype, exc, tb)).strip().replace(
+            "%", "%%"
+        )  # final new line
+
+    def get_message(self, *args, **kwargs):
+        if "message" in kwargs:
+            message = kwargs.get("message", "")
+        elif "msg" in kwargs:
+            message = kwargs.get("msg", "")
+        else:
+            message = str(args[0])
+        message, kwargs = self.process(message, kwargs)
+        message += self._exc_tb()
+        return message, kwargs
+
+    def error(self, *args, **kwargs):
+        new_msg, kwargs = self.get_message(*args, **kwargs)
+        self.logger.error(new_msg, stacklevel=2, **kwargs)
+
+    def critical(self, *args, **kwargs):
+        new_msg, kwargs = self.get_message(*args, **kwargs)
+        self.logger.critical(new_msg, stacklevel=2, **kwargs)
+
+    def process(self, msg, kwargs):
+        """
+        Method called to extract the tags from the message
+        """
+        raw_tags = dict(kwargs)
+        raw_tags.update(self._tags)
+        tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])
+        kwargs = {"extra": {"tags": raw_tags}}
+        return f"[{tags}] {msg}", kwargs
+
+
 class Log:
     """
     A static class to help create logger instances
@@ -273,68 +340,34 @@ class Log:
         logger.propagate = False
         return logger
 
+    @classmethod
+    def get_user_logger(cls, logger_name: str, **tags: dict) -> LogAdapter:
+        """Add 'user_log=True' tag to the logger.
 
-class LogAdapter(logging.LoggerAdapter):
-    """
-    A LogAdapter used to expose the logger inside a callback, we should
-    not need to use this adapter outside a callback.
+        Args:
+            logger_name (str): The name of the logger.
 
-    py_logger = Log.get_logger("logn ame")
-    logger = LogAdapter(py_logger, tag1="value", tag2="value")
-
-    Usage:
-        logger.debug(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
-        logger.info(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
-        logger.warning(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
-        logger.error(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
-        logger.critical(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
-
-    """
-
-    def __init__(self, logger, **kwargs):
-        super().__init__(logger, None)
-        self._tags = kwargs
-        self._tags[USER_LOG_TAG] = True
-
-    def _exc_tb(self):
-        """get latest exception (if any) and format it
-        only works "inside" an `except` block"""
-        etype, exc, tb = sys.exc_info()
-        if exc is None:
-            # no exception
-            return ""
-        return "\n" + str.join("", traceback.format_exception(etype, exc, tb)).strip().replace(
-            "%", "%%"
-        )  # final new line
-
-    def get_message(self, *args, **kwargs):
-        if "message" in kwargs:
-            message = kwargs.get("message", "")
-        elif "msg" in kwargs:
-            message = kwargs.get("msg", "")
-        else:
-            message = str(args[0])
-        message, _ = self.process(message, kwargs)
-        message += self._exc_tb()
-        return message
-
-    def error(self, *args, **kwargs):
-        new_msg = self.get_message(*args, **kwargs)
-        self.logger.error(new_msg, stacklevel=2)
-
-    def critical(self, *args, **kwargs):
-        new_msg = self.get_message(*args, **kwargs)
-        self.logger.critical(new_msg, stacklevel=2)
-
-    def process(self, msg, kwargs):
+        Returns:
+            LogAdapter: A logger with tags.
         """
-        Method called to extract the tags from the message
+        tags[USER_LOG_TAG] = True
+        user_logger = LogAdapter(cls.get_logger(logger_name), **tags)
+        return user_logger
+
+    @classmethod
+    def get_callback_logger(
+        cls, logger_name: str, node_name: str, callback_name: str
+    ) -> LogAdapter:
+        """Adds 'user_log=True', 'node' and 'callback' tags to the logger.
+
+        Args:
+            logger_name (str): The name of the logger.
+
+        Returns:
+            LogAdapter: A logger with tags.
         """
-        raw_tags = dict(kwargs)
-        raw_tags.update(self._tags)
-        tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])
-        kwargs = {"extra": {"tags": raw_tags}}
-        return f"[{tags}] {msg}", kwargs
+        logger = cls.get_user_logger(logger_name, node=node_name, callback=callback_name)
+        return logger
 
 
 class LogsQuery:
