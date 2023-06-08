@@ -106,6 +106,19 @@ TIMEOUT_PROCESS_SIGTERM = 2
 # Domains
 INTERNAL_DOMAIN = "internal"
 
+# Roles
+ADMIN_ROLE = "ADMIN"
+OPERATOR_ROLE = "OPERATOR"
+DEPLOYER_ROLE = "DEPLOYER"
+
+#permissions
+READ_PERMISSION = "read"
+UPDATE_PERMISSION = "update"
+CREATE_PERMISSION = "create"
+DELETE_PERMISSION = "delete"
+EXECUTE_PERMISSION = "execute"
+RESET_PERMISSION = "reset"
+
 #container_names
 INFLUXDB_HOST = "influxdb"
 MESSAGE_SERVER_HOST = "message-server"
