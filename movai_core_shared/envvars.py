@@ -2,7 +2,7 @@
 import os
 from logging import DEBUG, NOTSET, INFO
 import socket
-from .consts import MESSAGE_SERVER_HOST
+from .consts import MESSAGE_SERVER_HOST, ADMIN_ROLE
 
 # Setting for logging verbosity levels
 # Will be set only once at startup
@@ -124,7 +124,8 @@ DEFAULT_JWT_ACCESS_DELTA_SECS = int(os.getenv('DEFAULT_JWT_ACCESS_DELTA_SECS', "
 DEFAULT_JWT_REFRESH_DELTA_DAYS = int(os.getenv('DEFAULT_JWT_REFRESH_DELTA_DAYS', "7"))
 
 #General Vars
-DEFAULT_ROLE_NAME = os.getenv('DEFAULT_ROLE_NAME', "ADMIN")
+
+DEFAULT_ROLE_NAME = os.getenv('DEFAULT_ROLE_NAME', ADMIN_ROLE)
 FLEET_NAME = os.getenv('FLEET_NAME', "movai")
 DEVICE_NAME = os.getenv('DEVICE_NAME', "UNDEFINED_ROBOT_NAME")
 SERVICE_NAME = os.getenv('HOSTNAME', socket.gethostname())
