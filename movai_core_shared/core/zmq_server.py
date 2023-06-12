@@ -10,12 +10,14 @@
    - Erez Zomer (erez@mov.ai) - 2023
 """
 from abc import ABC, abstractmethod
+from beartype import beartype
 import asyncio
 import sys
 import json
 import logging
 import zmq
 import zmq.asyncio
+from threading import Lock
 
 from movai_core_shared.exceptions import UnknownRequestError
 from movai_core_shared.messages.general_data import Request
@@ -25,16 +27,9 @@ class ZMQServer(ABC):
     """
     This class is a base class for any ZMQ server.
     """
+    @beartype
     def __init__(self, server_name: str, bind_addr: str, new_loop: bool = False, debug: bool = False) -> None:
         """Constructor"""
-        if not isinstance(server_name, str):
-            raise ValueError("server name must be of type string.")
-        if not isinstance(bind_addr, str):
-            raise ValueError("bind address must be of type string.")
-        if not isinstance(new_loop, bool):
-            raise ValueError("new_loop must be of type bool.")
-        if not isinstance(debug, bool):
-            raise ValueError("debug must be of type bool.")
         self._name = server_name
         self._addr = bind_addr
         self._logger = logging.getLogger(server_name)
@@ -44,6 +39,7 @@ class ZMQServer(ABC):
         self._running = False
         self._ctx = None
         self._socket = None
+        self._lock = Lock()
 
     def _set_context(self) -> None:
         """Initializes the zmq context."""
@@ -63,6 +59,7 @@ class ZMQServer(ABC):
             try:
                 if self._debug:
                     self._logger.debug("Waiting for new requests.\n")
+                #with self._lock:
                 request = await self._socket.recv_multipart()
                 asyncio.create_task(self._handle(request))
             except Exception as error:
@@ -91,10 +88,11 @@ class ZMQServer(ABC):
         if response_required:
             if response.get("response") is None:
                 response = {"response": response}
-            response = await self.handle_response(response)
+            await self.handle_response(response)
             index = len(msg_buffer) - 1
             msg_buffer[index] = json.dumps(response).encode("utf8")
-            self._socket.send_multipart(msg_buffer)
+            with self._lock:
+                self._socket.send_multipart(msg_buffer)
             if self._debug:
                 self._logger.debug(f"{self._name} successfully sent a respone.")
                 
@@ -117,7 +115,7 @@ class ZMQServer(ABC):
         """Initializes the server to listen on the specified address.
         """
         if self._initialized:
-            self._logger.error("Server is already initialized.")
+            self._logger.error(f"{self._name} is already initialized.")
             return
         
         try:
@@ -140,6 +138,9 @@ class ZMQServer(ABC):
             int: 1 in case of exception.
         """
         self.init_server()
+        if self._running:
+            self._logger.warning(f"{self._name} is already ruuning")
+            return
         self._running = True
         sys.stdout.flush()
         self._logger.info(f"{self.__class__.__name__} is running!!!")
