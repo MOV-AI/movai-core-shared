@@ -14,7 +14,7 @@ import random
 import time
 
 from movai_core_shared.core.zmq_client import ZMQClient
-from movai_core_shared.exceptions import ArgumentError
+from movai_core_shared.exceptions import ArgumentError, MessageFormatError
 from movai_core_shared.envvars import (
     DEVICE_NAME,
     FLEET_NAME,
@@ -57,7 +57,7 @@ class MessageClient:
         identity = f"{DEVICE_NAME}_message_client_{random.getrandbits(24)}"
         self._zmq_client = ZMQClient(identity, self._server_addr)
 
-    def send_request(self,
+    async def send_request(self,
                      msg_type: str,
                      data: dict,
                      creation_time: str = None,
@@ -85,12 +85,24 @@ class MessageClient:
             }
         }
 
-        self._zmq_client.send(request)
+        await self._zmq_client.send(request)
         if respose_required:
-            return self._zmq_client.recieve()
+            raw_response = await self._zmq_client.recieve()
+            
+            if not isinstance(raw_response, dict):
+                raise MessageFormatError(f"The message format is unknown: {raw_response}.")
+            
+            if "response" in raw_response:
+                response = raw_response
+            else:
+                response = {
+                    "reponse": raw_response
+                }
+                
+            return response
         return {}
 
-    def foraward_request(self, request_msg: dict) -> dict:
+    async def foraward_request(self, request_msg: dict) -> dict:
         """forwards a request to different message-server (This function does 
         not adds the meta-data info as send_request does).
 
@@ -98,16 +110,16 @@ class MessageClient:
             request_msg (dict): The request to forward.
         """
         request = {"request": request_msg}
-        self._zmq_client.send(request)
+        await self._zmq_client.send(request)
         if request_msg["response_required"]:
             return self._zmq_client.recieve()
         return {}
 
-    def send_msg(self, data, **kwargs) -> None:
+    async def send_msg(self, data: dict, **kwargs) -> None:
         """sends a simple message as raw data, wan't wait for response
 
         Args:
-            data (_type_): _description_
+            data (dict): The data to send to server.
         """
         msg = {
             "data": data
@@ -118,4 +130,4 @@ class MessageClient:
         
         msg.update(kwargs)
         
-        self._zmq_client.send(msg)
+        await self._zmq_client.send(msg)
