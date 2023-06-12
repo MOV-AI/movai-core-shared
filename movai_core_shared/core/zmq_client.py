@@ -34,7 +34,7 @@ class ZMQClient:
         self._logger = getLogger(self.__class__.__name__)
         self._identity = identity.encode("utf-8")
         self._addr = server_addr
-        self.zmq_ctx = zmq.Context()
+        self.zmq_ctx = zmq.asyncio.Context()
         self._socket = self.zmq_ctx.socket(zmq.DEALER)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
@@ -47,7 +47,7 @@ class ZMQClient:
         self._socket.close()
         self.zmq_ctx.term()
 
-    def send(self, msg: dict) -> None:
+    async def send(self, msg: dict) -> None:
         """
         Send the message request over ZeroMQ to the local robot message server.
 
@@ -59,13 +59,13 @@ class ZMQClient:
         try:
             data = json.dumps(msg).encode("utf8")
             with self.lock:
-                self._socket.send(data)
+                await self._socket.send(data)
         except (json.JSONDecodeError, TypeError) as error:
             self._logger.error(
                 f"Got error of type {error.__class__.__name__} while trying to send message"
             )
 
-    def recieve(self) -> dict:
+    async def recieve(self) -> dict:
         """
         Recieves a message response over ZeroMQ from the server.
 
@@ -77,7 +77,7 @@ class ZMQClient:
             dict: The response from the server.
         """
         with self.lock:
-            response = self._socket.recv_multipart()
+            response = await self._socket.recv_multipart()
         index = len(response) - 1
         buffer = response[index]
 
@@ -85,8 +85,5 @@ class ZMQClient:
             raise MessageError("Got an empty response!")
 
         msg = json.loads(buffer)
-        # check for request in request
-        if "response" not in msg:
-            raise MessageFormatError(f"The message format is unknown: {msg}.")
-        response_msg = msg["response"]
-        return response_msg
+
+        return msg
