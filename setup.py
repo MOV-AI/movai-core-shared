@@ -4,6 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 requirements = [
+    "beartype==0.14.1",
     "cryptography==2.8",
     "requests==2.22.0",
     "pyzmq==24.0.1",
