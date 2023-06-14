@@ -24,6 +24,7 @@ async def test_with_reponse():
             raise ValueError("The field 'extra_data' is missing")
         if response.get("extra_data") != "Hello from server":
             raise ValueError("The field 'extra_data' field is different than expected")
+        LOGGER.info("test_with_reponse has completed")
     except Exception as err:
         LOGGER.error(err)
         
