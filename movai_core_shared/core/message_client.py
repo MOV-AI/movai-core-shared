@@ -57,7 +57,7 @@ class MessageClient:
         identity = f"{DEVICE_NAME}_message_client_{random.getrandbits(24)}"
         self._zmq_client = ZMQClient(identity, self._server_addr)
 
-    async def send_request(self,
+    def send_request(self,
                      msg_type: str,
                      data: dict,
                      creation_time: str = None,
@@ -85,9 +85,9 @@ class MessageClient:
             }
         }
 
-        await self._zmq_client.send(request)
+        self._zmq_client.send(request)
         if respose_required:
-            raw_response = await self._zmq_client.recieve()
+            raw_response = self._zmq_client.recieve()
             
             if not isinstance(raw_response, dict):
                 raise MessageFormatError(f"The message format is unknown: {raw_response}.")
@@ -102,7 +102,7 @@ class MessageClient:
             return response
         return {}
 
-    async def foraward_request(self, request_msg: dict) -> dict:
+    def foraward_request(self, request_msg: dict) -> dict:
         """forwards a request to different message-server (This function does 
         not adds the meta-data info as send_request does).
 
@@ -110,7 +110,7 @@ class MessageClient:
             request_msg (dict): The request to forward.
         """
         request = {"request": request_msg}
-        await self._zmq_client.send(request)
+        self._zmq_client.send(request)
         if request_msg["response_required"]:
             return self._zmq_client.recieve()
         return {}
@@ -130,4 +130,4 @@ class MessageClient:
         
         msg.update(kwargs)
         
-        await self._zmq_client.send(msg)
+        self._zmq_client.send(msg)
