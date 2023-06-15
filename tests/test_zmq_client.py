@@ -8,13 +8,13 @@ LOGGER = Log.get_logger(__name__)
 TEST_SERVER_ADDR = "tcp://0.0.0.0:30000"
         
 
-async def test_with_reponse():
+def test_with_reponse():
     try:
         client = MessageClient(TEST_SERVER_ADDR, "test")
         data = {
             "msg": "Hello from client"
         }
-        response = await client.send_request("test", data, None, True)
+        response = client.send_request("test", data, None, True)
         LOGGER.info(response)
         if response.get("response") is None:
             raise ValueError("The field 'reponse' is missing")
@@ -29,4 +29,4 @@ async def test_with_reponse():
         LOGGER.error(err)
         
 if __name__ == "__main__":
-    asyncio.run(test_with_reponse())
+    test_with_reponse()

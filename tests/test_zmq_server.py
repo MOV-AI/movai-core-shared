@@ -34,6 +34,7 @@ class TestServer(ZMQServer):
 
     async def handle_response(self, response):
         response["extra_data"] = "Hello from server"
+        self.stop()
         return response
 
 
@@ -42,28 +43,30 @@ def create_test_server():
     server.run()
         
 
-#class TestSuite(unittest.TestCase):
-#    server = TestServer()
-#    client = MessageClient(TEST_SERVER_ADDR)
-#    client_msg = "Hello from client"
-#
-##    def test_no_response(self):
-##        p = Process(target=create_test_server)
-##        p.start()
-##        self.client.send_request("test", self.client_msg)
-##        p.join()
-#
-#    def test_with_reponse(self):
-#        p = Process(target=create_test_server)
-#        p.start()
-#        response = self.client.send_request("test", self.client_msg)
-#        LOGGER.info(response)
-#        self.assertFalse(response.get("response") is None)
-#        self.assertTrue(response.get("response") == "ok")
-#        self.assertFalse(response.get("extra_data") is None)
-#        self.assertTrue(response.get("extra_data") == "Hello from server")
-#        p.join(timeout=5)
+class TestZMQ(unittest.TestCase):
+    
+    @classmethod
+    def setUpClass(self):
+        self.client = MessageClient(TEST_SERVER_ADDR)
+        self.data = {
+            "msg": "Hello from client"
+        }
+
+    def test_with_reponse(self):
+        try:
+            p = Process(target=create_test_server)
+            p.start()
+            response = self.client.send_request("test", self.data, None, True)
+            p.kill()
+            LOGGER.info(response)
+            self.assertFalse(response.get("response") is None)
+            self.assertTrue(response["response"].get("status") == "ok")
+            self.assertFalse(response.get("extra_data") is None)
+            self.assertTrue(response.get("extra_data") == "Hello from server")
+        except Exception as exc:
+            LOGGER.error(exc)
+            p.kill()
 
         
 if __name__ == "__main__":
-    create_test_server()
+    unittest.main()
