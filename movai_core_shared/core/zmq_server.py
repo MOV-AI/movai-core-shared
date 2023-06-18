@@ -59,12 +59,12 @@ class ZMQServer(ABC):
             try:
                 if self._debug:
                     self._logger.debug("Waiting for new requests.\n")
-                #with self._lock:
                 request = await self._socket.recv_multipart()
                 asyncio.create_task(self._handle(request))
             except Exception as error:
                 self._logger.error(f"ZMQServer Error: {str(error)}")
                 continue
+        self._close()
 
     async def _handle(self, msg_buffer) -> None:
         index = len(msg_buffer) - 1
@@ -95,8 +95,6 @@ class ZMQServer(ABC):
                 self._socket.send_multipart(msg_buffer)
             if self._debug:
                 self._logger.debug(f"{self._name} successfully sent a respone.")
-                
-
 
     def _close(self) -> None:
         """close the zmq socket."""
