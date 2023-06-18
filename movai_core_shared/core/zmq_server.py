@@ -59,7 +59,8 @@ class ZMQServer(ABC):
             try:
                 if self._debug:
                     self._logger.debug("Waiting for new requests.\n")
-                request = await self._socket.recv_multipart()
+                with self._lock:
+                    request = await self._socket.recv_multipart()
                 asyncio.create_task(self._handle(request))
             except Exception as error:
                 self._logger.error(f"ZMQServer Error: {str(error)}")
@@ -140,7 +141,6 @@ class ZMQServer(ABC):
             self._logger.warning(f"{self._name} is already ruuning")
             return
         self._running = True
-        sys.stdout.flush()
         self._logger.info(f"{self.__class__.__name__} is running!!!")
         if self._new_loop:
             asyncio.run(self._accept())
@@ -162,4 +162,9 @@ class ZMQServer(ABC):
 
     @abstractmethod
     async def handle_request(self, request: dict) -> dict:
+        """Handles the request recieved by the server.
+
+        Args:
+            request(dict): The request recieved.
+        """
         pass
