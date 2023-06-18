@@ -34,39 +34,13 @@ class TestServer(ZMQServer):
 
     async def handle_response(self, response):
         response["extra_data"] = "Hello from server"
-        self.stop()
         return response
 
 
 def create_test_server():
     server = TestServer()
     server.run()
-        
-
-class TestZMQ(unittest.TestCase):
-    
-    @classmethod
-    def setUpClass(self):
-        self.client = MessageClient(TEST_SERVER_ADDR)
-        self.data = {
-            "msg": "Hello from client"
-        }
-
-    def test_with_reponse(self):
-        try:
-            p = Process(target=create_test_server)
-            p.start()
-            response = self.client.send_request("test", self.data, None, True)
-            p.kill()
-            LOGGER.info(response)
-            self.assertFalse(response.get("response") is None)
-            self.assertTrue(response["response"].get("status") == "ok")
-            self.assertFalse(response.get("extra_data") is None)
-            self.assertTrue(response.get("extra_data") == "Hello from server")
-        except Exception as exc:
-            LOGGER.error(exc)
-            p.kill()
 
         
 if __name__ == "__main__":
-    unittest.main()
+    create_test_server()
