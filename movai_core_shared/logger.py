@@ -43,7 +43,7 @@ from movai_core_shared.envvars import (
     SYSLOG_ENABLED,
 )
 from movai_core_shared.core.message_client import MessageClient
-from movai_core_shared.common.utils import is_enteprise, is_manager
+from movai_core_shared.common.utils import is_enterprise, is_manager
 from movai_core_shared.common.time import validate_time
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
@@ -333,7 +333,7 @@ class Log:
             logger.addHandler(_get_console_handler())
         if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(_get_file_handler())
-        if is_enteprise():
+        if is_enterprise():
             if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
                 logger.addHandler(get_remote_handler())
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)

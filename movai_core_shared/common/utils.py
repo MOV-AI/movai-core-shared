@@ -21,7 +21,7 @@ def is_manager() -> bool:
     """
     return REDIS_MASTER_HOST in (None, "redis-master")
 
-def is_enteprise() -> bool:
+def is_enterprise() -> bool:
     """Check the existence of the movai_core_enterprise package.
 
     Returns:
