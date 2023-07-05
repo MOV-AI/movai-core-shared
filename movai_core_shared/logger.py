@@ -199,11 +199,14 @@ class RemoteHandler(logging.StreamHandler):
             self._message_client.send_request(SYSLOGS_HANDLER_MSG_TYPE, syslog_data)
 
 
-def _get_console_handler():
+def _get_console_handler(stream_config=None):
     """
     Set up the stdout handler
     """
-    console_handler = StdOutHandler()
+    if stream_config is None:
+        console_handler = StdOutHandler()
+    elif stream_config == "callback":
+        console_handler = StdOutHandler(stream=sys.stdout)
     console_handler.setFormatter(LOG_FORMATTER)
     console_handler.setLevel(MOVAI_STDOUT_VERBOSITY_LEVEL)
     return console_handler
@@ -322,7 +325,7 @@ class Log:
         Log.LOG_FILE = name
 
     @staticmethod
-    def get_logger(logger_name: str):
+    def get_logger(logger_name: str, stream_config=None):
         """
         Get a logger instance
         """
@@ -330,7 +333,7 @@ class Log:
         if logger.hasHandlers():
             logger.handlers = []
         if MOVAI_STDOUT_VERBOSITY_LEVEL != logging.NOTSET:
-            logger.addHandler(_get_console_handler())
+            logger.addHandler(_get_console_handler(stream_config))
         if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(_get_file_handler())
         if is_enteprise():
@@ -366,7 +369,11 @@ class Log:
         Returns:
             LogAdapter: A logger with tags.
         """
-        logger = cls.get_user_logger(logger_name, node=node_name, callback=callback_name)
+        tags = {}
+        tags[USER_LOG_TAG] = True
+        tags["node"] = node_name
+        tags["callback"] = callback_name
+        logger = LogAdapter(cls.get_logger(logger_name, "callback"), **tags)
         return logger
 
 
