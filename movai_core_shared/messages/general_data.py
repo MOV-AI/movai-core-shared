@@ -1,5 +1,15 @@
 from pydantic import BaseModel
 
+def print_dict(message: dict, space_count: int):
+    spacing = " "*4
+    text = ""
+    for key, val in message.items():
+        if hasattr(val, "__dict__"):
+            text += print_dict(val.__dict__, space_count+1)
+        else:
+            text += space_count*spacing + f"{key}: {val}\n"
+    return text
+
 
 class RobotInfo(BaseModel):
     """
@@ -12,14 +22,6 @@ class RobotInfo(BaseModel):
     service: str
     id: str
 
-    def __str__(self) -> str:
-        text = f"""
-            fleet: {self.fleet}
-            robot: {self.robot}
-            service: {self.service}
-            id: {self.id}"""
-        return text
-
 
 class Request(BaseModel):
     req_type: str
@@ -28,12 +30,7 @@ class Request(BaseModel):
     robot_info: RobotInfo
 
     def __str__(self):
-        text = f"""
-        ===========================================================================================
-        req_type: {self.req_type}
-        response_required: {self.response_required}
-        robot_info: {self.robot_info.__str__()}
-        created: {self.created}
-        ===========================================================================================
-        """
+        text = "\n" + "="*100+ "\n"
+        text += print_dict(self.__dict__, 0)
+        text += "="*100+ "\n"
         return text

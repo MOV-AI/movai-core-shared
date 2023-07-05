@@ -116,7 +116,7 @@ class MessageClient:
         return {}
 
     async def send_msg(self, data: dict, **kwargs) -> None:
-        """sends a simple message as raw data, wan't wait for response
+        """sends a simple message as raw data, want wait for response
 
         Args:
             data (dict): The data to send to server.

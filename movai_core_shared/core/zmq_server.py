@@ -27,6 +27,7 @@ class ZMQServer(ABC):
     """
     This class is a base class for any ZMQ server.
     """
+    _initialized = {}
     @beartype
     def __init__(self, server_name: str, bind_addr: str, new_loop: bool = False, debug: bool = False) -> None:
         """Constructor"""
@@ -65,7 +66,7 @@ class ZMQServer(ABC):
             except Exception as error:
                 self._logger.error(f"ZMQServer Error: {str(error)}")
                 continue
-        self._close()
+        self.close()
 
     async def _handle(self, msg_buffer) -> None:
         index = len(msg_buffer) - 1
@@ -97,7 +98,7 @@ class ZMQServer(ABC):
             if self._debug:
                 self._logger.debug(f"{self._name} successfully sent a respone.")
 
-    def _close(self) -> None:
+    def close(self) -> None:
         """close the zmq socket."""
         self._socket.close()
         self._ctx.destroy()
@@ -108,7 +109,7 @@ class ZMQServer(ABC):
     def __del__(self):
         """closes the socket when the object is destroyed.
         """
-        self._close()
+        self.close()
 
     def init_server(self):
         """Initializes the server to listen on the specified address.
