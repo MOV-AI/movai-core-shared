@@ -30,6 +30,7 @@ from movai_core_shared.consts import (
     SYSLOGS_HANDLER_MSG_TYPE,
     PID,
     USER_LOG_TAG,
+    CALLBACK_LOGGER
 )
 from movai_core_shared.envvars import (
     DEVICE_NAME,
@@ -205,8 +206,10 @@ def _get_console_handler(stream_config=None):
     """
     if stream_config is None:
         console_handler = StdOutHandler()
-    elif stream_config == "callback":
+    elif stream_config == CALLBACK_LOGGER:
         console_handler = StdOutHandler(stream=sys.stdout)
+    else:
+        raise ValueError("Unknown stream config for the console logger!")
     console_handler.setFormatter(LOG_FORMATTER)
     console_handler.setLevel(MOVAI_STDOUT_VERBOSITY_LEVEL)
     return console_handler
@@ -373,7 +376,7 @@ class Log:
         tags[USER_LOG_TAG] = True
         tags["node"] = node_name
         tags["callback"] = callback_name
-        logger = LogAdapter(cls.get_logger(logger_name, "callback"), **tags)
+        logger = LogAdapter(cls.get_logger(logger_name, CALLBACK_LOGGER), **tags)
         return logger
 
 
