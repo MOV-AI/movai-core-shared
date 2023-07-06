@@ -4,8 +4,6 @@ from movai_core_shared.messages.general_data import Request
 from movai_core_shared.messages.metric_data import MetricData
 
 
-
-
 class AlertFields(BaseModel):
     name: str
     info: str
