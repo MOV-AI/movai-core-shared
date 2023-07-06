@@ -1,9 +1,12 @@
 from pydantic import BaseModel
 
 from movai_core_shared.messages.general_data import Request
+from movai_core_shared.messages.metric_data import MetricData
 
 
-class MetricData(BaseModel):
+
+
+class AlertFields(BaseModel):
     name: str
     info: str
     action: str
@@ -12,10 +15,10 @@ class MetricData(BaseModel):
     send_email: bool = False
 
 
-class AlertData(BaseModel):
+class AlertData(MetricData):
     measurement: str
     metric_type: str
-    metric_data: MetricData
+    metric_fields: AlertFields
 
 
 class AlertRequest(Request):
