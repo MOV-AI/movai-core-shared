@@ -65,10 +65,10 @@ class LogRequest(Request):
             "lineno": self.req_data.log_fields.lineno,
             "funcName": self.req_data.log_fields.funcName,
             "level": self.req_data.log_tags.level,
-            "message": self.req_data.log_fields.message
-            }
+            "message": self.req_data.log_fields.message,
+        }
         return log_msg
+
 
 class SyslogRequest(Request):
     req_data: SyslogData
-

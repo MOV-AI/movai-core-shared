@@ -31,4 +31,3 @@ class MetricQueryData(BaseModel):
 
 class MetricQueryRequest(Request):
     req_data: MetricQueryData
-

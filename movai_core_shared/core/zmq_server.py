@@ -22,14 +22,18 @@ from threading import Lock
 from movai_core_shared.exceptions import UnknownRequestError
 from movai_core_shared.messages.general_data import Request
 
-    
+
 class ZMQServer(ABC):
     """
     This class is a base class for any ZMQ server.
     """
+
     _initialized = {}
+
     @beartype
-    def __init__(self, server_name: str, bind_addr: str, new_loop: bool = False, debug: bool = False) -> None:
+    def __init__(
+        self, server_name: str, bind_addr: str, new_loop: bool = False, debug: bool = False
+    ) -> None:
         """Constructor"""
         self._name = server_name
         self._addr = bind_addr
@@ -47,7 +51,7 @@ class ZMQServer(ABC):
         self._ctx = zmq.asyncio.Context()
         self._socket = self._ctx.socket(zmq.ROUTER)
         if self._socket is None:
-            raise zmq.ZMQError(msg= "Failed to create socket")
+            raise zmq.ZMQError(msg="Failed to create socket")
 
     def _bind(self) -> None:
         """Binds the zmq socket to the appropriate file/address."""
@@ -80,11 +84,11 @@ class ZMQServer(ABC):
         if "request" not in request_msg:
             raise UnknownRequestError(f"The message format is unknown: {request_msg}.")
         request = request_msg.get("request")
-        
+
         if self._debug:
             general_request = Request(**request)
             self._logger.debug(general_request.__str__())
-        
+
         response = await self.handle_request(request)
         response_required = request.get("response_required")
         if response_required:
@@ -107,17 +111,15 @@ class ZMQServer(ABC):
         self._initialized = False
 
     def __del__(self):
-        """closes the socket when the object is destroyed.
-        """
+        """closes the socket when the object is destroyed."""
         self.close()
 
     def init_server(self):
-        """Initializes the server to listen on the specified address.
-        """
+        """Initializes the server to listen on the specified address."""
         if self._initialized:
             self._logger.error(f"{self._name} is already initialized.")
             return
-        
+
         try:
             self._set_context()
         except OSError:
@@ -149,8 +151,7 @@ class ZMQServer(ABC):
             asyncio.create_task(self._accept())
 
     def stop(self):
-        """Stops the server from running.
-        """
+        """Stops the server from running."""
         self._running = False
 
     async def handle_response(self, response) -> dict:

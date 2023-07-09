@@ -21,4 +21,3 @@ class AlertData(MetricData):
 
 class AlertRequest(Request):
     req_data: AlertData
-

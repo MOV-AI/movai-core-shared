@@ -1,13 +1,14 @@
 from pydantic import BaseModel
 
+
 def print_dict(message: dict, space_count: int):
-    spacing = " "*4
+    spacing = " " * 4
     text = ""
     for key, val in message.items():
         if hasattr(val, "__dict__"):
-            text += print_dict(val.__dict__, space_count+1)
+            text += print_dict(val.__dict__, space_count + 1)
         else:
-            text += space_count*spacing + f"{key}: {val}\n"
+            text += space_count * spacing + f"{key}: {val}\n"
     return text
 
 
@@ -30,7 +31,7 @@ class Request(BaseModel):
     robot_info: RobotInfo
 
     def __str__(self):
-        text = "\n" + "="*100+ "\n"
+        text = "\n" + "=" * 100 + "\n"
         text += print_dict(self.__dict__, 0)
-        text += "="*100+ "\n"
+        text += "=" * 100 + "\n"
         return text
