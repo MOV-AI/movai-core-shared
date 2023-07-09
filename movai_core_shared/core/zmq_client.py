@@ -10,19 +10,20 @@
    - Erez Zomer (erez@mov.ai) - 2022
 """
 import json
-from logging import getLogger
 import threading
-import zmq.asyncio
+from logging import getLogger
+
 import zmq
+import zmq.asyncio
 
 from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
-from movai_core_shared.exceptions import MessageError, MessageFormatError
+from movai_core_shared.exceptions import MessageError
 
 
 class ZMQClient:
     """A very basic implementation of ZMQ Client"""
 
-    def __init__(self, identity: str, server: str) -> None:
+    def __init__(self, identity: str, server_addr: str) -> None:
         """Initializes the object and the connection to the serrver.
 
         Args:
@@ -33,11 +34,12 @@ class ZMQClient:
         """
         self._logger = getLogger(self.__class__.__name__)
         self._identity = identity.encode("utf-8")
+        self._addr = server_addr
         self.zmq_ctx = zmq.Context()
         self._socket = self.zmq_ctx.socket(zmq.DEALER)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
-        self._socket.connect(server)
+        self._socket.connect(self._addr)
         self.lock = threading.Lock()
 
     def __del__(self):
@@ -60,14 +62,15 @@ class ZMQClient:
             with self.lock:
                 self._socket.send(data)
         except (json.JSONDecodeError, TypeError) as error:
-            self._logger.error(f"Got an {error} while trying to send message")
+            self._logger.error(
+                f"Got error of type {error.__class__.__name__} while trying to send message"
+            )
 
     def recieve(self) -> dict:
         """
         Recieves a message response over ZeroMQ from the server.
 
         Raises:
-            MessageFormatError: In case the response message format is wrong.
             MessageError: In case response is empty.
 
         Returns:
@@ -82,8 +85,5 @@ class ZMQClient:
             raise MessageError("Got an empty response!")
 
         msg = json.loads(buffer)
-        # check for request in request
-        if "response" not in msg:
-            raise MessageFormatError(f"The message format is unknown: {msg}.")
-        response_msg = msg["response"]
-        return response_msg
+
+        return msg
