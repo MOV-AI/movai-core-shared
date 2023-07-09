@@ -10,13 +10,14 @@
    - Erez Zomer (erez@mov.ai) - 2022
 """
 import json
-from logging import getLogger
 import threading
-import zmq.asyncio
+from logging import getLogger
+
 import zmq
+import zmq.asyncio
 
 from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
-from movai_core_shared.exceptions import MessageError, MessageFormatError
+from movai_core_shared.exceptions import MessageError
 
 
 class ZMQClient:
@@ -70,7 +71,6 @@ class ZMQClient:
         Recieves a message response over ZeroMQ from the server.
 
         Raises:
-            MessageFormatError: In case the response message format is wrong.
             MessageError: In case response is empty.
 
         Returns:

@@ -9,15 +9,15 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2023
 """
-from abc import ABC, abstractmethod
-from beartype import beartype
 import asyncio
-import sys
 import json
 import logging
+from abc import ABC, abstractmethod
+from threading import Lock
+
 import zmq
 import zmq.asyncio
-from threading import Lock
+from beartype import beartype
 
 from movai_core_shared.exceptions import UnknownRequestError
 from movai_core_shared.messages.general_data import Request
@@ -87,7 +87,7 @@ class ZMQServer(ABC):
 
         if self._debug:
             general_request = Request(**request)
-            self._logger.debug(general_request.__str__())
+            self._logger.debug(str(general_request))
 
         response = await self.handle_request(request)
         response_required = request.get("response_required")
@@ -129,7 +129,7 @@ class ZMQServer(ABC):
         try:
             self._bind()
             self._initialized = True
-        except OSError as error:
+        except OSError:
             self._logger.error(f"failed to bind socket on address {self._addr}")
             raise
 
@@ -154,7 +154,7 @@ class ZMQServer(ABC):
         """Stops the server from running."""
         self._running = False
 
-    async def handle_response(self, response) -> dict:
+    async def handle_response(self, response: dict) -> dict:
         """Handles the response before it is sent back to the client.
 
         Args:
@@ -169,4 +169,3 @@ class ZMQServer(ABC):
         Args:
             request(dict): The request recieved.
         """
-        pass
