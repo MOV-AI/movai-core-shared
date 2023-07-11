@@ -88,7 +88,7 @@ class MessageClient:
             if "response" in raw_response:
                 response = raw_response
             else:
-                response = {"reponse": raw_response}
+                response = {"response": raw_response}
 
             return response
         return {}
