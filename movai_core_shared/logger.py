@@ -517,7 +517,8 @@ class LogsQuery:
             query_response = message_client.send_request(
                 LOGS_QUERY_HANDLER_MSG_TYPE, query_data, None, True
             )
-            response = query_response
+            if "response" in query_response:
+                response = query_response["response"]
         except Exception as error:
             raise error
 
