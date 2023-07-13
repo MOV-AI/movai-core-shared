@@ -12,6 +12,7 @@
 import json
 import threading
 from logging import getLogger
+import pydantic
 
 import zmq
 import zmq.asyncio
@@ -48,19 +49,18 @@ class ZMQClient:
         self._socket.close()
         self.zmq_ctx.term()
 
-    def send(self, msg: dict) -> None:
+    def send(self, msg) -> None:
         """
         Send the message request over ZeroMQ to the local robot message server.
 
         Args:
             msg (dict): The message request to be sent
         """
-        if not isinstance(msg, dict):
+        if not isinstance(msg, pydantic.BaseModel):
             return
         try:
-            data = json.dumps(msg).encode("utf8")
             with self.lock:
-                self._socket.send(data)
+                self._socket.send(msg.model_dump())
         except (json.JSONDecodeError, TypeError) as error:
             self._logger.error(
                 f"Got error of type {error.__class__.__name__} while trying to send message"
