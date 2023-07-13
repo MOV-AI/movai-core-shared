@@ -14,7 +14,7 @@ requirements = [
 
 setuptools.setup(
     name="movai-core-shared",
-    version="2.4.1-19",
+    version="2.4.1-20",
     author="Backend team",
     author_email="backend@mov.ai",
     description="Shared objects for various Mov.AI projects",
