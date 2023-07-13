@@ -30,11 +30,12 @@ from movai_core_shared.consts import (
     SYSLOGS_HANDLER_MSG_TYPE,
     PID,
     USER_LOG_TAG,
-    CALLBACK_LOGGER
+    CALLBACK_LOGGER,
 )
 from movai_core_shared.envvars import (
     DEVICE_NAME,
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
+    MOVAI_LOG_FILE,
     MOVAI_FLEET_LOGS_VERBOSITY_LEVEL,
     MOVAI_STDOUT_VERBOSITY_LEVEL,
     MOVAI_GENERAL_VERBOSITY_LEVEL,
@@ -323,7 +324,7 @@ class Log:
     A static class to help create logger instances
     """
 
-    LOG_FILE = "movai.log"
+    LOG_FILE = MOVAI_LOG_FILE
 
     @staticmethod
     def set_log_file(name: str):
