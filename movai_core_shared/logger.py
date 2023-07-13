@@ -30,11 +30,12 @@ from movai_core_shared.consts import (
     SYSLOGS_HANDLER_MSG_TYPE,
     PID,
     USER_LOG_TAG,
-    CALLBACK_LOGGER
+    CALLBACK_LOGGER,
 )
 from movai_core_shared.envvars import (
     DEVICE_NAME,
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
+    MOVAI_LOG_FILE,
     MOVAI_FLEET_LOGS_VERBOSITY_LEVEL,
     MOVAI_STDOUT_VERBOSITY_LEVEL,
     MOVAI_GENERAL_VERBOSITY_LEVEL,
@@ -323,7 +324,7 @@ class Log:
     A static class to help create logger instances
     """
 
-    LOG_FILE = "movai.log"
+    LOG_FILE = MOVAI_LOG_FILE
 
     @staticmethod
     def set_log_file(name: str):
@@ -344,9 +345,8 @@ class Log:
             logger.addHandler(_get_console_handler(stream_config))
         if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(_get_file_handler())
-        if is_enteprise():
-            if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
-                logger.addHandler(get_remote_handler())
+        if is_enteprise and MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
+            logger.addHandler(get_remote_handler())
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
         logger.propagate = False
         return logger
@@ -436,7 +436,7 @@ class LogsQuery:
         return value
 
     @classmethod
-    def validate_datetime(cls, value: int) -> str:
+    def validate_datetime(cls, value: int) -> int:
         """Validate if value is timestamp or datetime
 
         Args:
@@ -518,12 +518,9 @@ class LogsQuery:
             "count_field": "message",
         }
 
-        try:
-            query_response = message_client.send_request(
-                LOGS_QUERY_HANDLER_MSG_TYPE, query_data, None, True
-            )
-            response = query_response
-        except Exception as error:
-            raise error
+        query_response = message_client.send_request(
+            LOGS_QUERY_HANDLER_MSG_TYPE, query_data, None, True
+        )
+        response = query_response
 
         return response if pagination else response.get("data", [])
