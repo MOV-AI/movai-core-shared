@@ -12,6 +12,7 @@ MOVAI_STDOUT_VERBOSITY_LEVEL = int(
 MOVAI_FLEET_LOGS_VERBOSITY_LEVEL = int(
     os.getenv("MOVAI_FLEET_LOGS_VERBOSITY_LEVEL", str(DEBUG))
 )
+MOVAI_LOG_FILE = os.getenv("MOVAI_LOG_FILE", "/opt/mov.ai/app/movai.log")
 # default as NOTSET that will turn off the output for the addition log file
 MOVAI_LOGFILE_VERBOSITY_LEVEL = int(
     os.getenv("MOVAI_LOGFILE_VERBOSITY_LEVEL", str(NOTSET))
