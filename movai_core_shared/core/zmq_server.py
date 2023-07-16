@@ -70,7 +70,7 @@ class ZMQServer(ABC):
                 self._logger.error(f"ZMQServer Error: {str(error)}")
                 continue
         self.close()
-    
+
     async def _handle(self, buffer) -> None:
         index = len(buffer) - 1
         data = buffer[index]
@@ -143,7 +143,7 @@ class ZMQServer(ABC):
         self._running = True
         self._logger.info(f"{self.__class__.__name__} is running!!!")
         if self._new_loop:
-            asyncio.run(self._accept())            
+            asyncio.run(self._accept())
         else:
             asyncio.create_task(self._accept())
 
