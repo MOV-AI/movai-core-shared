@@ -77,13 +77,13 @@ class ZMQClient:
             dict: The response from the server.
         """
         with self.lock:
-            response = self._socket.recv_multipart()
-        index = len(response) - 1
-        buffer = response[index]
+            buffer = self._socket.recv_multipart()
+        index = len(buffer) - 1
+        reponse = buffer[index]
 
-        if buffer is None:
+        if reponse is None:
             raise MessageError("Got an empty response!")
 
-        msg = json.loads(buffer)
+        msg = json.loads(reponse)
 
         return msg
