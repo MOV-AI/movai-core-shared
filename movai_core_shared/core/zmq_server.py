@@ -13,8 +13,6 @@ import asyncio
 import json
 import logging
 from abc import ABC, abstractmethod
-#from threading import Lock
-
 
 import zmq
 import zmq.asyncio
