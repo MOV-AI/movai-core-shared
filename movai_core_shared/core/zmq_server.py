@@ -101,11 +101,12 @@ class ZMQServer(ABC):
 
     def close(self) -> None:
         """close the zmq socket."""
-        self._socket.close()
-        self._ctx.destroy()
-        self._socket = None
-        self._ctx = None
-        self._initialized = False
+        if self._initialized:
+            self._socket.close()
+            self._ctx.destroy()
+            self._socket = None
+            self._ctx = None
+            self._initialized = False
 
     def __del__(self):
         """closes the socket when the object is destroyed."""
@@ -146,6 +147,15 @@ class ZMQServer(ABC):
             asyncio.run(self._accept())
         else:
             asyncio.create_task(self._accept())
+
+    def run_standalone(self):
+        self.init_server()
+        if self._running:
+            self._logger.warning(f"{self._name} is already ruuning")
+            return
+        self._running = True
+        self._logger.info(f"{self.__class__.__name__} is running!!!")
+        asyncio.run(self._accept())
 
     def stop(self):
         """Stops the server from running."""
