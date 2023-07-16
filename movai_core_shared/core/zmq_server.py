@@ -146,15 +146,6 @@ class ZMQServer(ABC):
         else:
             asyncio.create_task(self._accept())
 
-    def run_standalone(self):
-        self.init_server()
-        if self._running:
-            self._logger.warning(f"{self._name} is already ruuning")
-            return
-        self._running = True
-        self._logger.info(f"{self.__class__.__name__} is running!!!")
-        asyncio.run(self._accept())
-
     def stop(self):
         """Stops the server from running."""
         self._running = False
