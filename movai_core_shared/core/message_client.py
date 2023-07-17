@@ -12,6 +12,7 @@
 """
 import random
 import time
+from typing import Optional
 
 from movai_core_shared.core.zmq_client import ZMQClient
 from movai_core_shared.envvars import DEVICE_NAME, FLEET_NAME, SERVICE_NAME
@@ -54,7 +55,11 @@ class MessageClient:
         self._zmq_client = ZMQClient(identity, self._server_addr)
 
     def send_request(
-        self, msg_type: str, data: dict, creation_time: str = None, respose_required: bool = False
+        self,
+        msg_type: str,
+        data: dict,
+        creation_time: Optional[int] = None,
+        respose_required: bool = False,
     ) -> dict:
         """
         Wrap the data into a message request and sent it to the robot message server
