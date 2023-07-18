@@ -345,7 +345,7 @@ class Log:
             logger.addHandler(_get_console_handler(stream_config))
         if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(_get_file_handler())
-        if is_enteprise and MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
+        if is_enteprise() and MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(get_remote_handler())
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
         logger.propagate = False
