@@ -6,6 +6,7 @@
    Developers:
    - Dor Marcous (dor@mov.ai) - 2022
 """
+import asyncio
 import sys
 from datetime import datetime
 from inspect import getframeinfo, stack
@@ -14,6 +15,7 @@ from logging.handlers import TimedRotatingFileHandler
 import threading
 import syslog
 import traceback
+from queue import Queue
 
 from movai_core_shared.common.utils import get_package_version
 from movai_core_shared.common.time import current_timestamp_int
@@ -44,7 +46,7 @@ from movai_core_shared.envvars import (
     SERVICE_NAME,
     SYSLOG_ENABLED,
 )
-from movai_core_shared.core.message_client import MessageClient
+from movai_core_shared.core.message_client import MessageClient, AsyncMessageClient
 from movai_core_shared.common.utils import is_enteprise, is_manager
 from movai_core_shared.common.time import validate_time
 
@@ -132,19 +134,10 @@ class RemoteHandler(logging.StreamHandler):
         """
         logging.StreamHandler.__init__(self, None)
         self._message_client = MessageClient(MESSAGE_SERVER_LOCAL_ADDR)
+        self._async_message_client = AsyncMessageClient(MESSAGE_SERVER_LOCAL_ADDR)
+        self.queue = Queue()
 
     def emit(self, record):
-        """
-        Emit a record.
-        Send the record to the HealthNode API
-
-        Args:
-            record: The python log message data record
-
-        """
-        threading.Thread(target=self._emit, args=(record,)).start()
-
-    def _emit(self, record):
         """
         Builds a valid log message request from the python log record
         and send it to the local message server
@@ -201,9 +194,16 @@ class RemoteHandler(logging.StreamHandler):
             "log_fields": syslog_fields,
         }
 
+        if asyncio._get_running_loop() is not None:
+            asyncio.create_task(self._async_message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data))
+            if SYSLOG_ENABLED:
+                asyncio.create_task(self._async_message_client.send_request(SYSLOGS_HANDLER_MSG_TYPE, syslog_data))
+            return
+
         self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data)
         if SYSLOG_ENABLED:
             self._message_client.send_request(SYSLOGS_HANDLER_MSG_TYPE, syslog_data)
+
 
 
 def _get_console_handler(stream_config=None):
@@ -461,7 +461,7 @@ class LogsQuery:
         return int(dt_obj.timestamp())
 
     @classmethod
-    def get_logs(
+    async def get_logs(
         cls,
         limit=DEFAULT_LOG_LIMIT,
         offset=DEFAULT_LOG_OFFSET,
@@ -479,7 +479,7 @@ class LogsQuery:
         if is_manager():
             server_addr = MESSAGE_SERVER_LOCAL_ADDR
 
-        message_client = MessageClient(server_addr)
+        message_client = AsyncMessageClient(server_addr)
         params = {}
 
         if limit is not None:
@@ -519,7 +519,7 @@ class LogsQuery:
         }
 
         try:
-            query_response = message_client.send_request(
+            query_response = await message_client.send_request(
                 LOGS_QUERY_HANDLER_MSG_TYPE, query_data, None, True
             )
             if "response" in query_response:
