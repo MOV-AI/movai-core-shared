@@ -192,15 +192,18 @@ class RemoteHandler(logging.StreamHandler):
         }
 
         if asyncio._get_running_loop() is not None:
-            asyncio.create_task(self._async_message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data))
+            asyncio.create_task(
+                self._async_message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data)
+            )
             if SYSLOG_ENABLED:
-                asyncio.create_task(self._async_message_client.send_request(SYSLOGS_HANDLER_MSG_TYPE, syslog_data))
+                asyncio.create_task(
+                    self._async_message_client.send_request(SYSLOGS_HANDLER_MSG_TYPE, syslog_data)
+                )
             return
 
         self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data)
         if SYSLOG_ENABLED:
             self._message_client.send_request(SYSLOGS_HANDLER_MSG_TYPE, syslog_data)
-
 
 
 def _get_console_handler(stream_config=None):
