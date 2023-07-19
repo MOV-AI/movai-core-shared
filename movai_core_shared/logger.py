@@ -12,10 +12,8 @@ from datetime import datetime
 from inspect import getframeinfo, stack
 import logging
 from logging.handlers import TimedRotatingFileHandler
-import threading
 import syslog
 import traceback
-from queue import Queue
 
 from movai_core_shared.common.utils import get_package_version
 from movai_core_shared.common.time import current_timestamp_int
@@ -135,7 +133,6 @@ class RemoteHandler(logging.StreamHandler):
         logging.StreamHandler.__init__(self, None)
         self._message_client = MessageClient(MESSAGE_SERVER_LOCAL_ADDR)
         self._async_message_client = AsyncMessageClient(MESSAGE_SERVER_LOCAL_ADDR)
-        self.queue = Queue()
 
     def emit(self, record):
         """
