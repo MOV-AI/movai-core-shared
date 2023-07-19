@@ -39,21 +39,21 @@ class ZMQClient:
         self._lock = None
         self.prepare_socket()
 
-    def _set_context(self):
+    def _init_context(self):
         self._zmq_ctx = zmq.Context()
 
-    def _set_lock(self):
+    def _init_lock(self):
         self._lock = threading.Lock()
 
     def prepare_socket(self):
         """Creates the socket and sets a lock.
         """
-        self._set_context()
+        self._init_context()
         self._socket = self._zmq_ctx.socket(zmq.DEALER)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
         self._socket.connect(self._addr)
-        self._set_lock()
+        self._init_lock()
 
     def __del__(self):
         """closes the socket when the object is destroyed."""
@@ -61,11 +61,21 @@ class ZMQClient:
         self._socket.close()
         self._zmq_ctx.term()
 
-    def _send(self, data: bytes):
+    def _send(self, msg: bytes):
+        """sends a message in a synchronous way.
+        """
         with self._lock:
-            self._socket.send(data)
+            self._socket.send(msg)
 
-    def _extract_msg(self, msg: dict):
+    def _create_msg(self, msg: dict):
+        """Extracts the msg from 
+
+        Args:
+            msg (dict): _description_
+
+        Returns:
+            _type_: _description_
+        """
         if not isinstance(msg, dict):
             return
         try:
@@ -83,15 +93,28 @@ class ZMQClient:
         Args:
             msg (dict): The message request to be sent
         """
-        data = self._extract_msg(msg)
+        data = self._create_msg(msg)
         self._send(data)
 
     def _recieve(self):
+        """Synchrounsly recieves data from the server.
+
+        Returns:
+            (bytes): raw data from the server.
+        """
         with self._lock:
             buffer = self._socket.recv_multipart()
         return buffer
 
     def _extract_reponse(self, buffer: bytes):
+        """Extracts the response from the buffer.
+        
+        Args:
+            buffer (bytes): The memory buffer which contains the reponse msg.
+            
+        Returns:
+            (dict): A reponse from server.
+        """
         index = len(buffer) - 1
         msg = buffer[index]
 
@@ -126,15 +149,20 @@ class AsyncZMQClient(ZMQClient):
     """An Async implementation of ZMQ Client
     """
 
-    def _set_context(self):
+    def _init_context(self):
         self._zmq_ctx = zmq.asyncio.Context()
 
-    def _set_lock(self):
+    def _init_lock(self):
         self._lock = asyncio.Lock()
 
-    async def _send(self, data: bytes):
+    async def _send(self, msg: bytes):
+        """Asynchrounously send the message.
+
+        Args:
+            data (bytes): the msg representation
+        """
         async with self._lock:
-            await self._socket.send(data)
+            await self._socket.send(msg)
 
     async def send(self, msg: dict) -> None:
         """
@@ -143,10 +171,15 @@ class AsyncZMQClient(ZMQClient):
         Args:
             msg (dict): The message request to be sent
         """
-        data = self._extract_msg(msg)
+        data = self._create_msg(msg)
         await self._send(data)
 
     async def _recieve(self):
+        """Asynchrounsly recieves data from the server.
+
+        Returns:
+            (bytes): raw data from the server.
+        """
         async with self._lock:
             buffer = await self._socket.recv_multipart()
             return buffer

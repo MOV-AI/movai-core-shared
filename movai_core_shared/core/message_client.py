@@ -117,7 +117,7 @@ class MessageClient:
         response_required = request_msg.get("response_required")
 
         if response_required is None:
-            raise MessageFormatError("The field response_required is missing from request message")
+            response_required = False
 
         if response_required:
             response = self._zmq_client.recieve()
