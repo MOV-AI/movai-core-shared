@@ -20,6 +20,7 @@ import zmq.asyncio
 from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
 from movai_core_shared.exceptions import MessageError
 
+
 class ZMQClient:
     """A very basic implementation of ZMQ Client"""
 
@@ -46,8 +47,7 @@ class ZMQClient:
         self._lock = threading.Lock()
 
     def prepare_socket(self):
-        """Creates the socket and sets a lock.
-        """
+        """Creates the socket and sets a lock."""
         self._init_context()
         self._socket = self._zmq_ctx.socket(zmq.DEALER)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
@@ -62,13 +62,12 @@ class ZMQClient:
         self._zmq_ctx.term()
 
     def _send(self, msg: bytes):
-        """sends a message in a synchronous way.
-        """
+        """sends a message in a synchronous way."""
         with self._lock:
             self._socket.send(msg)
 
     def _create_msg(self, msg: dict):
-        """Extracts the msg from 
+        """Extracts the msg from
 
         Args:
             msg (dict): _description_
@@ -108,10 +107,10 @@ class ZMQClient:
 
     def _extract_reponse(self, buffer: bytes):
         """Extracts the response from the buffer.
-        
+
         Args:
             buffer (bytes): The memory buffer which contains the reponse msg.
-            
+
         Returns:
             (dict): A reponse from server.
         """
@@ -146,8 +145,7 @@ class ZMQClient:
 
 
 class AsyncZMQClient(ZMQClient):
-    """An Async implementation of ZMQ Client
-    """
+    """An Async implementation of ZMQ Client"""
 
     def _init_context(self):
         self._zmq_ctx = zmq.asyncio.Context()

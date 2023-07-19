@@ -52,12 +52,30 @@ class MessageClient:
         random.seed()  # setting the seed for the random number generator
         identity = f"{DEVICE_NAME}_message_client_{random.getrandbits(24)}"
         self._zmq_client = None
-        self._set_zmq_client(identity)
+        self._init_zmq_client(identity)
 
-    def _set_zmq_client(self, identity: str):
+    def _init_zmq_client(self, identity: str):
+        """initializes the ZMQClient object
+
+        Args:
+            identity (str): A string represent unique identity for the client.
+        """
         self._zmq_client = ZMQClient(identity, self._server_addr)
 
-    def _build_request(self, msg_type: str, data: dict, creation_time: str = None, respose_required: bool = False):
+    def _build_request(
+        self, msg_type: str, data: dict, creation_time: str = None, respose_required: bool = False
+    ) -> dict:
+        """Build a request in the format accepted by the message server.
+
+        Args:
+            msg_type (str): The type of the message (logs, alerts, metrics....)
+            data (dict): The data to include in the request.
+            creation_time (str, optional): The time the request was created.
+            respose_required (bool, optional): Tells the message-server if the client is wainting for response.
+
+        Returns:
+            {dict}: The message request to send the message-server
+        """
         if creation_time is None:
             creation_time = time.time_ns()
 
@@ -72,7 +90,18 @@ class MessageClient:
         }
         return request
 
-    def _extract_response(self, msg):
+    def _extract_response(self, msg) -> dict:
+        """Extracts the reponse from the message.
+
+        Args:
+            msg (msg): The msg got from message-server.
+
+        Raises:
+            MessageFormatError: in case the message is not in the acceptable format.
+
+        Returns:
+            (dict): The actual response
+        """
         if not isinstance(msg, dict):
             raise MessageFormatError(f"The message format is unknown: {msg}.")
 
@@ -141,20 +170,20 @@ class MessageClient:
 
 
 class AsyncMessageClient(MessageClient):
-    def _set_zmq_client(self, identity: str):
+    def _init_zmq_client(self, identity: str):
         self._zmq_client = AsyncZMQClient(identity, self._server_addr)
 
     async def send_request(
         self, msg_type: str, data: dict, creation_time: str = None, respose_required: bool = False
     ) -> dict:
         """
-        Wrap the data into a message request and sent it to the robot message server
+        Wrap the data into a message request and sent it asynchonously to the robot message server
+        (can not wait for a response).
 
         Args:
             data (dict): The message data to be sent to the robot message server.
             creation_time (str): The time where the request is created.
         """
-        # Add tags to the request data
         request = self._build_request(msg_type, data, creation_time, respose_required)
 
         await self._zmq_client.send(request)
@@ -166,7 +195,8 @@ class AsyncMessageClient(MessageClient):
         return {}
 
     async def foraward_request(self, request_msg: dict) -> dict:
-        """forwards a request to different message-server (This function does
+        """
+        Send the request asynchrounsly to different message-server (This function does
         not adds the meta-data info as send_request does).
 
         Args:
@@ -175,7 +205,7 @@ class AsyncMessageClient(MessageClient):
         if "request" not in request_msg:
             request = {"request": request_msg}
         await self._zmq_client.send(request)
-        
+
         response_required = request_msg.get("response_required")
         if response_required is None:
             raise MessageFormatError("The field response_required is missing from request message")
@@ -186,7 +216,7 @@ class AsyncMessageClient(MessageClient):
         return {}
 
     async def send_msg(self, data: dict, **kwargs) -> None:
-        """sends a simple message as raw data, won't wait for response
+        """sends a simple message as raw data asynchrously, won't wait for response
 
         Args:
             data (dict): The data to send to server.
