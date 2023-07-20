@@ -6,6 +6,8 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2023
 """
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -14,6 +16,7 @@ def print_dict(message: dict, space_count: int):
     text = ""
     for key, val in message.items():
         if hasattr(val, "__dict__"):
+            text += space_count * spacing + f"{key}:\n"
             text += print_dict(val.__dict__, space_count + 1)
         else:
             text += space_count * spacing + f"{key}: {val}\n"
@@ -33,6 +36,7 @@ class RobotInfo(BaseModel):
 
 
 class Request(BaseModel):
+    req_id: Optional[str]
     req_type: str
     created: int
     response_required: bool

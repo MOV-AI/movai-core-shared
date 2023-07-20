@@ -13,7 +13,6 @@ import asyncio
 import json
 import logging
 from abc import ABC, abstractmethod
-from threading import Lock
 
 import zmq
 import zmq.asyncio
@@ -44,7 +43,6 @@ class ZMQServer(ABC):
         self._running = False
         self._ctx = None
         self._socket = None
-        self._lock = Lock()
 
     def _set_context(self) -> None:
         """Initializes the zmq context."""
@@ -64,23 +62,22 @@ class ZMQServer(ABC):
             try:
                 if self._debug:
                     self._logger.debug("Waiting for new requests.\n")
-                with self._lock:
-                    request = await self._socket.recv_multipart()
+                request = await self._socket.recv_multipart()
                 asyncio.create_task(self._handle(request))
             except Exception as error:
                 self._logger.error(f"ZMQServer Error: {str(error)}")
                 continue
         self.close()
 
-    async def _handle(self, msg_buffer) -> None:
-        index = len(msg_buffer) - 1
-        buffer = msg_buffer[index]
+    async def _handle(self, buffer) -> None:
+        index = len(buffer) - 1
+        data = buffer[index]
 
-        if buffer is None:
+        if data is None:
             self._logger.warning("Request has no buffer, can't handle request.")
             return
 
-        request_msg = json.loads(buffer)
+        request_msg = json.loads(data)
         if "request" not in request_msg:
             raise UnknownRequestError(f"The message format is unknown: {request_msg}.")
         request = request_msg.get("request")
@@ -95,20 +92,19 @@ class ZMQServer(ABC):
             if response.get("response") is None:
                 response = {"response": response}
             await self.handle_response(response)
-            index = len(msg_buffer) - 1
-            msg_buffer[index] = json.dumps(response).encode("utf8")
-            with self._lock:
-                self._socket.send_multipart(msg_buffer)
+            buffer[index] = json.dumps(response).encode("utf8")
+            self._socket.send_multipart(buffer)
             if self._debug:
                 self._logger.debug(f"{self._name} successfully sent a respone.")
 
     def close(self) -> None:
         """close the zmq socket."""
-        self._socket.close()
-        self._ctx.destroy()
-        self._socket = None
-        self._ctx = None
-        self._initialized = False
+        if self._initialized:
+            self._socket.close()
+            self._ctx.destroy()
+            self._socket = None
+            self._ctx = None
+            self._initialized = False
 
     def __del__(self):
         """closes the socket when the object is destroyed."""
