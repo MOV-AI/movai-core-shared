@@ -145,9 +145,6 @@ class MessageClient:
         self._zmq_client.send(request)
         response_required = request_msg.get("response_required")
 
-        if response_required is None:
-            response_required = False
-
         if response_required:
             response = self._zmq_client.recieve()
             return response
