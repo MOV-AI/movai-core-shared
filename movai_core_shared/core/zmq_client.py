@@ -58,10 +58,6 @@ class ZMQClient:
     def __del__(self):
         """closes the socket when the object is destroyed."""
         # Close all sockets associated with this context and then terminate the context.
-        with self._lock:
-            self.close_ports()
-
-    def close_ports(self):
         self._socket.close()
         self._zmq_ctx.term()
 
@@ -156,10 +152,6 @@ class AsyncZMQClient(ZMQClient):
 
     def _init_lock(self):
         self._lock = asyncio.Lock()
-
-    def __del__(self):
-        async with self._lock:
-            self.close_ports()
 
     async def _send(self, msg: bytes):
         """Asynchrounously send the message.
