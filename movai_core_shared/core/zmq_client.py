@@ -20,6 +20,7 @@ import zmq.asyncio
 from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
 from movai_core_shared.exceptions import MessageError
 
+MOVAI_RCV_ZMQ_TIMEOUT_MS = 5 * MOVAI_ZMQ_TIMEOUT_MS
 
 class ZMQClient:
     """A very basic implementation of ZMQ Client"""
@@ -52,6 +53,8 @@ class ZMQClient:
         self._socket = self._zmq_ctx.socket(zmq.DEALER)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
+
+        self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_RCV_ZMQ_TIMEOUT_MS))
         self._socket.connect(self._addr)
         self._init_lock()
 
