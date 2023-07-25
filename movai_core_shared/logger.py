@@ -199,11 +199,11 @@ class RemoteHandler(logging.StreamHandler):
                 asyncio.create_task(
                     self._async_message_client.send_request(SYSLOGS_HANDLER_MSG_TYPE, syslog_data)
                 )
-            return
-
-        self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data)
-        if SYSLOG_ENABLED:
-            self._message_client.send_request(SYSLOGS_HANDLER_MSG_TYPE, syslog_data)
+        else:
+            self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data)
+            if SYSLOG_ENABLED:
+                self._message_client.send_request(SYSLOGS_HANDLER_MSG_TYPE, syslog_data)
+        return
 
 
 def _get_console_handler(stream_config=None):
