@@ -93,7 +93,7 @@ class ZMQServer(ABC):
                 response = {"response": response}
             await self.handle_response(response)
             buffer[index] = json.dumps(response).encode("utf8")
-            self._socket.send_multipart(buffer)
+            await self._socket.send_multipart(buffer)
             if self._debug:
                 self._logger.debug(f"{self._name} successfully sent a respone.")
 
