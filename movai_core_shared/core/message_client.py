@@ -141,7 +141,7 @@ class MessageClient:
         if "request" not in request_msg:
             request = {"request": request_msg}
         else:
-            request = request_msg["request"]
+            request = request_msg
         response_required = request_msg.get("response_required")
         return self._zmq_client.send(request, response_required)
 
@@ -194,7 +194,7 @@ class AsyncMessageClient(MessageClient):
         if "request" not in request_msg:
             request = {"request": request_msg}
         else:
-            request = request_msg["request"]
+            request = request_msg
 
         response_required = request_msg.get("response_required")
         if response_required is None:
