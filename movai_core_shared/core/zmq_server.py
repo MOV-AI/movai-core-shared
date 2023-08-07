@@ -56,7 +56,7 @@ class ZMQServer(ABC):
 
     async def _accept(self) -> None:
         """accepts new connections requests to zmq."""
-        await self.setup()
+        await self.startup()
         while self._running:
             try:
                 if self._debug:
@@ -125,7 +125,10 @@ class ZMQServer(ABC):
         """Stops the server from running."""
         self._running = False
 
-    async def setup(self):
+    async def startup(self):
+        """A funtion which is called once at server startup and can be used for initializing
+        other tasks.
+        """
         pass
 
 
