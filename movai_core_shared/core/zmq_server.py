@@ -10,7 +10,6 @@
    - Erez Zomer (erez@mov.ai) - 2023
 """
 import asyncio
-import json
 import logging
 from abc import ABC, abstractmethod
 
@@ -18,6 +17,7 @@ import zmq
 import zmq.asyncio
 from beartype import beartype
 
+from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
 from movai_core_shared.exceptions import UnknownRequestError
 from movai_core_shared.messages.general_data import Request
 
@@ -46,6 +46,8 @@ class ZMQServer(ABC):
         """Initializes the zmq context."""
         self._ctx = zmq.asyncio.Context()
         self._socket = self._ctx.socket(zmq.ROUTER)
+        self._socket.setsockopt(zmq.IDENTITY, self._name.encode("ascii"))
+        self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
         if self._socket is None:
             raise zmq.ZMQError(msg="Failed to create socket")
 
