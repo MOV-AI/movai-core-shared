@@ -27,8 +27,6 @@ class ZMQServer(ABC):
     This class is a base class for any ZMQ server.
     """
 
-    _initialized = {}
-
     @beartype
     def __init__(
         self, server_name: str, bind_addr: str, new_loop: bool = False, debug: bool = False
@@ -54,48 +52,25 @@ class ZMQServer(ABC):
     def _bind(self) -> None:
         """Binds the zmq socket to the appropriate file/address."""
         self._socket.bind(self._addr)
-        self._logger.info(f"{self.__class__.__name__} is listening on {self._addr}")
+        self._logger.info(f"{self._name} is listening on {self._addr}")
 
     async def _accept(self) -> None:
         """accepts new connections requests to zmq."""
+        await self.startup()
         while self._running:
             try:
                 if self._debug:
                     self._logger.debug("Waiting for new requests.\n")
-                request = await self._socket.recv_multipart()
-                asyncio.create_task(self._handle(request))
+                buffer = await self._socket.recv_multipart()
+                asyncio.create_task(self.handle(buffer))
             except Exception as error:
                 self._logger.error(f"ZMQServer Error: {str(error)}")
                 continue
         self.close()
 
-    async def _handle(self, buffer) -> None:
-        index = len(buffer) - 1
-        data = buffer[index]
-
-        if data is None:
-            self._logger.warning("Request has no buffer, can't handle request.")
-            return
-
-        request_msg = json.loads(data)
-        if "request" not in request_msg:
-            raise UnknownRequestError(f"The message format is unknown: {request_msg}.")
-        request = request_msg.get("request")
-
-        if self._debug:
-            general_request = Request(**request)
-            self._logger.debug(str(general_request))
-
-        response = await self.handle_request(request)
-        response_required = request.get("response_required")
-        if response_required:
-            if response.get("response") is None:
-                response = {"response": response}
-            await self.handle_response(response)
-            buffer[index] = json.dumps(response).encode("utf8")
-            self._socket.send_multipart(buffer)
-            if self._debug:
-                self._logger.debug(f"{self._name} successfully sent a respone.")
+    @abstractmethod
+    async def handle(self, buffer: bytes) -> None:
+        pass
 
     def close(self) -> None:
         """close the zmq socket."""
@@ -150,18 +125,8 @@ class ZMQServer(ABC):
         """Stops the server from running."""
         self._running = False
 
-    async def handle_response(self, response: dict) -> dict:
-        """Handles the response before it is sent back to the client.
-
-        Args:
-            response: The response dict.
+    async def startup(self):
+        """A funtion which is called once at server startup and can be used for initializing
+        other tasks.
         """
         pass
-
-    @abstractmethod
-    async def handle_request(self, request: dict) -> dict:
-        """Handles the request recieved by the server.
-
-        Args:
-            request(dict): The request recieved.
-        """
