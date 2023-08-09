@@ -30,8 +30,8 @@ class MessageClient:
         constructor - initializes the object.
 
         Args:
-            server_addr (str): that include the IP and the port
-            robot_id (str): the robot id, defaults to empty string
+            server_addr (str): The address of the server to connect with.
+            robot_id (str): The id of the robot issuing the request.
 
         Raises:
             TypeError: In case the supplied argument is not in the correct type.
@@ -71,7 +71,7 @@ class MessageClient:
             msg_type (str): The type of the message (logs, alerts, metrics....)
             data (dict): The data to include in the request.
             creation_time (str, optional): The time the request was created.
-            response_required (bool, optional): Tells the message-server if the client is waiting for response.
+            response_required (bool, optional): Tells the message-server if the client is wainting for response.
 
         Returns:
             {dict}: The message request to send the message-server
@@ -104,34 +104,38 @@ class MessageClient:
         """
         if not isinstance(msg, dict):
             raise MessageFormatError(f"The message format is unknown: {msg}.")
+
         if "response" in msg:
             response = msg
         else:
             response = {"response": msg}
+
         return response
 
     def send_request(
-        self, msg_type: str, data: dict, creation_time: str = None, response_required: bool = False
+        self, msg_type: str, data: dict, creation_time: str = None, respose_required: bool = False
     ) -> dict:
         """
         Wrap the data into a message request and sent it to the robot message server
 
         Args:
-            msg_type (str): the type of message
+            msg_type (str): the type of message.
             data (dict): The message data to be sent to the robot message server.
             creation_time (str): The time where the request is created.
-            response_required (bool): whether to wait for response, Default False
+            response_required (bool): whether to wait for response, Default False.
         """
         # Add tags to the request data
-        request = self._build_request(msg_type, data, creation_time, response_required)
-        msg = self._zmq_client.send(request, response_required)
-        if msg:
+        request = self._build_request(msg_type, data, creation_time, respose_required)
+
+        self._zmq_client.send(request)
+        if respose_required:
+            msg = self._zmq_client.recieve()
             response = self._extract_response(msg)
             return response
 
         return {}
 
-    def forward_request(self, request_msg: dict) -> dict:
+    def foraward_request(self, request_msg: dict) -> dict:
         """forwards a request to different message-server (This function does
         not adds the meta-data info as send_request does).
 
@@ -140,10 +144,13 @@ class MessageClient:
         """
         if "request" not in request_msg:
             request = {"request": request_msg}
-        else:
-            request = request_msg
+        self._zmq_client.send(request)
         response_required = request_msg.get("response_required")
-        return self._zmq_client.send(request, response_required)
+
+        if response_required:
+            response = self._zmq_client.recieve()
+            return response
+        return {}
 
     def send_msg(self, data: dict, **kwargs) -> None:
         """sends a simple message as raw data, won't wait for response
@@ -152,9 +159,12 @@ class MessageClient:
             data (dict): The data to send to server.
         """
         msg = {"data": data}
+
         if "data" in kwargs:
             kwargs.pop("data")
+
         msg.update(kwargs)
+
         self._zmq_client.send(msg)
 
 
@@ -163,27 +173,29 @@ class AsyncMessageClient(MessageClient):
         self._zmq_client = AsyncZMQClient(identity, self._server_addr)
 
     async def send_request(
-        self, msg_type: str, data: dict, creation_time: str = None, response_required: bool = False
+        self, msg_type: str, data: dict, creation_time: str = None, respose_required: bool = False
     ) -> dict:
         """
-        Wrap the data into a message request and sent it asynchronously to the robot message server
+        Wrap the data into a message request and sent it asynchonously to the robot message server
         (can not wait for a response).
 
         Args:
-            msg_type (str): the type of message
+            msg_type (str): the type of message.
             data (dict): The message data to be sent to the robot message server.
             creation_time (str): The time where the request is created.
-            response_required (bool): whether to wait for response, Default False
+            response_required (bool): whether to wait for response, Default False.
         """
-        request = self._build_request(msg_type, data, creation_time, response_required)
+        request = self._build_request(msg_type, data, creation_time, respose_required)
 
-        msg = await self._zmq_client.send(request, response_required)
-        if msg:
+        await self._zmq_client.send(request)
+        if respose_required:
+            msg = await self._zmq_client.recieve()
             response = self._extract_response(msg)
             return response
+
         return {}
 
-    async def forward_request(self, request_msg: dict) -> dict:
+    async def foraward_request(self, request_msg: dict) -> dict:
         """
         Send the request asynchronously to different message-server (This function does
         not adds the meta-data info as send_request does).
@@ -195,15 +207,19 @@ class AsyncMessageClient(MessageClient):
             request = {"request": request_msg}
         else:
             request = request_msg
+        await self._zmq_client.send(request)
 
         response_required = request_msg.get("response_required")
         if response_required is None:
             raise MessageFormatError("The field response_required is missing from request message")
 
-        return await self._zmq_client.send(request, response_required)
+        if response_required:
+            response = await self._zmq_client.recieve()
+            return response
+        return {}
 
     async def send_msg(self, data: dict, **kwargs) -> None:
-        """sends a simple message as raw data asynchronously, won't wait for response
+        """sends a simple message as raw data asynchrously, won't wait for response
 
         Args:
             data (dict): The data to send to server.
