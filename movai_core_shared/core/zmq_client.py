@@ -39,6 +39,7 @@ class ZMQClient:
         self._zmq_ctx = None
         self._lock = None
         self.prepare_socket()
+        self._init_lock()
 
     def _init_context(self):
         self._zmq_ctx = zmq.Context()
@@ -54,7 +55,6 @@ class ZMQClient:
         self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
         self._socket.connect(self._addr)
-        self._init_lock()
 
     def __del__(self):
         """closes the socket when the object is destroyed."""
@@ -177,7 +177,7 @@ class AsyncZMQClient(ZMQClient):
         except Exception as e:
             self._logger.error("error while trying to recieve data, %s", e)
         finally:
-            await self._lock.release()
+            self._lock.release()
 
     async def send(self, msg: dict) -> None:
         """
@@ -202,7 +202,7 @@ class AsyncZMQClient(ZMQClient):
         except Exception as e:
             self._logger.error("error while trying to recieve data, %s", e)
         finally:
-            await self._lock.release()
+            self._lock.release()
         return buffer
 
     async def recieve(self) -> dict:
