@@ -126,14 +126,16 @@ MESSAGE_SERVER_HOST = "message-server"
 
 
 #inluxdb DB names:
-INFLUX_LOGS_DB_NAME = "logs"
-INFLUX_METRICS_DB_NAME = "metrics"
-INFLUXDB_DB_NAMES = [INFLUX_LOGS_DB_NAME, INFLUX_METRICS_DB_NAME]
+LOGS_INFLUX_DB = "logs"
+METRICS_INFLUX_DB = "metrics"
+STRESS_INFLUX_DB = "stress"
+INFLUXDB_DB_NAMES = [LOGS_INFLUX_DB, METRICS_INFLUX_DB, STRESS_INFLUX_DB]
 
 #inluxdb measurements names:
 SYSLOG_MEASUREMENT = "syslog"
 LOGS_MEASUREMENT = "app_logs"
 METRICS_MEASUREMENT = "metric_logs"
+STRESS_MEASUREMENT = "stress_logs"
 
 #Message-Server msgs types:
 LOGS_HANDLER_MSG_TYPE = "logs"

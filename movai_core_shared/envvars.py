@@ -25,7 +25,7 @@ LOG_HTTP_HOST = os.environ.get('LOG_HTTP_HOST', 'http://health-node:8081')
 # Read variables from current environment
 APP_PATH = os.getenv("APP_PATH")
 APP_LOGS = os.getenv("APP_LOGS")
-SYSLOG_ENABLED = os.getenv("SYSLOG_ENABLED", False)
+SYSLOG_ENABLED = os.getenv("SYSLOG_ENABLED", 'False').lower() in ('true', '1', 't')
 LD_LIBRARY_PATH = os.getenv("LD_LIBRARY_PATH")
 MOVAI_HOME = os.getenv("MOVAI_HOME")
 PATH = os.getenv("PATH")
@@ -60,6 +60,17 @@ MOVAI_ZMQ_TIMEOUT_MS = int(os.getenv("MOVAI_ZMQ_TIMEOUT_MS", "1000"))
 LOG_STREAMER_BIND_IP = os.getenv("LOG_STREAMER_BIND_IP", "0.0.0.0")
 LOG_STREAMER_BIND_ADDR = f"tcp://{LOG_STREAMER_BIND_IP}:{MESSAGE_SERVER_PORT}"
 MESSAGE_SERVER_DEBUG_MODE = os.getenv("MESSAGE_SERVER_DEBUG_MODE", 'False').lower() in ('true', '1', 't')
+
+# DBWriter environment variables
+DBWRITER_EMPTY_THREASHOULD = int(os.getenv("DBWRITER_EMPTY_THREASHOULD", "1000"))
+DBWRITER_BIND_IP = os.getenv("DBWRITER_BIND_IP", "127.10.10.1")
+LOGS_DBWRITWER_PORT = os.getenv("LOGS_DBWRITWER_PORT", "9001")
+METRICS_DBWRITWER_PORT = os.getenv("METRICS_DBWRITWER_PORT", "9002")
+STRESS_DBWRITWER_PORT = os.getenv("STRESS_DBWRITWER_PORT", "9003")
+LOGS_DBWRITER_BIND_ADDR = f"tcp://{DBWRITER_BIND_IP}:{LOGS_DBWRITWER_PORT}"
+METRICS_DBWRITER_BIND_ADDR = f"tcp://{DBWRITER_BIND_IP}:{METRICS_DBWRITWER_PORT}"
+STRESS_DBWRITER_BIND_ADDR = f"tcp://{DBWRITER_BIND_IP}:{STRESS_DBWRITWER_PORT}"
+
 # Custom vars
 ROS1_LIB = f"/opt/ros/{ROS_DISTRO}/lib"
 ROS2_LIB = f"/opt/ros/{ROS2_DISTRO}/lib"
