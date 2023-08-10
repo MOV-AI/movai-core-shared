@@ -152,6 +152,8 @@ class ZMQClient:
             dict: The response from the server.
         """
         buffer = self._recieve()
+        if not buffer:
+            return {}
         response = self._extract_reponse(buffer)
         return response
 
@@ -216,5 +218,7 @@ class AsyncZMQClient(ZMQClient):
             dict: The response from the server.
         """
         buffer = await self._recieve()
+        if not buffer:
+            return {}
         response = self._extract_reponse(buffer)
         return response
