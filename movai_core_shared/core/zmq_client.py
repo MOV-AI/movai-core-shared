@@ -171,7 +171,13 @@ class AsyncZMQClient(ZMQClient):
         Args:
             data (bytes): the msg representation
         """
-        await self._socket.send(msg)
+        await self._lock.acquire()
+        try:
+            await self._socket.send(msg)
+        except Exception as e:
+            self._logger.error("error while trying to recieve data, %s", e)
+        finally:
+            await self._lock.release()
 
     async def send(self, msg: dict) -> None:
         """
@@ -189,7 +195,14 @@ class AsyncZMQClient(ZMQClient):
         Returns:
             (bytes): raw data from the server.
         """
-        buffer = await self._socket.recv_multipart()
+        buffer = None
+        await self._lock.acquire()
+        try:
+            buffer = await self._socket.recv_multipart()
+        except Exception as e:
+            self._logger.error("error while trying to recieve data, %s", e)
+        finally:
+            await self._lock.release()
         return buffer
 
     async def recieve(self) -> dict:
