@@ -24,6 +24,8 @@ from movai_core_shared.exceptions import MessageError
 class ZMQClient:
     """A very basic implementation of ZMQ Client"""
 
+    _ctx = zmq.Context.instance()
+
     def __init__(self, identity: str, server_addr: str) -> None:
         """Initializes the object and the connection to the server.
 
@@ -36,15 +38,16 @@ class ZMQClient:
         self._logger = getLogger(self.__class__.__name__)
         self._identity = identity.encode("utf-8")
         self._addr = server_addr
-        self._zmq_ctx = None
         self._lock = None
+        self._socket = None
         self.prepare_socket()
 
     def _init_context(self):
-        self._zmq_ctx = zmq.Context()
+        if self._ctx is None:
+            self._ctx = zmq.Context().instance()
 
     def _init_socket(self):
-        self._socket = self._zmq_ctx.socket(zmq.DEALER)
+        self._socket = self._ctx.socket(zmq.DEALER)
 
     def _init_lock(self):
         self._lock = threading.Lock()
@@ -61,8 +64,8 @@ class ZMQClient:
     def __del__(self):
         """closes the socket when the object is destroyed."""
         # Close all sockets associated with this context and then terminate the context.
-        self._socket.close()
-        self._zmq_ctx.term()
+        if self._socket is not None:
+            self._socket.close()
 
     def _send(self, msg: bytes):
         """sends a message in a synchronous way."""
@@ -158,7 +161,7 @@ class AsyncZMQClient(ZMQClient):
     """An Async implementation of ZMQ Client"""
 
     def _init_context(self):
-        self._zmq_ctx = zmq.asyncio.Context()
+        self._ctx = zmq.asyncio.Context()
 
     def _init_lock(self):
         self._lock = asyncio.Lock()
@@ -216,4 +219,4 @@ class AsyncZMQClient(ZMQClient):
 
 class REQZMQClient(ZMQClient):
     def _init_socket(self):
-        self._socket = self._zmq_ctx.socket(zmq.REQ)
+        self._socket = self._ctx.socket(zmq.REQ)
