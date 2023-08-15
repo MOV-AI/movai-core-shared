@@ -43,15 +43,18 @@ class ZMQClient:
     def _init_context(self):
         self._zmq_ctx = zmq.Context()
 
+    def _init_socket(self):
+        self._socket = self._zmq_ctx.socket(zmq.DEALER)
+
     def _init_lock(self):
         self._lock = threading.Lock()
 
     def prepare_socket(self):
         """Creates the socket and sets a lock."""
         self._init_context()
-        self._socket = self._zmq_ctx.socket(zmq.DEALER)
+        self._init_socket()
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
-        self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
+        self._socket.setsockopt(zmq.RCVTIMEO, 5 * int(MOVAI_ZMQ_TIMEOUT_MS))
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
         self._socket.connect(self._addr)
 
@@ -209,3 +212,8 @@ class AsyncZMQClient(ZMQClient):
             return {}
         response = self._extract_reponse(buffer)
         return response
+
+
+class REQZMQClient(ZMQClient):
+    def _init_socket(self):
+        self._socket = self._zmq_ctx.socket(zmq.REQ)
