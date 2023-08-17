@@ -12,7 +12,6 @@
 import asyncio
 import json
 import threading
-from logging import getLogger
 
 import zmq
 import zmq.asyncio

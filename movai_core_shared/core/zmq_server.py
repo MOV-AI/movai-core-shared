@@ -11,15 +11,12 @@
 """
 import asyncio
 from abc import ABC, abstractmethod
-import logging
 import random
 import zmq
 import zmq.asyncio
 from beartype import beartype
 
 from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS, DEVICE_NAME
-from movai_core_shared.exceptions import UnknownRequestError
-from movai_core_shared.messages.general_data import Request
 from movai_core_shared.core.zmq_base import ZMQBase
 
 
