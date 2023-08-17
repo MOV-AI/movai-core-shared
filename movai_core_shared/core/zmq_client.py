@@ -19,14 +19,13 @@ import zmq.asyncio
 
 from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
 from movai_core_shared.exceptions import MessageError
+from movai_core_shared.core.zmq_base import ZMQBase
 
 
-class ZMQClient:
+class ZMQClient(ZMQBase):
     """A very basic implementation of ZMQ Client"""
 
-    _ctx = zmq.Context.instance()
-
-    def __init__(self, identity: str, server_addr: str) -> None:
+    def __init__(self, identity: str, server_addr: str, client_type: zmq.TYPE = zmq.DEALER) -> None:
         """Initializes the object and the connection to the server.
 
         Args:
@@ -35,27 +34,23 @@ class ZMQClient:
             server_addr (str): The server addr and port in the form:
                 'tcp://server_addr:port'
         """
-        self._logger = getLogger(self.__class__.__name__)
-        self._identity = identity.encode("utf-8")
-        self._addr = server_addr
-        self._lock = None
-        self._socket = None
-        self.prepare_socket()
+        super().__init__(identity, server_addr)
+        self.prepare_socket(client_type)
 
     def _init_context(self):
         if self._ctx is None:
-            self._ctx = zmq.Context().instance()
+            self._ctx = zmq.Context()
 
-    def _init_socket(self):
-        self._socket = self._ctx.socket(zmq.DEALER)
+    def _init_socket(self, client_type: zmq.TYPE):
+        self._socket = self._ctx.socket(client_type)
 
     def _init_lock(self):
         self._lock = threading.Lock()
 
-    def prepare_socket(self):
+    def prepare_socket(self, client_type: zmq.TYPE):
         """Creates the socket and sets a lock."""
         self._init_context()
-        self._init_socket()
+        self._init_socket(client_type)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self._socket.setsockopt(zmq.RCVTIMEO, 5 * int(MOVAI_ZMQ_TIMEOUT_MS))
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))

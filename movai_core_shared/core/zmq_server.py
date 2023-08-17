@@ -10,19 +10,20 @@
    - Erez Zomer (erez@mov.ai) - 2023
 """
 import asyncio
-import logging
 from abc import ABC, abstractmethod
-
+import logging
+import random
 import zmq
 import zmq.asyncio
 from beartype import beartype
 
-from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
+from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS, DEVICE_NAME
 from movai_core_shared.exceptions import UnknownRequestError
 from movai_core_shared.messages.general_data import Request
+from movai_core_shared.core.zmq_base import ZMQBase
 
 
-class ZMQServer(ABC):
+class ZMQServer(ZMQBase):
     """
     This class is a base class for any ZMQ server.
     """
@@ -32,11 +33,12 @@ class ZMQServer(ABC):
         self, server_name: str, bind_addr: str, new_loop: bool = False, debug: bool = False
     ) -> None:
         """Constructor"""
+        random.seed()  # setting the seed for the random number generator
+        identity = f"{DEVICE_NAME}_message_server_{random.getrandbits(24)}"
+        super().__init__(identity, bind_addr, debug)
         self._name = server_name
-        self._addr = bind_addr
-        self._logger = logging.getLogger(server_name)
         self._new_loop = new_loop
-        self._debug = debug
+
         self._initialized = False
         self._running = False
         self._ctx = None
