@@ -20,16 +20,17 @@ import zmq
 import zmq.asyncio
 
 
-
 from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS, DEVICE_NAME
 from movai_core_shared.core.zmq_base import ZMQBase
 
 NUM_OF_THREADS = 4
 
+
 class ZMQServer(ZMQBase):
     """
     This class is a base class for any ZMQ server.
     """
+
     _ctx = zmq.asyncio.Context()
 
     @beartype
@@ -139,7 +140,6 @@ class ZMQServer(ZMQBase):
         self._running = True
         self._logger.info(f"{self.__class__.__name__} is running!!!")
         self._accept()
-
 
     def startup(self):
         """A funtion which is called once at server startup and can be used for initializing

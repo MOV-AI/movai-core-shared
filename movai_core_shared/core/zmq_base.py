@@ -15,8 +15,6 @@ from logging import getLogger
 import zmq
 
 
-
-
 class ZMQBase(ABC):
 
     _ctx = zmq.Context()

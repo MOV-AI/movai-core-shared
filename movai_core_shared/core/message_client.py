@@ -24,6 +24,7 @@ class MessageClient:
     It wraps the data into the message structure and send it to
     the message-server using ZMQClient.
     """
+
     _clients = {}
 
     def __init__(self, server_addr: str, robot_id: str = "") -> None:
