@@ -9,7 +9,7 @@
 import secrets
 
 
-def generate_secret_bytes(length: int=32) -> bytes:
+def generate_secret_bytes(length: int = 32) -> bytes:
     """The function generates a unique secret in bytes format,
 
     Args:
@@ -21,7 +21,7 @@ def generate_secret_bytes(length: int=32) -> bytes:
     return secrets.token_bytes(length)
 
 
-def generate_secret_string(length: int=32) -> bytes:
+def generate_secret_string(length: int = 32) -> bytes:
     """The function generates a unique secret in bytes format,
 
     Args:
