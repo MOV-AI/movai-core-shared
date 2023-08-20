@@ -12,19 +12,19 @@
 import asyncio
 import json
 import threading
-from logging import getLogger
 
 import zmq
 import zmq.asyncio
 
 from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
 from movai_core_shared.exceptions import MessageError
+from movai_core_shared.core.zmq_base import ZMQBase
 
 
-class ZMQClient:
+class ZMQClient(ZMQBase):
     """A very basic implementation of ZMQ Client"""
 
-    def __init__(self, identity: str, server_addr: str) -> None:
+    def __init__(self, identity: str, server_addr: str, client_type: zmq.TYPE = zmq.DEALER) -> None:
         """Initializes the object and the connection to the server.
 
         Args:
@@ -33,44 +33,40 @@ class ZMQClient:
             server_addr (str): The server addr and port in the form:
                 'tcp://server_addr:port'
         """
-        self._logger = getLogger(self.__class__.__name__)
-        self._identity = identity.encode("utf-8")
-        self._addr = server_addr
-        self._zmq_ctx = None
-        self._lock = None
-        self.prepare_socket()
-        self._init_lock()
+        super().__init__(identity, server_addr)
+        self.prepare_socket(client_type)
 
     def _init_context(self):
-        self._zmq_ctx = zmq.Context()
+        if self._ctx is None:
+            self._ctx = zmq.Context()
+
+    def _init_socket(self, client_type: zmq.TYPE):
+        self._socket = self._ctx.socket(client_type)
 
     def _init_lock(self):
         self._lock = threading.Lock()
 
-    def prepare_socket(self):
+    def prepare_socket(self, client_type: zmq.TYPE):
         """Creates the socket and sets a lock."""
         self._init_context()
-        self._socket = self._zmq_ctx.socket(zmq.DEALER)
+        self._init_socket(client_type)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
-        self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
+        self._socket.setsockopt(zmq.RCVTIMEO, 5 * int(MOVAI_ZMQ_TIMEOUT_MS))
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
         self._socket.connect(self._addr)
 
     def __del__(self):
         """closes the socket when the object is destroyed."""
         # Close all sockets associated with this context and then terminate the context.
-        self._socket.close()
-        self._zmq_ctx.term()
+        if self._socket is not None:
+            self._socket.close()
 
     def _send(self, msg: bytes):
         """sends a message in a synchronous way."""
-        self._lock.acquire()
         try:
             self._socket.send(msg)
         except:
             self._logger.error("Failed to send message")
-        finally:
-            self._lock.release()
 
     def _create_msg(self, msg: dict):
         """create the msg in json format.
@@ -107,14 +103,11 @@ class ZMQClient:
         Returns:
             (bytes): raw data from the server.
         """
-        self._lock.acquire()
         buffer = None
         try:
             buffer = self._socket.recv_multipart()
         except Exception as e:
             self._logger.error("error while trying to recieve data, %s", e)
-        finally:
-            self._lock.release()
         return buffer
 
     def _extract_reponse(self, buffer: bytes):
@@ -152,6 +145,8 @@ class ZMQClient:
             dict: The response from the server.
         """
         buffer = self._recieve()
+        if not buffer:
+            return {}
         response = self._extract_reponse(buffer)
         return response
 
@@ -160,7 +155,7 @@ class AsyncZMQClient(ZMQClient):
     """An Async implementation of ZMQ Client"""
 
     def _init_context(self):
-        self._zmq_ctx = zmq.asyncio.Context()
+        self._ctx = zmq.asyncio.Context()
 
     def _init_lock(self):
         self._lock = asyncio.Lock()
@@ -171,13 +166,10 @@ class AsyncZMQClient(ZMQClient):
         Args:
             data (bytes): the msg representation
         """
-        await self._lock.acquire()
         try:
             await self._socket.send(msg)
         except Exception as e:
             self._logger.error("error while trying to recieve data, %s", e)
-        finally:
-            self._lock.release()
 
     async def send(self, msg: dict) -> None:
         """
@@ -196,13 +188,10 @@ class AsyncZMQClient(ZMQClient):
             (bytes): raw data from the server.
         """
         buffer = None
-        await self._lock.acquire()
         try:
             buffer = await self._socket.recv_multipart()
         except Exception as e:
             self._logger.error("error while trying to recieve data, %s", e)
-        finally:
-            self._lock.release()
         return buffer
 
     async def recieve(self) -> dict:
@@ -216,5 +205,12 @@ class AsyncZMQClient(ZMQClient):
             dict: The response from the server.
         """
         buffer = await self._recieve()
+        if not buffer:
+            return {}
         response = self._extract_reponse(buffer)
         return response
+
+
+class REQZMQClient(ZMQClient):
+    def _init_socket(self):
+        self._socket = self._ctx.socket(zmq.REQ)
