@@ -8,7 +8,7 @@
 """
 from os import getpid
 
-#system
+# system
 PID = getpid()
 
 # Constants
@@ -112,7 +112,7 @@ ADMIN_ROLE = "ADMIN"
 OPERATOR_ROLE = "OPERATOR"
 DEPLOYER_ROLE = "DEPLOYER"
 
-#permissions
+# permissions
 READ_PERMISSION = "read"
 UPDATE_PERMISSION = "update"
 CREATE_PERMISSION = "create"
@@ -120,24 +120,24 @@ DELETE_PERMISSION = "delete"
 EXECUTE_PERMISSION = "execute"
 RESET_PERMISSION = "reset"
 
-#container_names
+# container_names
 INFLUXDB_HOST = "influxdb"
 MESSAGE_SERVER_HOST = "message-server"
 
 
-#inluxdb DB names:
+# inluxdb DB names:
 LOGS_INFLUX_DB = "logs"
 METRICS_INFLUX_DB = "metrics"
 STRESS_INFLUX_DB = "stress"
 INFLUXDB_DB_NAMES = [LOGS_INFLUX_DB, METRICS_INFLUX_DB, STRESS_INFLUX_DB]
 
-#inluxdb measurements names:
+# inluxdb measurements names:
 SYSLOG_MEASUREMENT = "syslog"
 LOGS_MEASUREMENT = "app_logs"
 METRICS_MEASUREMENT = "metric_logs"
 STRESS_MEASUREMENT = "stress_logs"
 
-#Message-Server msgs types:
+# Message-Server msgs types:
 LOGS_HANDLER_MSG_TYPE = "logs"
 SYSLOGS_HANDLER_MSG_TYPE = "syslog"
 LOGS_QUERY_HANDLER_MSG_TYPE = "logs_query"

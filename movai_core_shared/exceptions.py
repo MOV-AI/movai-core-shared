@@ -51,18 +51,16 @@ class ActiveFlowError(MovaiException):
 
 
 class InitializationError(MovaiException):
-    """Failure to initialize an object.
-    """
+    """Failure to initialize an object."""
 
 
 class RestrictedPathError(MovaiException):
-    """The client tries to access restricted path.
-    """
+    """The client tries to access restricted path."""
 
 
 class UserError(MovaiException):
-    """A base class for user errors.
-    """
+    """A base class for user errors."""
+
     def __init__(self, message: str) -> None:
         self.message = message
 
@@ -71,23 +69,20 @@ class UserError(MovaiException):
 
 
 class UserAlreadyExist(UserError):
-    """The requested user is already exist in the system.
-    """
+    """The requested user is already exist in the system."""
 
 
 class UserDoesNotExist(UserError):
-    """The requested user is not exist in the system.
-    """
+    """The requested user is not exist in the system."""
 
 
 class UserPermissionsError(UserError):
-    """The user's permissions can't be retrieved.
-    """
+    """The user's permissions can't be retrieved."""
 
 
 class LoginError(MovaiException):
-    """A base class for login errors.
-    """
+    """A base class for login errors."""
+
     def __init__(self, message: str) -> None:
         self.message = message
 
@@ -96,43 +91,36 @@ class LoginError(MovaiException):
 
 
 class DomainDoesNotExist(LoginError):
-    """The required domain is not registered in the systm.
-    """
+    """The required domain is not registered in the systm."""
 
 
 class AuthorizationError(LoginError):
-    """Failure to get access to the system.
-    """
+    """Failure to get access to the system."""
 
 
 class InvalidCredentials(LoginError):
-    """Supplied credentials are incorrect.
-    """
+    """Supplied credentials are incorrect."""
 
 
 class TokenError(LoginError):
-    """General Token error
-    """
+    """General Token error"""
 
 
 class InvalidToken(TokenError):
-    """Failed to get access token.
-    """
+    """Failed to get access token."""
 
 
 class TokenExpired(TokenError):
-    """Token's signature has expired.
-    """
+    """Token's signature has expired."""
 
 
 class TokenRevoked(TokenError):
-    """Token have been revoked.
-    """
+    """Token have been revoked."""
 
 
 class AclObjectError(MovaiException):
-    """a base class for AclObject model exceptions.
-    """
+    """a base class for AclObject model exceptions."""
+
     def __init__(self, message: str) -> None:
         self.message = message
 
@@ -141,28 +129,24 @@ class AclObjectError(MovaiException):
 
 
 class AclObjectDoesNotExist(AclObjectError):
-    """the required object is not found on DB.
-    """
+    """the required object is not found on DB."""
 
 
 class AclObjectAlreadyExist(AclObjectError):
-    """the required object is already found on DB.
-    """
+    """the required object is already found on DB."""
 
 
 class AclObjectIDMismatch(AclObjectError):
-    """The name and the ID of the required object are mismatched.
-    """
+    """The name and the ID of the required object are mismatched."""
 
 
 class AclObjectInvalidAttribute(AclObjectError):
-    """The required attribute does id not defined in AclObject scheme.
-    """
+    """The required attribute does id not defined in AclObject scheme."""
 
 
 class LdapConfigError(MovaiException):
-    """a base class for LdapConfig model exceptions.
-    """
+    """a base class for LdapConfig model exceptions."""
+
     def __init__(self, message: str) -> None:
         self.message = message
 
@@ -171,28 +155,24 @@ class LdapConfigError(MovaiException):
 
 
 class LdapConfigAlreadyExist(LdapConfigError):
-    """A configuration with the supplied name is already exist in DB.
-    """
+    """A configuration with the supplied name is already exist in DB."""
 
 
 class LdapConfigDoesNotExist(LdapConfigError):
-    """the required configuration is not found on DB.
-    """
+    """the required configuration is not found on DB."""
 
 
 class LdapConfigMissingParameter(LdapConfigError):
-    """a required parameter is missing in supplied LdapConfig dictionary.
-    """
+    """a required parameter is missing in supplied LdapConfig dictionary."""
 
 
 class LdapConfigInvalidStructure(LdapConfigError):
-    """a required parameter is missing in supplied LdapConfig dictionary.
-    """
+    """a required parameter is missing in supplied LdapConfig dictionary."""
 
 
 class RoleError(MovaiException):
-    """a base class for Role model exceptions.
-    """
+    """a base class for Role model exceptions."""
+
     def __init__(self, message: str) -> None:
         self.message = message
 
@@ -201,18 +181,16 @@ class RoleError(MovaiException):
 
 
 class RoleDoesNotExist(RoleError):
-    """the requested role is not found on DB.
-    """
+    """the requested role is not found on DB."""
 
 
 class RoleAlreadyExist(RoleError):
-    """the requested role is already found in DB.
-    """
+    """the requested role is already found in DB."""
 
 
 class PasswordError(MovaiException):
-    """a base class for password exceptions.
-    """
+    """a base class for password exceptions."""
+
     def __init__(self, message: str) -> None:
         self.message = message
 
@@ -221,18 +199,16 @@ class PasswordError(MovaiException):
 
 
 class PasswordComplexityError(PasswordError):
-    """The password doesn't comply with complexity settings.
-    """
+    """The password doesn't comply with complexity settings."""
 
 
 class PasswordASCIIFormatError(MovaiException):
-    """The supplied password isn't comprised of ascii symbols.
-    """
+    """The supplied password isn't comprised of ascii symbols."""
 
 
 class SecretKeyError(MovaiException):
-    """a base class for Role model exceptions.
-    """
+    """a base class for Role model exceptions."""
+
     def __init__(self, message: str) -> None:
         self.message = message
 
@@ -241,23 +217,19 @@ class SecretKeyError(MovaiException):
 
 
 class SecretKeyDoesNotExist(SecretKeyError):
-    """the requested secret key is not found on DB.
-    """
+    """the requested secret key is not found on DB."""
 
 
 class SecretKeyAlreadyExist(SecretKeyError):
-    """the requested secret key is already found in DB.
-    """
+    """the requested secret key is already found in DB."""
 
 
 class ArgumentError(MovaiException):
-    """The supplied argument is invalid.
-    """
+    """The supplied argument is invalid."""
 
 
 class HandlerNotFoundError(MovaiException):
-    """The message has no suitable handler.
-    """
+    """The message has no suitable handler."""
 
 
 class MessageError(MovaiException):
@@ -269,29 +241,24 @@ class MessageFormatError(MessageError):
 
 
 class MetricError(MessageError):
-    """Something is wrong with the metric.
-    """
+    """Something is wrong with the metric."""
 
 
 class QueryError(MovaiException):
-    """Something is wrong with the metric.
-    """
+    """Something is wrong with the metric."""
 
 
 class UnknownRequestError(MovaiException):
-    """The request format is unknown.
-    """
+    """The request format is unknown."""
 
 
 class ConfigurationDoesNotExist(DoesNotExist):
-    """The requested configuration could not be found.
-    """
+    """The requested configuration could not be found."""
 
 
 class DBHandlerError(MovaiException):
-    """General exception in DBHandler.
-    """
+    """General exception in DBHandler."""
+
 
 class TimeError(MovaiException):
-    """The supplied time is not a timestamp
-    """
+    """The supplied time is not a timestamp"""
