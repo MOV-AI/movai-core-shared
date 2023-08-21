@@ -19,7 +19,7 @@ class StressData(BaseModel):
     query: bool
     measurement: str
     insert_data: Optional[dict]
-    query_data:Optional[dict]
+    query_data: Optional[dict]
 
 
 class StressRequest(Request):
