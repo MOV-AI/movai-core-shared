@@ -3,7 +3,6 @@ import sys
 
 from movai_core_shared.logger import Log
 
-
 class BaseCommand(ABC):
     """Base Class for the various tools commands."""
 

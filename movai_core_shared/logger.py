@@ -44,7 +44,7 @@ from movai_core_shared.envvars import (
     SERVICE_NAME,
     SYSLOG_ENABLED,
 )
-from movai_core_shared.core.message_client import MessageClient
+from movai_core_shared.core.message_client import MessageClient, AsyncMessageClient
 from movai_core_shared.common.utils import is_enteprise, is_manager
 from movai_core_shared.common.time import validate_time
 
@@ -132,6 +132,7 @@ class RemoteHandler(logging.StreamHandler):
         """
         logging.StreamHandler.__init__(self, None)
         self._message_client = MessageClient(MESSAGE_SERVER_LOCAL_ADDR)
+        self._async_message_client = AsyncMessageClient(MESSAGE_SERVER_LOCAL_ADDR)
 
     def emit(self, record):
         """
@@ -189,6 +190,16 @@ class RemoteHandler(logging.StreamHandler):
             "log_tags": syslog_tags,
             "log_fields": syslog_fields,
         }
+
+        if asyncio._get_running_loop() is not None:
+            asyncio.create_task(
+                self._async_message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data)
+            )
+            if SYSLOG_ENABLED:
+                asyncio.create_task(
+                    self._async_message_client.send_request(SYSLOGS_HANDLER_MSG_TYPE, syslog_data)
+                )
+            return
 
         self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data)
         if SYSLOG_ENABLED:
@@ -468,7 +479,7 @@ class LogsQuery:
         if is_manager():
             server_addr = MESSAGE_SERVER_LOCAL_ADDR
 
-        message_client = MessageClient(server_addr)
+        message_client = AsyncMessageClient(server_addr)
         params = {}
 
         if limit is not None:
@@ -508,7 +519,7 @@ class LogsQuery:
         }
 
         try:
-            query_response = message_client.send_request(
+            query_response = await message_client.send_request(
                 LOGS_QUERY_HANDLER_MSG_TYPE, query_data, None, True
             )
             if "response" in query_response:

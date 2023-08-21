@@ -25,8 +25,6 @@ class MessageClient:
     the message-server using ZMQClient.
     """
 
-    _clients = {}
-
     def __init__(self, server_addr: str, robot_id: str = "") -> None:
         """
         constructor - initializes the object.
@@ -51,23 +49,18 @@ class MessageClient:
             "service": SERVICE_NAME,
             "id": robot_id,
         }
-        self._zmq_client = self.get_zmq_client()
+        random.seed()  # setting the seed for the random number generator
+        identity = f"{DEVICE_NAME}_message_client_{random.getrandbits(24)}"
+        self._zmq_client = None
+        self._init_zmq_client(identity)
 
-    def get_zmq_client(self) -> ZMQClient:
+    def _init_zmq_client(self, identity: str):
         """initializes the ZMQClient object
 
         Args:
             identity (str): A string represent unique identity for the client.
-
-        Returns:
-            (ZMQClient): a zmq client connected to the request socket.
         """
-        if not self._server_addr in self._clients:
-            random.seed()  # setting the seed for the random number generator
-            identity = f"{DEVICE_NAME}_message_client_{random.getrandbits(24)}"
-            self._clients[self._server_addr] = ZMQClient(identity, self._server_addr)
-
-        return self._clients[self._server_addr]
+        self._zmq_client = ZMQClient(identity, self._server_addr)
 
     def _build_request(
         self, msg_type: str, data: dict, creation_time: str = None, response_required: bool = False
