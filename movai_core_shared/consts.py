@@ -101,7 +101,7 @@ NAME_REGEX = r"^(\/)?[~@a-zA-Z_0-9-.]+([~@a-zA-Z_0-9-]+)?([\/a-zA-Z_0-9-.]+)?$"
 LINK_REGEX = r"^([~@a-zA-Z_0-9-]+)([\/])([\/~@a-zA-Z_0-9]+)+([\/])([~@a-zA-Z_0-9]+)$"
 CONFIG_REGEX = r"\$\((param|config|var|flow)[^$)]+\)"
 
-TIMEOUT_PROCESS_SIGINT = 15
+TIMEOUT_PROCESS_SIGINT = 7
 TIMEOUT_PROCESS_SIGTERM = 2
 
 # Domains
