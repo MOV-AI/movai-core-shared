@@ -64,13 +64,10 @@ class ZMQClient:
 
     def _send(self, msg: bytes):
         """sends a message in a synchronous way."""
-        self._lock.acquire()
         try:
             self._socket.send(msg)
         except:
             self._logger.error("Failed to send message")
-        finally:
-            self._lock.release()
 
     def _create_msg(self, msg: dict):
         """create the msg in json format.
@@ -107,14 +104,11 @@ class ZMQClient:
         Returns:
             (bytes): raw data from the server.
         """
-        self._lock.acquire()
         buffer = None
         try:
             buffer = self._socket.recv_multipart()
         except Exception as e:
             self._logger.error("error while trying to recieve data, %s", e)
-        finally:
-            self._lock.release()
         return buffer
 
     def _extract_reponse(self, buffer: bytes):
@@ -173,13 +167,10 @@ class AsyncZMQClient(ZMQClient):
         Args:
             data (bytes): the msg representation
         """
-        await self._lock.acquire()
         try:
             await self._socket.send(msg)
         except Exception as e:
             self._logger.error("error while trying to recieve data, %s", e)
-        finally:
-            self._lock.release()
 
     async def send(self, msg: dict) -> None:
         """
@@ -198,13 +189,10 @@ class AsyncZMQClient(ZMQClient):
             (bytes): raw data from the server.
         """
         buffer = None
-        await self._lock.acquire()
         try:
             buffer = await self._socket.recv_multipart()
         except Exception as e:
             self._logger.error("error while trying to recieve data, %s", e)
-        finally:
-            self._lock.release()
         return buffer
 
     async def recieve(self) -> dict:
