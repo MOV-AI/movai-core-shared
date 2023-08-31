@@ -17,7 +17,7 @@ from logging import getLogger
 import zmq
 import zmq.asyncio
 
-from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
+from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS, MOVAI_ZMQ_RECV_TIMEOUT_MS
 from movai_core_shared.exceptions import MessageError
 
 
@@ -52,8 +52,8 @@ class ZMQClient:
         self._init_context()
         self._socket = self._zmq_ctx.socket(zmq.DEALER)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
-        self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
-        self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
+        self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_ZMQ_RECV_TIMEOUT_MS))
+        self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
         self._socket.connect(self._addr)
 
     def __del__(self):
@@ -64,10 +64,13 @@ class ZMQClient:
 
     def _send(self, msg: bytes):
         """sends a message in a synchronous way."""
+        self._lock.acquire()
         try:
             self._socket.send(msg)
         except:
             self._logger.error("Failed to send message")
+        finally:
+            self._lock.release()
 
     def _create_msg(self, msg: dict):
         """create the msg in json format.
@@ -104,11 +107,14 @@ class ZMQClient:
         Returns:
             (bytes): raw data from the server.
         """
+        self._lock.acquire()
         buffer = None
         try:
             buffer = self._socket.recv_multipart()
         except Exception as e:
             self._logger.error("error while trying to recieve data, %s", e)
+        finally:
+            self._lock.release()
         return buffer
 
     def _extract_reponse(self, buffer: bytes):
