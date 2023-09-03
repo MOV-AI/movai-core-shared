@@ -17,7 +17,7 @@ from logging import getLogger
 import zmq
 import zmq.asyncio
 
-from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
+from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS, MOVAI_ZMQ_RECV_TIMEOUT_MS
 from movai_core_shared.exceptions import MessageError
 
 
@@ -52,8 +52,8 @@ class ZMQClient:
         self._init_context()
         self._socket = self._zmq_ctx.socket(zmq.DEALER)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
-        self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
-        self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
+        self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_ZMQ_RECV_TIMEOUT_MS))
+        self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
         self._socket.connect(self._addr)
 
     def __del__(self):
@@ -173,13 +173,10 @@ class AsyncZMQClient(ZMQClient):
         Args:
             data (bytes): the msg representation
         """
-        await self._lock.acquire()
         try:
             await self._socket.send(msg)
         except Exception as e:
             self._logger.error("error while trying to recieve data, %s", e)
-        finally:
-            self._lock.release()
 
     async def send(self, msg: dict) -> None:
         """
@@ -198,13 +195,10 @@ class AsyncZMQClient(ZMQClient):
             (bytes): raw data from the server.
         """
         buffer = None
-        await self._lock.acquire()
         try:
             buffer = await self._socket.recv_multipart()
         except Exception as e:
             self._logger.error("error while trying to recieve data, %s", e)
-        finally:
-            self._lock.release()
         return buffer
 
     async def recieve(self) -> dict:

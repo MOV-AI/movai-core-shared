@@ -17,9 +17,7 @@ import zmq
 import zmq.asyncio
 from beartype import beartype
 
-from movai_core_shared.envvars import MOVAI_ZMQ_TIMEOUT_MS
-from movai_core_shared.exceptions import UnknownRequestError
-from movai_core_shared.messages.general_data import Request
+from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS
 
 
 class ZMQServer(ABC):
@@ -47,7 +45,7 @@ class ZMQServer(ABC):
         self._ctx = zmq.asyncio.Context()
         self._socket = self._ctx.socket(zmq.ROUTER)
         self._socket.setsockopt(zmq.IDENTITY, self._name.encode("ascii"))
-        self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_TIMEOUT_MS))
+        self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
         if self._socket is None:
             raise zmq.ZMQError(msg="Failed to create socket")
 
