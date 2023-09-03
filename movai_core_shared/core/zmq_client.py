@@ -165,7 +165,7 @@ class AsyncZMQClient(ZMQClient):
         self._zmq_ctx = zmq.asyncio.Context()
 
     def _init_lock(self):
-        self._lock = asyncio.Lock()
+        pass
 
     async def _send(self, msg: bytes):
         """Asynchrounously send the message.
