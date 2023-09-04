@@ -9,7 +9,6 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2022
 """
-import asyncio
 import json
 import threading
 from logging import getLogger
@@ -39,12 +38,10 @@ class ZMQClient:
         self._zmq_ctx = None
         self._lock = None
         self.prepare_socket()
-        self._init_lock()
 
     def _init_context(self):
         self._zmq_ctx = zmq.Context()
-
-    def _init_lock(self):
+        # lock used for socket in multithreading
         self._lock = threading.Lock()
 
     def prepare_socket(self):
@@ -163,9 +160,6 @@ class AsyncZMQClient(ZMQClient):
 
     def _init_context(self):
         self._zmq_ctx = zmq.asyncio.Context()
-
-    def _init_lock(self):
-        self._lock = asyncio.Lock()
 
     async def _send(self, msg: bytes):
         """Asynchrounously send the message.
