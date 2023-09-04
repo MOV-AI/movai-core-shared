@@ -41,14 +41,11 @@ class ZMQClient:
 
     def _init_context(self):
         self._zmq_ctx = zmq.Context()
-
-    def _init_lock(self):
+        # lock used for socket in multithreading
         self._lock = threading.Lock()
 
     def prepare_socket(self):
         """Creates the socket and sets a lock."""
-        # lock used for socket in multithreading
-        self._init_lock()
         self._init_context()
         self._socket = self._zmq_ctx.socket(zmq.DEALER)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
