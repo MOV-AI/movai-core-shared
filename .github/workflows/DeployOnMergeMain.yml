@@ -6,7 +6,6 @@ on:
       - 'releases/**'
     paths-ignore:
       - '.bumpversion.cfg'
-      - 'setup.py'
 
 jobs:
   CI:
