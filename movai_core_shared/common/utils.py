@@ -9,6 +9,7 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2022
 """
+import asyncio
 import socket
 from pkg_resources import get_distribution
 from movai_core_shared.envvars import REDIS_MASTER_HOST
@@ -72,3 +73,10 @@ def get_package_version(package_name: str) -> str:
         str: The version of the package.
     """
     return get_distribution(package_name).version
+
+
+async def run_blocking_code(executor, blocking_func, *args):
+    loop = asyncio.get_running_loop()
+    future = loop.run_in_executor(executor, blocking_func, *args)
+    results = await future
+    return results
