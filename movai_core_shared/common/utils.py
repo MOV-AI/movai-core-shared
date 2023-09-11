@@ -76,6 +76,15 @@ def get_package_version(package_name: str) -> str:
 
 
 async def run_blocking_code(executor, blocking_func, *args):
+    """runs a blocking code in another thread to free the main loop for other tasks.
+
+    Args:
+        executor (_type_): A thread or process to execute the code.
+        blocking_func (_type_): The fucntion to execute.
+
+    Returns:
+        Any: The results from the blocking_func
+    """
     loop = asyncio.get_running_loop()
     future = loop.run_in_executor(executor, blocking_func, *args)
     results = await future
