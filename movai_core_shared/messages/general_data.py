@@ -1,4 +1,26 @@
+"""
+   Copyright (C) Mov.ai  - All Rights Reserved
+   Unauthorized copying of this file, via any medium is strictly prohibited
+   Proprietary and confidential
+
+   Developers:
+   - Erez Zomer (erez@mov.ai) - 2023
+"""
+from typing import Optional
+
 from pydantic import BaseModel
+
+
+def print_dict(message: dict, space_count: int):
+    spacing = " " * 4
+    text = ""
+    for key, val in message.items():
+        if hasattr(val, "__dict__"):
+            text += space_count * spacing + f"{key}:\n"
+            text += print_dict(val.__dict__, space_count + 1)
+        else:
+            text += space_count * spacing + f"{key}: {val}\n"
+    return text
 
 
 class RobotInfo(BaseModel):
@@ -12,28 +34,16 @@ class RobotInfo(BaseModel):
     service: str
     id: str
 
-    def __str__(self) -> str:
-        text = f"""
-            fleet: {self.fleet}
-            robot: {self.robot}
-            service: {self.service}
-            id: {self.id}"""
-        return text
-
 
 class Request(BaseModel):
+    req_id: Optional[str]
     req_type: str
     created: int
     response_required: bool
     robot_info: RobotInfo
 
     def __str__(self):
-        text = f"""
-        ===========================================================================================
-        req_type: {self.req_type}
-        response_required: {self.response_required}
-        robot_info: {self.robot_info.__str__()}
-        created: {self.created}
-        ===========================================================================================
-        """
+        text = "\n" + "=" * 100 + "\n"
+        text += print_dict(self.__dict__, 0)
+        text += "=" * 100 + "\n"
         return text

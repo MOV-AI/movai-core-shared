@@ -1,9 +1,18 @@
+"""
+   Copyright (C) Mov.ai  - All Rights Reserved
+   Unauthorized copying of this file, via any medium is strictly prohibited
+   Proprietary and confidential
+
+   Developers:
+   - Erez Zomer (erez@mov.ai) - 2023
+"""
 from pydantic import BaseModel
 
 from movai_core_shared.messages.general_data import Request
+from movai_core_shared.messages.metric_data import MetricData
 
 
-class MetricData(BaseModel):
+class AlertFields(BaseModel):
     name: str
     info: str
     action: str
@@ -11,42 +20,12 @@ class MetricData(BaseModel):
     status: str
     send_email: bool = False
 
-    def __str__(self) -> str:
-        text = f"""
-                name: {self.name}
-                info: {self.info}
-                action: {self.action}
-                callback: {self.callback}
-                status: {self.status}
-                send_email: {self.send_email}
-        """
-        return text
 
-
-class AlertData(BaseModel):
+class AlertData(MetricData):
     measurement: str
     metric_type: str
-    metric_data: MetricData
-
-    def __str__(self) -> str:
-        text = f"""
-            measurement: {self.measurement}
-            metric_type: {self.metric_type}
-            metric_data: {self.metric_data.__str__()}
-        """
-        return text
+    metric_fields: AlertFields
 
 
 class AlertRequest(Request):
     req_data: AlertData
-
-    def __str__(self):
-        text = f"""
-        ===========================================================================================
-        req_type: {self.req_type}
-        response_required: {self.response_required}
-        req_data: {self.req_data.__str__()}
-        robot_info: {self.robot_info.__str__()}
-        created: {self.created}
-        ==========================================================================================="""
-        return text

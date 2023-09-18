@@ -6,12 +6,12 @@
    Developers:
    - Dor Marcous (dor@mov.ai) - 2022
 """
+import asyncio
 import sys
 from datetime import datetime
 from inspect import getframeinfo, stack
 import logging
 from logging.handlers import TimedRotatingFileHandler
-import threading
 import syslog
 import traceback
 
@@ -30,10 +30,12 @@ from movai_core_shared.consts import (
     SYSLOGS_HANDLER_MSG_TYPE,
     PID,
     USER_LOG_TAG,
+    CALLBACK_LOGGER,
 )
 from movai_core_shared.envvars import (
     DEVICE_NAME,
     MOVAI_LOGFILE_VERBOSITY_LEVEL,
+    MOVAI_LOG_FILE,
     MOVAI_FLEET_LOGS_VERBOSITY_LEVEL,
     MOVAI_STDOUT_VERBOSITY_LEVEL,
     MOVAI_GENERAL_VERBOSITY_LEVEL,
@@ -42,7 +44,7 @@ from movai_core_shared.envvars import (
     SERVICE_NAME,
     SYSLOG_ENABLED,
 )
-from movai_core_shared.core.message_client import MessageClient
+from movai_core_shared.core.message_client import MessageClient, AsyncMessageClient
 from movai_core_shared.common.utils import is_enteprise, is_manager
 from movai_core_shared.common.time import validate_time
 
@@ -106,6 +108,11 @@ class StdOutHandler(logging.StreamHandler):
             msg = self.format(record)
 
             stream = self.stream
+            if stream.closed:
+                if stream == sys.stderr:
+                    stream = open("/dev/stderr", "w")
+                else:
+                    stream = open("/dev/stdout", "w")
             stream.write(self._COLORS.get(record.levelno, "") + msg + self._COLOR_RESET)
             stream.write(self.terminator)
             self.flush()
@@ -125,19 +132,9 @@ class RemoteHandler(logging.StreamHandler):
         """
         logging.StreamHandler.__init__(self, None)
         self._message_client = MessageClient(MESSAGE_SERVER_LOCAL_ADDR)
+        self._async_message_client = AsyncMessageClient(MESSAGE_SERVER_LOCAL_ADDR)
 
     def emit(self, record):
-        """
-        Emit a record.
-        Send the record to the HealthNode API
-
-        Args:
-            record: The python log message data record
-
-        """
-        threading.Thread(target=self._emit, args=(record,)).start()
-
-    def _emit(self, record):
         """
         Builds a valid log message request from the python log record
         and send it to the local message server
@@ -194,16 +191,31 @@ class RemoteHandler(logging.StreamHandler):
             "log_fields": syslog_fields,
         }
 
+        if asyncio._get_running_loop() is not None:
+            asyncio.create_task(
+                self._async_message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data)
+            )
+            if SYSLOG_ENABLED:
+                asyncio.create_task(
+                    self._async_message_client.send_request(SYSLOGS_HANDLER_MSG_TYPE, syslog_data)
+                )
+            return
+
         self._message_client.send_request(LOGS_HANDLER_MSG_TYPE, log_data)
         if SYSLOG_ENABLED:
             self._message_client.send_request(SYSLOGS_HANDLER_MSG_TYPE, syslog_data)
 
 
-def _get_console_handler():
+def _get_console_handler(stream_config=None):
     """
     Set up the stdout handler
     """
-    console_handler = StdOutHandler()
+    if stream_config is None:
+        console_handler = StdOutHandler()
+    elif stream_config == CALLBACK_LOGGER:
+        console_handler = StdOutHandler(stream=sys.stdout)
+    else:
+        raise ValueError("Unknown stream config for the console logger!")
     console_handler.setFormatter(LOG_FORMATTER)
     console_handler.setLevel(MOVAI_STDOUT_VERBOSITY_LEVEL)
     return console_handler
@@ -312,7 +324,7 @@ class Log:
     A static class to help create logger instances
     """
 
-    LOG_FILE = "movai.log"
+    LOG_FILE = MOVAI_LOG_FILE
 
     @staticmethod
     def set_log_file(name: str):
@@ -322,7 +334,7 @@ class Log:
         Log.LOG_FILE = name
 
     @staticmethod
-    def get_logger(logger_name: str):
+    def get_logger(logger_name: str, stream_config=None):
         """
         Get a logger instance
         """
@@ -330,12 +342,11 @@ class Log:
         if logger.hasHandlers():
             logger.handlers = []
         if MOVAI_STDOUT_VERBOSITY_LEVEL != logging.NOTSET:
-            logger.addHandler(_get_console_handler())
+            logger.addHandler(_get_console_handler(stream_config))
         if MOVAI_LOGFILE_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(_get_file_handler())
-        if is_enteprise():
-            if MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
-                logger.addHandler(get_remote_handler())
+        if is_enteprise() and MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
+            logger.addHandler(get_remote_handler())
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
         logger.propagate = False
         return logger
@@ -366,7 +377,11 @@ class Log:
         Returns:
             LogAdapter: A logger with tags.
         """
-        logger = cls.get_user_logger(logger_name, node=node_name, callback=callback_name)
+        tags = {}
+        tags[USER_LOG_TAG] = True
+        tags["node"] = node_name
+        tags["callback"] = callback_name
+        logger = LogAdapter(cls.get_logger(logger_name, CALLBACK_LOGGER), **tags)
         return logger
 
 
@@ -421,7 +436,7 @@ class LogsQuery:
         return value
 
     @classmethod
-    def validate_datetime(cls, value: int) -> str:
+    def validate_datetime(cls, value: int) -> int:
         """Validate if value is timestamp or datetime
 
         Args:
@@ -446,7 +461,7 @@ class LogsQuery:
         return int(dt_obj.timestamp())
 
     @classmethod
-    def get_logs(
+    async def get_logs(
         cls,
         limit=DEFAULT_LOG_LIMIT,
         offset=DEFAULT_LOG_OFFSET,
@@ -464,7 +479,7 @@ class LogsQuery:
         if is_manager():
             server_addr = MESSAGE_SERVER_LOCAL_ADDR
 
-        message_client = MessageClient(server_addr)
+        message_client = AsyncMessageClient(server_addr)
         params = {}
 
         if limit is not None:
@@ -504,10 +519,11 @@ class LogsQuery:
         }
 
         try:
-            query_response = message_client.send_request(
+            query_response = await message_client.send_request(
                 LOGS_QUERY_HANDLER_MSG_TYPE, query_data, None, True
             )
-            response = query_response
+            if "response" in query_response:
+                response = query_response["response"]
         except Exception as error:
             raise error
 
