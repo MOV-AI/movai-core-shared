@@ -28,15 +28,15 @@ class ZMQServer(ZMQBase):
 
     @beartype
     def __init__(
-        self, server_name: str, bind_addr: str, new_loop: bool = False, debug: bool = False
+        self, server_name: str, bind_addr: str, debug: bool = False
     ) -> None:
         """Constructor"""
-        super().__init__(server_name, bind_addr)
         self._name = server_name
-        self._new_loop = new_loop
         self._debug = debug
         self._initialized = False
         self._running = False
+        super().__init__(server_name, bind_addr)
+        
         self._lock = threading.Lock()
 
     def prepare_socket(self) -> None:
@@ -45,6 +45,7 @@ class ZMQServer(ZMQBase):
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
         self._bind()
+        self._initialized = True
 
     def _bind(self) -> None:
         """Binds the zmq socket to the appropriate file/address."""
@@ -65,8 +66,8 @@ class ZMQServer(ZMQBase):
                     self._logger.debug("Waiting for new requests.\n")
                 buffer = self._socket.recv_multipart()
                 self.handle(buffer)
-            except Exception as error:
-                self._logger.error(f"ZMQServer Error: {str(error)}")
+            except Exception as exc:
+                self._logger.error("%s got an error while handling request: %s", self._name, exc)
                 continue
         self.close()
 
@@ -81,21 +82,24 @@ class ZMQServer(ZMQBase):
         """closes the socket when the object is destroyed."""
         self.close()
 
-    def start(self) -> int:
+    def start(self) -> bool:
         """The main message dispatch loop.
 
         Returns:
-            int: 1 in case of exception.
+            bool: True in case server is running, False if failed to start.
         """
         if self._running:
             self._logger.warning(f"{self._name} is already ruuning")
-            return
-        self._running = True
-        self._logger.info(f"{self.__class__.__name__} is running!!!")
-        if self._new_loop:
-            asyncio.run(self._accept())
-        else:
-            asyncio.create_task(self._accept())
+            return True
+        
+        try:
+            self._running = True
+            self._logger.info("%s is running!!!", self._name)
+            self._accept()
+            return True
+        except Exception as exc:
+            self._logger.info("%s failed to start, due to %s", self._name, exc)
+            return False
 
     def stop(self):
         """Stops the server from running."""
@@ -112,9 +116,15 @@ class ZMQServer(ZMQBase):
         pass
 
 
-class AsyncZMQServer(ZMQServer):
-    
-    
+class AsyncZMQServer(ZMQServer):   
+
+    _context = zmq.asyncio.Context()
+
+    @beartype
+    def __init__(self, server_name: str, bind_addr: str, debug: bool = False) -> None:
+        super().__init__(server_name, bind_addr, debug)
+        self._lock = asyncio.Lock()
+
     async def _accept(self) -> None:
         """accepts new connections requests to zmq."""
         await self.startup()
@@ -128,7 +138,26 @@ class AsyncZMQServer(ZMQServer):
                 self._logger.error(f"ZMQServer Error: {str(error)}")
                 continue
         self.close()
-    
+
+    def start(self) -> int:
+        """The main message dispatch loop.
+
+        Returns:
+            int: 1 in case of exception.
+        """
+        if self._running:
+            self._logger.warning(f"{self._name} is already ruuning")
+            return True
+        self._running = True
+        self._logger.info("%s is running!!!", self._name)
+        try:
+            if asyncio._get_running_loop() is None:
+                asyncio.run(self._accept())
+            else:
+                asyncio.create_task(self._accept())
+        except Exception as exc:
+            self._logger.info("%s failed to start, due to %s", self._name, exc)
+
     async def handle(self, buffer: bytes) -> None:
         pass
 
