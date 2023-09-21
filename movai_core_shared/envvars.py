@@ -58,6 +58,11 @@ MESSAGE_SERVER_DEBUG_MODE = os.getenv("MESSAGE_SERVER_DEBUG_MODE", "False").lowe
     "t",
 )
 MESSAGE_SERVER_PERIODIC_WRITE = float(os.getenv("MESSAGE_SERVER_PERIODIC_WRITE", "1.0"))
+MESSAGE_SERVER_STRESS_MODE = os.getenv("MESSAGE_SERVER_STRESS_MODE", "False").lower() in (
+    "true",
+    "1",
+    "t",
+)
 
 # DBWriter environment variables
 DBWRITER_EMPTY_THREASHOULD = int(os.getenv("DBWRITER_EMPTY_THREASHOULD", "1000"))
