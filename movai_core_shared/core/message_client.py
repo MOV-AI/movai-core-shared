@@ -13,7 +13,7 @@
 import random
 import time
 
-from movai_core_shared.core.zmq_client import ZMQClient, AsyncZMQClient
+from movai_core_shared.core.zmq.zmq_client import ZMQClient, AsyncZMQClient
 from movai_core_shared.envvars import DEVICE_NAME, FLEET_NAME, SERVICE_NAME
 from movai_core_shared.exceptions import ArgumentError, MessageFormatError
 
