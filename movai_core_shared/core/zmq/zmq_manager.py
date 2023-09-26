@@ -1,5 +1,7 @@
-from movai_core_shared.logger import Log
+from logging import getLogger
+
 from movai_core_shared.core.zmq.zmq_base import ZMQBase
+from movai_core_shared.core.zmq.zmq_client import ZMQClient, AsyncZMQClient
 from movai_core_shared.core.zmq.zmq_subscriber import ZMQSubscriber, AsyncZMQSubscriber
 from movai_core_shared.core.zmq.zmq_publisher import ZMQPublisher, AsyncZMQPublisher
 from movai_core_shared.core.zmq.zmq_helpers import generate_zmq_identity
@@ -7,7 +9,7 @@ from movai_core_shared.exceptions import ArgumentError
 
 
 class ZMQManager:
-    _logger = Log.get_logger("ZMQManager")
+    _logger = getLogger("ZMQManager")
     _clients = {}
     _async_clients = {}
     _publishers = {}
@@ -37,7 +39,9 @@ class ZMQManager:
         
         else:
             identity = ""
-            if isinstance(object_type, ZMQSubscriber) or isinstance(object_type, AsyncZMQSubscriber):
+            if isinstance(object_type, ZMQClient) or isinstance(object_type, AsyncZMQClient):
+                identity = generate_zmq_identity("dealer")
+            elif isinstance(object_type, ZMQSubscriber) or isinstance(object_type, AsyncZMQSubscriber):
                 identity = generate_zmq_identity("sub")
             elif isinstance(object_type, ZMQPublisher) or isinstance(object_type, AsyncZMQPublisher):
                 identity = generate_zmq_identity("pub")
@@ -46,6 +50,16 @@ class ZMQManager:
             zmq_object = object_type(identity, server_addr)
             objects_dict[server_addr] = zmq_object
             return zmq_object
+
+    @classmethod
+    def get_client(cls, server_addr: str) -> ZMQClient:
+        client = cls._get_zmq_object(server_addr, ZMQClient, cls._clients)
+        return client
+
+    @classmethod
+    def get_async_client(cls, server_addr: str) -> AsyncZMQClient:
+        client = cls._get_zmq_object(server_addr, AsyncZMQClient, cls._async_clients)
+        return client
 
     @classmethod
     def get_subscriber(cls, server_addr: str) -> ZMQSubscriber:
