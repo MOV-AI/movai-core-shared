@@ -28,7 +28,6 @@ class ZMQBase(ABC):
         # Close all sockets associated with this context and then terminate the context.
         if self._socket:
             self._socket.close()
-        self._context.term()
 
     @abstractmethod
     def prepare_socket(self):
