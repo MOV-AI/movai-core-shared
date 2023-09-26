@@ -13,7 +13,7 @@
 import random
 import time
 
-from movai_core_shared.core.zmq.zmq_client import ZMQClient, AsyncZMQClient
+from movai_core_shared.core.zmq.zmq_manager import ZMQManager
 from movai_core_shared.envvars import DEVICE_NAME, FLEET_NAME, SERVICE_NAME
 from movai_core_shared.exceptions import ArgumentError, MessageFormatError
 
@@ -49,18 +49,7 @@ class MessageClient:
             "service": SERVICE_NAME,
             "id": robot_id,
         }
-        random.seed()  # setting the seed for the random number generator
-        identity = f"{DEVICE_NAME}_message_client_{random.getrandbits(24)}"
-        self._zmq_client = None
-        self._init_zmq_client(identity)
-
-    def _init_zmq_client(self, identity: str):
-        """initializes the ZMQClient object
-
-        Args:
-            identity (str): A string represent unique identity for the client.
-        """
-        self._zmq_client = ZMQClient(identity, self._server_addr)
+        self._zmq_client = ZMQManager.get_client(self._server_addr)
 
     def _build_request(
         self, msg_type: str, data: dict, creation_time: str = None, response_required: bool = False
@@ -169,8 +158,10 @@ class MessageClient:
 
 
 class AsyncMessageClient(MessageClient):
-    def _init_zmq_client(self, identity: str):
-        self._zmq_client = AsyncZMQClient(identity, self._server_addr)
+
+    def __init__(self, server_addr: str, robot_id: str = "") -> None:
+        super().__init__(server_addr, robot_id)
+        self._zmq_client = ZMQManager.get_async_client(self._server_addr)
 
     async def send_request(
         self, msg_type: str, data: dict, creation_time: str = None, respose_required: bool = False
