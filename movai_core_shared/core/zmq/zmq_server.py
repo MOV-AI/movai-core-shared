@@ -24,7 +24,6 @@ class ZMQServer(ZMQBase):
     """
     This class is a base class for any ZMQ server.
     """
-    _context = zmq.asyncio.Context()
 
     @beartype
     def __init__(
@@ -155,6 +154,7 @@ class AsyncZMQServer(ZMQServer):
                 asyncio.run(self._accept())
             else:
                 asyncio.create_task(self._accept())
+            return True
         except Exception as exc:
             self._logger.info("%s failed to start, due to %s", self._name, exc)
 
