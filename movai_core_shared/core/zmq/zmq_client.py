@@ -25,79 +25,94 @@ from movai_core_shared.exceptions import MessageError
 class ZMQClient(ZMQBase):
     """A very basic implementation of ZMQ Client"""
 
-    def init_socket(self):
-        """Creates the socket and sets a lock."""
+    def _init_lock(self) -> None:
+        """Initializes the lock."""
         self._lock = threading.Lock()
+
+    def init_socket(self) -> None:
+        """Initializes the socket and connect to the server."""
+        self._init_lock()
         self._socket = self._context.socket(zmq.DEALER)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_ZMQ_RECV_TIMEOUT_MS))
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
         self._socket.connect(self._addr)
 
-    def send(self, msg: bytes):
-        """sends a message in a synchronous way."""
-        data = create_msg(msg)
-        self._lock.acquire()
+    def send(self, msg: dict) -> None:
+        """
+        Synchronously sends a message to the server.
+        
+        Args:
+            data (dict): the msg representation
+        """
         try:
-            self._socket.send(data)
+            data = create_msg(msg)
+            with self._lock:
+                self._socket.send(data)
         except Exception as exc:
+            if self._lock.locked():
+                self._lock.release()
             self._logger.error("%s failed to send message, got exception of type %s", self.__class__.__name__, exc)
-        finally:
-            self._lock.release()
 
-    def recieve(self):
-        """Synchronously recieves data from the server.
+    def recieve(self) -> dict:
+        """
+        Synchronously recieves data from the server.
 
         Returns:
-            (bytes): raw data from the server.
+            (dict): A response from the server.
         """
-        self._lock.acquire()
-        buffer = None
         try:
-            buffer = self._socket.recv_multipart()
-            if not buffer:
-                return {}
+            buffer = None
+            self._lock.acquire()
+            with self._lock:
+                buffer = self._socket.recv_multipart()
             response = extract_reponse(buffer)
             return response
         except Exception as exc:
+            if self._lock.locked():
+                self._lock.release()
             self._logger.error("%s failed to recieve data, got error of type: %s", self.__class__.__name__, exc)
-        finally:
-            self._lock.release()
+            return {}
 
 class AsyncZMQClient(ZMQClient):
     """An Async implementation of ZMQ Client"""
     _context = zmq.asyncio.Context()
 
-    def init_socket(self):
-        """Creates the socket and sets a lock."""
-        super().init_socket()
+    def _init_lock(self) -> None:
+        """Initializes the lock."""
         self._lock = asyncio.Lock()
 
-    async def send(self, msg: dict):
-        """Asynchrounously send the message.
+    async def send(self, msg: dict) -> None:
+        """
+        Asynchrounously send the message to the server.
 
         Args:
             data (bytes): the msg representation
         """
         try:
             data = create_msg(msg)
-            await self._socket.send(data)
+            async with self._lock:
+                await self._socket.send(data)
         except Exception as exc:
+            if self._lock.locked():
+                await self._lock.release()
             self._logger.error("%s failed to send message, got exception of type %s", self.__class__.__name__, exc)
-
-    async def recieve(self):
-        """Asynchrounsly recieves data from the server.
+    
+    async def recieve(self) -> dict:
+        """
+        Asynchrounsly recieves data from the server.
 
         Returns:
-            (bytes): raw data from the server.
+            (dict): A response from the server.
         """
-        buffer = None
         try:
-            buffer = await self._socket.recv_multipart()
-            if not buffer:
-                return {}
+            buffer = None
+            async with self._lock:
+                buffer = await self._socket.recv_multipart()
             response = extract_reponse(buffer)
             return response
         except Exception as exc:
+            if self._lock.locked():
+                await self._lock.release()
             self._logger.error("%s failed to recieve data, got error of type: %s", self.__class__.__name__, exc)
-        return buffer
+            return {}

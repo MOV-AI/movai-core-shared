@@ -10,6 +10,7 @@
    - Erez Zomer (erez@mov.ai) - 2022
 """
 import asyncio
+import threading
 import zmq
 import zmq.asyncio
 
@@ -20,17 +21,24 @@ from movai_core_shared.core.zmq.zmq_helpers import extract_reponse
 class ZMQSubscriber(ZMQBase):
     """A very basic implementation of ZMQ Subscriber"""
 
-    def init_socket(self):
-        """Creates the socket and set options."""
+    def _init_lock(self) -> None:
+        """Initializes the lock."""
+        self._lock = threading.Lock()
+
+    def init_socket(self) -> None:
+        """Initializes the socket and set options."""
+        self._init_lock()
         self._socket: zmq.Socket = self._context.socket(zmq.SUB)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self.subscribe(b"", self._addr)
 
-    def subscribe(self, topic: str, pub_addr:str):
-        """Synchronously recieves data from the server.
+    def subscribe(self, topic: str, pub_addr:str) -> None:
+        """
+        Adds a topic to subscribe to.
 
-        Returns:
-            (bytes): raw data from the server.
+        Args:
+            topic (str): The name of the topic to subscribe.
+            pub_addr (str): The address of the publisher.
         """
         if isinstance(topic, str):
             self._socket.setsockopt_string(zmq.SUBSCRIBE, topic)
@@ -38,35 +46,49 @@ class ZMQSubscriber(ZMQBase):
             self._socket.setsockopt(zmq.SUBSCRIBE, b"")    
         self._socket.connect(pub_addr)
     
-    def recieve(self):
-        buffer = None
+    def recieve(self) -> dict:
+        """
+        Synchronously recieves data from the server.
+
+        Returns:
+            (dict): raw data from the server.
+        """
         try:
-            buffer = self._socket.recv_multipart()
+            buffer = None
+            with self._lock:
+                buffer = self._socket.recv_multipart()
             response = extract_reponse(buffer)
             return response
         except Exception as exc:
-            self._logger.error("error while trying to recieve data, %s", exc)
+            if self._lock.locked():
+                self._lock.release()
+            self._logger.error("%s failed to recieve data, got error of type: %s", self.__class__.__name__, exc)
             return {}
 
 class AsyncZMQSubscriber(ZMQSubscriber):
     """An Async implementation of ZMQ subscriber"""
     _context = zmq.asyncio.Context()
 
-    def __init__(self, identity: str, bind_addr: str) -> None:
-        super().__init__(identity, bind_addr)
+    def _init_lock(self) -> None:
+        """Initializes the lock."""
         self._lock = asyncio.Lock()
 
-    async def recieve(self):
-        """Asynchrounsly recieves data from the server.
+    async def recieve(self) -> dict:
+        """
+        Asynchrounsly recieves data from the server.
 
         Returns:
-            (bytes): raw data from the server.
+            (dict): raw data from the server.
         """
-        buffer = None
         try:
-            buffer = await self._socket.recv_multipart()
+            buffer = None
+            async with self._lock:
+                buffer = await self._socket.recv_multipart()
             response = extract_reponse(buffer)
             return response
         except Exception as exc:
-            self._logger.error("error while trying to recieve data, %s", exc)
-        return buffer
+            if self._lock.locked():
+                self._lock.release()
+            self._logger.error("%s failed to recieve data, got error of type: %s", self.__class__.__name__, exc)
+            return {}
+

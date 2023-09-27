@@ -22,14 +22,18 @@ from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS
 class ZMQPublisher(ZMQBase):
     """A very basic implementation of ZMQ publisher"""
 
+    def _init_lock(self) -> None:
+        """Initializes the lock."""
+        self._lock = threading.Lock()
+
     def init_socket(self):
         """Creates the socket and sets a lock."""
-        self._lock = threading.Lock()
+        self._init_lock()
         self._socket = self._context.socket(zmq.PUB)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
         self._socket.bind(self._addr)
-        self._logger.info(f"{self.__class__.__name__} is listening on: {self._addr}")
+        self._logger.info(f"{self.__class__.__name__} is bounded to: {self._addr}")
 
     def publish(self, topic: str, msg: dict) -> None:
         """
@@ -38,30 +42,23 @@ class ZMQPublisher(ZMQBase):
         Args:
             msg (dict): The message request to be sent
         """
-        data = create_msg(msg)
-        with self._lock:
-            try:
+        try:
+            data = create_msg(msg)
+            with self._lock:
                 self._socket.send(data)
-            except Exception as exc:
-                self._logger.error(f"Got {exc} when trying to send message.")
+        except Exception as exc:
+            self._logger.error("%s failed to publish message, got exception of type %s", self.__class__.__name__, exc)
+            if self._lock.locked():
+                self._lock.release()
 
 
 class AsyncZMQPublisher(ZMQPublisher):
     """An Async implementation of ZMQ Publisher"""
     _context = zmq.asyncio.Context()
-    
-    def __init__(self, identity: str, bind_addr: str) -> None:
-        super().__init__(identity, bind_addr)
-        self._lock = asyncio.Lock()
 
-    def init_socket(self):
-        """Creates the socket and sets a lock."""
+    def _init_lock(self) -> None:
+        """Initializes the lock."""
         self._lock = asyncio.Lock()
-        self._socket = self._context.socket(zmq.PUB)
-        self._socket.setsockopt(zmq.IDENTITY, self._identity)
-        self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
-        self._socket.bind(self._addr)
-        self._logger.info(f"{self.__class__.__name__} is bounded to: {self._addr}")
 
     async def publish(self, topic: str, msg: dict) -> None:
         """
@@ -69,10 +66,12 @@ class AsyncZMQPublisher(ZMQPublisher):
 
         Args:
             msg (dict): The message to be sent
-        """
-        data = create_msg(msg)
-        with self._lock:
-            try:
+        """       
+        try:
+            data = create_msg(msg)
+            async with self._lock:
                 await self._socket.send(data)
-            except Exception as exc:
-                self._logger.error(f"Got {exc} when trying to send message.")
+        except Exception as exc:
+            self._logger.error("%s failed to publish message, got exception of type %s", self.__class__.__name__, exc)
+            if self._lock.locked():
+                self._lock.release()
