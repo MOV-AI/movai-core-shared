@@ -31,5 +31,9 @@ class ZMQBase(ABC):
 
     @abstractmethod
     def init_socket(self):
+        """
+        An abstract medthod which allows every ZMQ component to initiliaze the socket by
+        it's own needs.
+        """
         pass
 
