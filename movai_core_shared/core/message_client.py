@@ -49,8 +49,15 @@ class MessageClient:
             "service": SERVICE_NAME,
             "id": robot_id,
         }
-        self._zmq_client = ZMQManager.get_client(self._server_addr)
+        self._zmq_client = None
+        self._init_zmq_client()
 
+    def _init_zmq_client(self) -> None:
+        """
+        Initializes the ZMQ attributute.
+        """
+        self._zmq_client = ZMQManager.get_client(self._server_addr)
+        
     def _build_request(
         self, msg_type: str, data: dict, creation_time: str = None, response_required: bool = False
     ) -> dict:
@@ -79,7 +86,7 @@ class MessageClient:
         }
         return request
 
-    def _extract_response(self, msg) -> dict:
+    def _fetch_response(self, msg) -> dict:
         """Extracts the response from the message.
 
         Args:
@@ -119,7 +126,7 @@ class MessageClient:
         self._zmq_client.send(request)
         if respose_required:
             msg = self._zmq_client.recieve()
-            response = self._extract_response(msg)
+            response = self._fetch_response(msg)
             return response
 
         return {}
@@ -159,8 +166,10 @@ class MessageClient:
 
 class AsyncMessageClient(MessageClient):
 
-    def __init__(self, server_addr: str, robot_id: str = "") -> None:
-        super().__init__(server_addr, robot_id)
+    def _init_zmq_client(self) -> None:
+        """
+        Initializes the ZMQ attributute.
+        """
         self._zmq_client = ZMQManager.get_async_client(self._server_addr)
 
     async def send_request(
@@ -181,7 +190,7 @@ class AsyncMessageClient(MessageClient):
         await self._zmq_client.send(request)
         if respose_required:
             msg = await self._zmq_client.recieve()
-            response = self._extract_response(msg)
+            response = self._fetch_response(msg)
             return response
 
         return {}
