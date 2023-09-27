@@ -27,13 +27,12 @@ class ZMQServer(ABC):
 
     @beartype
     def __init__(
-        self, server_name: str, bind_addr: str, new_loop: bool = False, debug: bool = False
+        self, server_name: str, bind_addr: str, debug: bool = False
     ) -> None:
         """Constructor"""
         self._name = server_name
         self._addr = bind_addr
         self._logger = logging.getLogger(server_name)
-        self._new_loop = new_loop
         self._debug = debug
         self._initialized = False
         self._running = False
