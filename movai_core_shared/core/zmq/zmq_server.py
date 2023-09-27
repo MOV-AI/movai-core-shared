@@ -10,119 +10,48 @@
    - Erez Zomer (erez@mov.ai) - 2023
 """
 import asyncio
-from abc import abstractmethod
-import threading
+import logging
+from abc import ABC, abstractmethod
 
 import zmq
 import zmq.asyncio
 from beartype import beartype
 
 from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS
-from movai_core_shared.core.zmq.zmq_base import ZMQBase
 
-class ZMQServer(ZMQBase):
+
+class ZMQServer(ABC):
     """
     This class is a base class for any ZMQ server.
     """
 
     @beartype
     def __init__(
-        self, server_name: str, bind_addr: str, debug: bool = False
+        self, server_name: str, bind_addr: str, new_loop: bool = False, debug: bool = False
     ) -> None:
         """Constructor"""
         self._name = server_name
+        self._addr = bind_addr
+        self._logger = logging.getLogger(server_name)
+        self._new_loop = new_loop
         self._debug = debug
         self._initialized = False
         self._running = False
-        super().__init__(server_name, bind_addr)
-        
-        self._lock = threading.Lock()
+        self._ctx = None
+        self._socket = None
 
-    def prepare_socket(self) -> None:
+    def _init_socket(self) -> None:
         """Initializes the zmq context."""
-        self._socket = self._context.socket(zmq.ROUTER)
-        self._socket.setsockopt(zmq.IDENTITY, self._identity)
-        self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
-        self._bind()
-        self._initialized = True
-
-    def _bind(self) -> None:
-        """Binds the zmq socket to the appropriate file/address."""
         try:
+            self._ctx = zmq.asyncio.Context()
+            self._socket = self._ctx.socket(zmq.ROUTER)
+            self._socket.setsockopt(zmq.IDENTITY, self._name.encode("ascii"))
+            self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
             self._socket.bind(self._addr)
             self._logger.info(f"{self._name} is listening on {self._addr}")
         except OSError:
-            self._logger.error("%s failed to bind socket on address: %s", self._name, self._addr)
-            raise
-
-
-    def _accept(self) -> None:
-        """accepts new connections requests to zmq."""
-        self.startup()
-        while self._running:
-            try:
-                if self._debug:
-                    self._logger.debug("Waiting for new requests.\n")
-                buffer = self._socket.recv_multipart()
-                self.handle(buffer)
-            except Exception as exc:
-                self._logger.error("%s got an error while handling request: %s", self._name, exc)
-                continue
-        self.close()
-
-    def close(self) -> None:
-        """close the zmq socket."""
-        if self._initialized:
-            self._socket.close()
-            self._socket = None
-            self._initialized = False
-
-    def __del__(self):
-        """closes the socket when the object is destroyed."""
-        self.close()
-
-    def start(self) -> bool:
-        """The main message dispatch loop.
-
-        Returns:
-            bool: True in case server is running, False if failed to start.
-        """
-        if self._running:
-            self._logger.warning(f"{self._name} is already ruuning")
-            return True
-        
-        try:
-            self._running = True
-            self._logger.info("%s is running!!!", self._name)
-            self._accept()
-            return True
-        except Exception as exc:
-            self._logger.info("%s failed to start, due to %s", self._name, exc)
-            return False
-
-    def stop(self):
-        """Stops the server from running."""
-        self._running = False
-
-    @abstractmethod
-    def handle(self, buffer: bytes) -> None:
-        pass
-
-    def startup(self):
-        """A funtion which is called once at server startup and can be used for initializing
-        other tasks.
-        """
-        pass
-
-
-class AsyncZMQServer(ZMQServer):   
-
-    _context = zmq.asyncio.Context()
-
-    @beartype
-    def __init__(self, server_name: str, bind_addr: str, debug: bool = False) -> None:
-        super().__init__(server_name, bind_addr, debug)
-        self._lock = asyncio.Lock()
+            self._logger.error(f"failed to bind socket on address {self._addr}")
+            raise        
 
     async def _accept(self) -> None:
         """accepts new connections requests to zmq."""
@@ -138,26 +67,55 @@ class AsyncZMQServer(ZMQServer):
                 continue
         self.close()
 
+    def close(self) -> None:
+        """close the zmq socket."""
+        if self._initialized:
+            self._socket.close()
+            self._ctx.destroy()
+            self._socket = None
+            self._ctx = None
+            self._initialized = False
+
+    def __del__(self):
+        """closes the socket when the object is destroyed."""
+        self.close()
+
+    def init_server(self):
+        """Initializes the server to listen on the specified address."""
+        if self._initialized:
+            self._logger.error(f"{self._name} is already initialized.")
+            return
+
+        self._init_socket()
+        self._initialized = True
+
     def start(self) -> int:
         """The main message dispatch loop.
 
         Returns:
-            int: 1 in case of exception.
+            int: 0 on success, 1 in case of exception.
         """
-        if self._running:
-            self._logger.warning(f"{self._name} is already ruuning")
-            return True
-        self._running = True
-        self._logger.info("%s is running!!!", self._name)
         try:
+            self.init_server()
+            if self._running:
+                self._logger.warning("%s is already running", self._name)
+                return 0
+            self._running = True
             if asyncio._get_running_loop() is None:
                 asyncio.run(self._accept())
             else:
                 asyncio.create_task(self._accept())
-            return True
+            self._logger.info("%s is running!!!", self._name)
+            return 0
         except Exception as exc:
-            self._logger.info("%s failed to start, due to %s", self._name, exc)
+            self._logger.error("Failed to start %s", self._name)
+            return 1
+        
+    def stop(self):
+        """Stops the server from running."""
+        self._running = False
 
+    @abstractmethod
     async def handle(self, buffer: bytes) -> None:
         pass
 
