@@ -21,7 +21,7 @@ class ZMQBase(ABC):
         self._addr = addr
         self._lock = None
         self._socket = None
-        self.prepare_socket()
+        self.init_socket()
          
     def __del__(self):
         """closes the socket when the object is destroyed."""
@@ -30,6 +30,6 @@ class ZMQBase(ABC):
             self._socket.close()
 
     @abstractmethod
-    def prepare_socket(self):
+    def init_socket(self):
         pass
 

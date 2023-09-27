@@ -25,7 +25,7 @@ from movai_core_shared.exceptions import MessageError
 class ZMQClient(ZMQBase):
     """A very basic implementation of ZMQ Client"""
 
-    def prepare_socket(self):
+    def init_socket(self):
         """Creates the socket and sets a lock."""
         self._lock = threading.Lock()
         self._socket = self._context.socket(zmq.DEALER)
@@ -68,9 +68,9 @@ class AsyncZMQClient(ZMQClient):
     """An Async implementation of ZMQ Client"""
     _context = zmq.asyncio.Context()
 
-    def prepare_socket(self):
+    def init_socket(self):
         """Creates the socket and sets a lock."""
-        super().prepare_socket()
+        super().init_socket()
         self._lock = asyncio.Lock()
 
     async def send(self, msg: dict):

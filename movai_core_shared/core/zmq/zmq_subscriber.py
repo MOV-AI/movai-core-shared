@@ -20,7 +20,7 @@ from movai_core_shared.core.zmq.zmq_helpers import extract_reponse
 class ZMQSubscriber(ZMQBase):
     """A very basic implementation of ZMQ Subscriber"""
 
-    def prepare_socket(self):
+    def init_socket(self):
         """Creates the socket and set options."""
         self._socket: zmq.Socket = self._context.socket(zmq.SUB)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)

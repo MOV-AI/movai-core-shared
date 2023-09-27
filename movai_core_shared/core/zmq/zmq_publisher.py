@@ -22,7 +22,7 @@ from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS
 class ZMQPublisher(ZMQBase):
     """A very basic implementation of ZMQ publisher"""
 
-    def prepare_socket(self):
+    def init_socket(self):
         """Creates the socket and sets a lock."""
         self._lock = threading.Lock()
         self._socket = self._context.socket(zmq.PUB)
@@ -54,7 +54,7 @@ class AsyncZMQPublisher(ZMQPublisher):
         super().__init__(identity, bind_addr)
         self._lock = asyncio.Lock()
 
-    def prepare_socket(self):
+    def init_socket(self):
         """Creates the socket and sets a lock."""
         self._lock = asyncio.Lock()
         self._socket = self._context.socket(zmq.PUB)
