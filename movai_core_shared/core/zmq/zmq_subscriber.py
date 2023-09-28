@@ -46,7 +46,7 @@ class ZMQSubscriber(ZMQBase):
             self._socket.setsockopt(zmq.SUBSCRIBE, b"")    
         self._socket.connect(pub_addr)
     
-    def recieve(self) -> dict:
+    def recieve(self, use_lock: bool = False) -> dict:
         """
         Synchronously recieves data from the server.
 
@@ -54,15 +54,18 @@ class ZMQSubscriber(ZMQBase):
             (dict): raw data from the server.
         """
         try:
-            buffer = None
-            with self._lock:
+            if use_lock and self._lock:
+                self._lock.acquire()
+                buffer = self._socket.recv_multipart()
+                self._lock.release()
+            else:
                 buffer = self._socket.recv_multipart()
             response = extract_reponse(buffer)
             return response
         except Exception as exc:
-            if self._lock.locked():
+            if self._lock and self._lock.locked():
                 self._lock.release()
-            self._logger.error("%s failed to recieve data, got error of type: %s", self.__class__.__name__, exc)
+            self._logger.error(f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}")
             return {}
 
 class AsyncZMQSubscriber(ZMQSubscriber):
@@ -73,7 +76,7 @@ class AsyncZMQSubscriber(ZMQSubscriber):
         """Initializes the lock."""
         self._lock = asyncio.Lock()
 
-    async def recieve(self) -> dict:
+    async def recieve(self, use_lock: bool = False) -> dict:
         """
         Asynchrounsly recieves data from the server.
 
@@ -81,14 +84,17 @@ class AsyncZMQSubscriber(ZMQSubscriber):
             (dict): raw data from the server.
         """
         try:
-            buffer = None
-            async with self._lock:
+            if use_lock and self._lock:
+                await self._lock.acquire()
+                buffer = await self._socket.recv_multipart()
+                self._lock.release()
+            else:
                 buffer = await self._socket.recv_multipart()
             response = extract_reponse(buffer)
             return response
         except Exception as exc:
-            if self._lock.locked():
+            if self._lock and self._lock.locked():
                 self._lock.release()
-            self._logger.error("%s failed to recieve data, got error of type: %s", self.__class__.__name__, exc)
+            self._logger.error(f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}")
             return {}
 

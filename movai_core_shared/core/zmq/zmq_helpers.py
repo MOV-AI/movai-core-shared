@@ -18,7 +18,7 @@ def create_msg(msg: dict):
         json string
     """
     if not isinstance(msg, dict):
-        return
+        return None
     try:
         data = json.dumps(msg).encode("utf8")
         return data
@@ -26,6 +26,7 @@ def create_msg(msg: dict):
         LOGGER.error(
             f"Got error of type {error.__class__.__name__} while trying to send the message"
         )
+        return None
 
 def extract_reponse(buffer: bytes):
     """Extracts the response from the buffer.

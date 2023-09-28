@@ -17,6 +17,15 @@ class ZMQManager:
     _subscribers = {}
     _async_subscribers = {}
 
+    zmq_types = {
+        ZMQClient.__name__: "dealer",
+        AsyncZMQClient.__name__: "dealer",
+        ZMQPublisher.__name__: "pub",
+        AsyncZMQPublisher.__name__: "pub",
+        ZMQSubscriber.__name__: "sub",
+        AsyncZMQSubscriber.__name__: "sub"
+    }
+    
     @classmethod
     def validate_server_addr(cls, server_addr: str):
         if not isinstance(server_addr, str):
@@ -36,15 +45,9 @@ class ZMQManager:
         
         if server_addr in objects_dict:
             return objects_dict[server_addr]
-        
         else:
-            identity = ""
-            if isinstance(object_type, ZMQClient) or isinstance(object_type, AsyncZMQClient):
-                identity = generate_zmq_identity("dealer")
-            elif isinstance(object_type, ZMQSubscriber) or isinstance(object_type, AsyncZMQSubscriber):
-                identity = generate_zmq_identity("sub")
-            elif isinstance(object_type, ZMQPublisher) or isinstance(object_type, AsyncZMQPublisher):
-                identity = generate_zmq_identity("pub")
+            if object_type.__class__.__name__ in cls.zmq_types:
+                identity = cls.zmq_types[object_type.__class__.__name__]
             else:
                 identity = generate_zmq_identity("")
             zmq_object = object_type(identity, server_addr)

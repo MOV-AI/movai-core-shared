@@ -35,7 +35,7 @@ class ZMQPublisher(ZMQBase):
         self._socket.bind(self._addr)
         self._logger.info(f"{self.__class__.__name__} is bounded to: {self._addr}")
 
-    def publish(self, topic: str, msg: dict) -> None:
+    def publish(self, topic: str, msg: dict, use_lock: bool = False) -> None:
         """
         Send the message request over ZeroMQ to the local robot message server.
 
@@ -44,12 +44,16 @@ class ZMQPublisher(ZMQBase):
         """
         try:
             data = create_msg(msg)
-            with self._lock:
+            if use_lock and self._lock:
+                self._lock.acquire()
                 self._socket.send(data)
-        except Exception as exc:
-            self._logger.error("%s failed to publish message, got exception of type %s", self.__class__.__name__, exc)
-            if self._lock.locked():
                 self._lock.release()
+            else:
+                self._socket.send(data)            
+        except Exception as exc:
+            if self._lock and self._lock.locked():
+                self._lock.release()
+            self._logger.error(f"{self.__class__.__name__} failed to publish message, got exception of type {exc}")
 
 
 class AsyncZMQPublisher(ZMQPublisher):
@@ -60,7 +64,7 @@ class AsyncZMQPublisher(ZMQPublisher):
         """Initializes the lock."""
         self._lock = asyncio.Lock()
 
-    async def publish(self, topic: str, msg: dict) -> None:
+    async def publish(self, topic: str, msg: dict, use_lock: bool = False) -> None:
         """
         Send the message over ZeroMQ subscribers.
 
@@ -69,9 +73,13 @@ class AsyncZMQPublisher(ZMQPublisher):
         """       
         try:
             data = create_msg(msg)
-            async with self._lock:
+            if use_lock and self._lock:
+                await self._lock.acquire()
+                await self._socket.send(data)
+                self._lock.release()
+            else:
                 await self._socket.send(data)
         except Exception as exc:
-            self._logger.error("%s failed to publish message, got exception of type %s", self.__class__.__name__, exc)
-            if self._lock.locked():
+            if self._lock and self._lock.locked():
                 self._lock.release()
+            self._logger.error(f"{self.__class__.__name__} failed to publish message, got exception of type {exc}")

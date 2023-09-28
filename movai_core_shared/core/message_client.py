@@ -123,9 +123,9 @@ class MessageClient:
         # Add tags to the request data
         request = self._build_request(msg_type, data, creation_time, respose_required)
 
-        self._zmq_client.send(request)
+        self._zmq_client.send(request, True)
         if respose_required:
-            msg = self._zmq_client.recieve()
+            msg = self._zmq_client.recieve(True)
             response = self._fetch_response(msg)
             return response
 
@@ -140,11 +140,11 @@ class MessageClient:
         """
         if "request" not in request_msg:
             request = {"request": request_msg}
-        self._zmq_client.send(request)
+        self._zmq_client.send(request, True)
         response_required = request_msg.get("response_required")
 
         if response_required:
-            response = self._zmq_client.recieve()
+            response = self._zmq_client.recieve(True)
             return response
         return {}
 
@@ -161,7 +161,7 @@ class MessageClient:
 
         msg.update(kwargs)
 
-        self._zmq_client.send(msg)
+        self._zmq_client.send(msg, True)
 
 
 class AsyncMessageClient(MessageClient):
