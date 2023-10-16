@@ -4,7 +4,8 @@ import zmq
 
 
 class ZMQBase(ABC):
-
+    """A base class for zmq components.
+    """
     _context = zmq.Context()
     
     def __init__(self, identity: str, addr: str) -> None:

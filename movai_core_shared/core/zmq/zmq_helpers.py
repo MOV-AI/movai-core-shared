@@ -24,7 +24,7 @@ def create_msg(msg: dict):
         return data
     except (json.JSONDecodeError, TypeError) as error:
         LOGGER.error(
-            f"Got error of type {error.__class__.__name__} while trying to send the message"
+            f"Got error of type {error.__class__.__name__} while trying to convert dictionary to json."
         )
         return None
 

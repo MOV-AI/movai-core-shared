@@ -88,7 +88,7 @@ class ZMQServer(ABC):
         self._init_socket()
         self._initialized = True
 
-    def start(self) -> int:
+    def start(self) -> bool:
         """The main message dispatch loop.
 
         Returns:
@@ -98,17 +98,17 @@ class ZMQServer(ABC):
             self.init_server()
             if self._running:
                 self._logger.warning("%s is already running", self._name)
-                return 0
+                return True
             self._running = True
             if asyncio._get_running_loop() is None:
                 asyncio.run(self._accept())
             else:
                 asyncio.create_task(self._accept())
             self._logger.info("%s is running!!!", self._name)
-            return 0
+            return True
         except Exception as exc:
             self._logger.error("Failed to start %s", self._name)
-            return 1
+            return False
         
     def stop(self):
         """Stops the server from running."""

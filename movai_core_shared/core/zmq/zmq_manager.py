@@ -1,3 +1,5 @@
+from beartype import beartype
+from enum import Enum
 from logging import getLogger
 
 from movai_core_shared.core.zmq.zmq_base import ZMQBase
@@ -7,23 +9,32 @@ from movai_core_shared.core.zmq.zmq_publisher import ZMQPublisher, AsyncZMQPubli
 from movai_core_shared.core.zmq.zmq_helpers import generate_zmq_identity
 from movai_core_shared.exceptions import ArgumentError
 
+class ZMQType(Enum):
+    client = 1
+    AsyncClient = 2
+    publisher = 3
+    AsyncPublisher = 4
+    Subscriber = 5
+    AsyncSubscriber = 6
+
+ZMQ_TYPES = {
+    ZMQType.client:         {"type": ZMQClient,             "identity": "dealer"},
+    ZMQType.AsyncClient:    {"type": AsyncZMQClient,        "identity": "dealer"},
+    ZMQType.publisher:      {"type": ZMQPublisher,          "identity": "pub"},
+    ZMQType.AsyncPublisher: {"type": AsyncZMQPublisher,     "identity": "pub"},
+    ZMQType.Subscriber:     {"type": ZMQSubscriber,         "identity": "sub"},
+    ZMQType.AsyncSubscriber: {"type": AsyncZMQSubscriber,    "identity": "sub"}
+}
 
 class ZMQManager:
     _logger = getLogger("ZMQManager")
-    _clients = {}
-    _async_clients = {}
-    _publishers = {}
-    _async_publishers = {}
-    _subscribers = {}
-    _async_subscribers = {}
-
-    zmq_types = {
-        ZMQClient.__name__: "dealer",
-        AsyncZMQClient.__name__: "dealer",
-        ZMQPublisher.__name__: "pub",
-        AsyncZMQPublisher.__name__: "pub",
-        ZMQSubscriber.__name__: "sub",
-        AsyncZMQSubscriber.__name__: "sub"
+    _clients = {
+        ZMQType.client: {},
+        ZMQType.AsyncClient: {},
+        ZMQType.publisher: {},
+        ZMQType.AsyncPublisher: {},
+        ZMQType.Subscriber: {},
+        ZMQType.AsyncSubscriber: {}
     }
     
     @classmethod
@@ -33,53 +44,22 @@ class ZMQManager:
             cls._logger.error(error_msg)
             raise ArgumentError(error_msg)
 
-    def validate_zmq_type(cls, zmq_object: ZMQBase):
-        if not isinstance(zmq_object, ZMQBase):
-            error_msg = f"The argument zmq_object must be of type {ZMQBase.__class__.__name__}"
-            cls._logger.error(error_msg)
-            raise ArgumentError(error_msg)
-
     @classmethod
-    def _get_zmq_object(cls, server_addr: str, object_type: ZMQBase, objects_dict: dict) -> ZMQBase:
-        cls.validate_server_addr(server_addr)
+    @beartype
+    def _get_or_create_zmq_object(cls, server_addr: str, zmq_type: ZMQType) -> ZMQBase:
+
+        if zmq_type not in cls._clients:
+            raise TypeError(f"{zmq_type} does not exist!")
         
-        if server_addr in objects_dict:
-            return objects_dict[server_addr]
+        if server_addr in cls._clients[zmq_type]:
+            return cls._clients[zmq_type][server_addr]
         else:
-            if object_type.__class__.__name__ in cls.zmq_types:
-                identity = cls.zmq_types[object_type.__class__.__name__]
-            else:
-                identity = generate_zmq_identity("")
-            zmq_object = object_type(identity, server_addr)
-            objects_dict[server_addr] = zmq_object
+            identity = ZMQ_TYPES[zmq_type]["identity"]
+            zmq_object = ZMQ_TYPES[zmq_type]["type"](identity, server_addr)
+            cls._clients[zmq_type][server_addr] = zmq_object
             return zmq_object
 
     @classmethod
-    def get_client(cls, server_addr: str) -> ZMQClient:
-        client = cls._get_zmq_object(server_addr, ZMQClient, cls._clients)
+    def get_client(cls, server_addr: str, client_type: ZMQType) -> ZMQClient:
+        client = cls._get_or_create_zmq_object(server_addr, client_type)
         return client
-
-    @classmethod
-    def get_async_client(cls, server_addr: str) -> AsyncZMQClient:
-        client = cls._get_zmq_object(server_addr, AsyncZMQClient, cls._async_clients)
-        return client
-
-    @classmethod
-    def get_subscriber(cls, server_addr: str) -> ZMQSubscriber:
-        subscriber = cls._get_zmq_object(server_addr, ZMQSubscriber, cls._subscribers)
-        return subscriber
-
-    @classmethod
-    def get_async_subscriber(cls, server_addr: str) -> AsyncZMQSubscriber:
-        subscriber = cls._get_zmq_object(server_addr, AsyncZMQSubscriber, cls._async_subscribers)
-        return subscriber
-
-    @classmethod
-    def get_publisher(cls, server_addr: str) -> ZMQPublisher:
-        publisher = cls._get_zmq_object(server_addr, ZMQPublisher, cls._publishers)
-        return publisher
-
-    @classmethod
-    def get_async_publisher(cls, server_addr: str) -> AsyncZMQPublisher:
-        publisher = cls._get_zmq_object(server_addr, AsyncZMQPublisher, cls._async_publishers)
-        return publisher
