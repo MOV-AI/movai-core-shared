@@ -6,20 +6,19 @@
    Developers:
    - Moawiya Mograbi (moawiya@mov.ai) - 2023
 """
-import pydantic
 from re import search
 from typing import List, Optional
 from movai_core_shared.envvars import FLEET_NAME, DEVICE_NAME
 from movai_core_shared.consts import NOTIFICATIONS_HANDLER_MSG_TYPE
 from movai_core_shared.logger import Log
-from pydantic import ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 EMAIL_REGEX = r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+"
 logger = Log.get_logger(NOTIFICATIONS_HANDLER_MSG_TYPE)
 
 
-class EmailData(pydantic.BaseModel):
+class EmailData(BaseModel):
     """
     a base dataclass based on pydantic basemodel in order to support
     validation and check for missing fields or wrong values.
@@ -32,14 +31,14 @@ class EmailData(pydantic.BaseModel):
     attachment_data: Optional[str] = None
     sender: str = f"{DEVICE_NAME} {FLEET_NAME}"
 
-    @pydantic.validator("notification_type")
+    @field_validator("notification_type")
     @classmethod
     def notification_type_valid(cls, value):
         if value.lower() != "smtp":
             raise ValueError("notification_type must be smtp")
         return value
 
-    @pydantic.validator("recipients")
+    @field_validator("recipients")
     @classmethod
     def recipients_valid(cls, value):
         valid = []
