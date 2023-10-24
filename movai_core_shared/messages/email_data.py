@@ -12,6 +12,7 @@ from typing import List, Optional
 from movai_core_shared.envvars import FLEET_NAME, DEVICE_NAME
 from movai_core_shared.consts import NOTIFICATIONS_HANDLER_MSG_TYPE
 from movai_core_shared.logger import Log
+from pydantic import ConfigDict
 
 
 EMAIL_REGEX = r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+"
@@ -26,9 +27,9 @@ class EmailData(pydantic.BaseModel):
 
     recipients: List[str]
     notification_type: str = "smtp"
-    subject: Optional[str]
+    subject: Optional[str] = None
     body: str
-    attachment_data: Optional[str]
+    attachment_data: Optional[str] = None
     sender: str = f"{DEVICE_NAME} {FLEET_NAME}"
 
     @pydantic.validator("notification_type")
@@ -51,8 +52,4 @@ class EmailData(pydantic.BaseModel):
             raise ValueError("no valid Email Address provided for email notification")
 
         return valid
-
-    class Config:
-        """Pydantic config class"""
-
-        allow_mutation = False  # make object immutable
+    model_config = ConfigDict(frozen=False)

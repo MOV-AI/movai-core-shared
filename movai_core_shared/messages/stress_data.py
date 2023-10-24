@@ -18,8 +18,8 @@ class StressData(BaseModel):
     insert: bool
     query: bool
     measurement: str
-    insert_data: Optional[dict]
-    query_data: Optional[dict]
+    insert_data: Optional[dict] = None
+    query_data: Optional[dict] = None
 
 
 class StressRequest(Request):
