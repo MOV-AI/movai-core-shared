@@ -18,12 +18,12 @@ class ZMQType(Enum):
     AsyncSubscriber = 6
 
 ZMQ_TYPES = {
-    ZMQType.client:         {"type": ZMQClient,             "identity": "dealer"},
-    ZMQType.AsyncClient:    {"type": AsyncZMQClient,        "identity": "dealer"},
-    ZMQType.publisher:      {"type": ZMQPublisher,          "identity": "pub"},
-    ZMQType.AsyncPublisher: {"type": AsyncZMQPublisher,     "identity": "pub"},
-    ZMQType.Subscriber:     {"type": ZMQSubscriber,         "identity": "sub"},
-    ZMQType.AsyncSubscriber: {"type": AsyncZMQSubscriber,    "identity": "sub"}
+    ZMQType.client:             {"type": ZMQClient,             "identity": "dealer"},
+    ZMQType.AsyncClient:        {"type": AsyncZMQClient,        "identity": "dealer"},
+    ZMQType.publisher:          {"type": ZMQPublisher,          "identity": "pub"},
+    ZMQType.AsyncPublisher:     {"type": AsyncZMQPublisher,     "identity": "pub"},
+    ZMQType.Subscriber:         {"type": ZMQSubscriber,         "identity": "sub"},
+    ZMQType.AsyncSubscriber:    {"type": AsyncZMQSubscriber,    "identity": "sub"}
 }
 
 class ZMQManager:
@@ -54,7 +54,8 @@ class ZMQManager:
         if server_addr in cls._clients[zmq_type]:
             return cls._clients[zmq_type][server_addr]
         else:
-            identity = ZMQ_TYPES[zmq_type]["identity"]
+            identity_type = ZMQ_TYPES[zmq_type]["identity"]
+            identity = generate_zmq_identity(identity_type)
             zmq_object = ZMQ_TYPES[zmq_type]["type"](identity, server_addr)
             cls._clients[zmq_type][server_addr] = zmq_object
             return zmq_object
