@@ -11,9 +11,11 @@
 """
 import asyncio
 import socket
+from logging import getLogger
 from pkg_resources import get_distribution
 from movai_core_shared.envvars import REDIS_MASTER_HOST
 
+LOGGER = getLogger(__name__)
 
 def is_manager() -> bool:
     """Identify if this robot is the manager host machine.
@@ -51,6 +53,37 @@ def create_principal_name(domain_name: str, account_name: str) -> str:
     principal_name = f"{account_name}@{domain_name}"
     return principal_name
 
+def get_account_name(principal_name: str) -> str:
+    """extract account name from principal name.
+
+    Args:
+    principal_name (str): the name in the form "account_name@domain_name".
+
+    Returns:
+        str: the account name (e.g: "johns")
+    """
+    if '@' in principal_name:
+        account_name = principal_name.split('@')[0]
+        return account_name
+    else:
+        LOGGER.error("principlal name doesn't contain the seperator"
+                        "character @")
+
+def get_domain_name(principal_name: str) -> str:
+    """extract domain name from principal.
+
+    Args:
+    principal_name (str): the name in the form "account_name@domain_name".
+
+    Returns:
+        str: the domain name (e.g: "example.com")
+    """
+    if '@' in principal_name:
+        domain_name = principal_name.split('@')[1]
+        return domain_name
+    else:
+        LOGGER.error("principlal name doesn't contain the seperator"
+                        "character @")
 
 def get_ip_address() -> str:
     """Returns the host(container) ip address.
