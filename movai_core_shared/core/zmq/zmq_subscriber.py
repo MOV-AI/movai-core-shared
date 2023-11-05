@@ -7,10 +7,11 @@
         Basic 0MQ client for connecting 0MQ servers.
 
    Developers:
-   - Erez Zomer (erez@mov.ai) - 2022
+   - Erez Zomer (erez@mov.ai) - 2023
 """
 import asyncio
 import threading
+from typing import Union
 import zmq
 import zmq.asyncio
 
@@ -21,6 +22,13 @@ from movai_core_shared.core.zmq.zmq_helpers import extract_reponse
 class ZMQSubscriber(ZMQBase):
     """A very basic implementation of ZMQ Subscriber"""
 
+    def __init__(self, topic: Union(str|bytes), identity: str, addr: str) -> None:
+        super().__init__(identity, addr)
+        if isinstance(topic, str):
+            self._topic = bytes(topic, encoding='utf-8')
+        else:
+            raise TypeError("topic type is unknown.")
+
     def _init_lock(self) -> None:
         """Initializes the lock."""
         self._lock = threading.Lock()
@@ -30,7 +38,7 @@ class ZMQSubscriber(ZMQBase):
         self._init_lock()
         self._socket: zmq.Socket = self._context.socket(zmq.SUB)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
-        self.subscribe(b"", self._addr)
+        self.subscribe(self._topic, self._addr)
 
     def subscribe(self, topic: str, pub_addr: str) -> None:
         """

@@ -55,7 +55,7 @@ class MessageClient:
         """
         Initializes the ZMQ attributute.
         """
-        self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.client)
+        self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.CLIENT)
 
     def _build_request(
         self, msg_type: str, data: dict, creation_time: str = None, response_required: bool = False
@@ -168,7 +168,7 @@ class AsyncMessageClient(MessageClient):
         """
         Initializes the ZMQ attributute.
         """
-        self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.AsyncClient)
+        self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.ASYNC_CLIENT)
 
     async def send_request(
         self, msg_type: str, data: dict, creation_time: str = None, respose_required: bool = False

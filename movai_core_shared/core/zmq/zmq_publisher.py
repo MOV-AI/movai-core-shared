@@ -7,7 +7,7 @@
         Basic 0MQ client for connecting 0MQ servers.
 
    Developers:
-   - Erez Zomer (erez@mov.ai) - 2022
+   - Erez Zomer (erez@mov.ai) - 2023
 """
 import asyncio
 import threading

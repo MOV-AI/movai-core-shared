@@ -7,19 +7,16 @@
         Basic 0MQ client for connecting 0MQ servers.
 
    Developers:
-   - Erez Zomer (erez@mov.ai) - 2022
+   - Erez Zomer (erez@mov.ai) - 2023
 """
 import asyncio
 import threading
-from logging import getLogger
-
 import zmq
 import zmq.asyncio
 
 from movai_core_shared.core.zmq.zmq_base import ZMQBase
 from movai_core_shared.core.zmq.zmq_helpers import create_msg, extract_reponse
 from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS, MOVAI_ZMQ_RECV_TIMEOUT_MS
-from movai_core_shared.exceptions import MessageError
 
 
 class ZMQClient(ZMQBase):

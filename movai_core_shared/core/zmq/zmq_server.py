@@ -106,7 +106,7 @@ class ZMQServer(ABC):
                 asyncio.create_task(self._accept())
             self._logger.info("%s is running!!!", self._name)
             return True
-        except Exception as exc:
+        except Exception:
             self._logger.error("Failed to start %s", self._name)
             return False
         
