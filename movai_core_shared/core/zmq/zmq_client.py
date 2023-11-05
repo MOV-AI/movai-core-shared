@@ -41,7 +41,7 @@ class ZMQClient(ZMQBase):
     def send(self, msg: dict, use_lock: bool = False) -> None:
         """
         Synchronously sends a message to the server.
-        
+
         Args:
             data (dict): the msg representation
         """
@@ -56,7 +56,9 @@ class ZMQClient(ZMQBase):
         except Exception as exc:
             if self._lock and self._lock.locked():
                 self._lock.release()
-            self._logger.error(f"{self.__class__.__name__} failed to send message, got exception of type {exc}")
+            self._logger.error(
+                f"{self.__class__.__name__} failed to send message, got exception of type {exc}"
+            )
 
     def recieve(self, use_lock: bool = False) -> dict:
         """
@@ -76,13 +78,16 @@ class ZMQClient(ZMQBase):
             return response
         except Exception as exc:
             if self._lock and self._lock.locked():
-                self._lock.release()            
-            self._logger.error(f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}")
+                self._lock.release()
+            self._logger.error(
+                f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}"
+            )
             return {}
 
 
 class AsyncZMQClient(ZMQClient):
     """An Async implementation of ZMQ Client"""
+
     _context = zmq.asyncio.Context()
 
     def _init_lock(self) -> None:
@@ -107,8 +112,10 @@ class AsyncZMQClient(ZMQClient):
         except Exception as exc:
             if self._lock and self._lock.locked():
                 self._lock.release()
-            self._logger.error(f"{self.__class__.__name__} failed to send message, got exception of type {exc}")
-    
+            self._logger.error(
+                f"{self.__class__.__name__} failed to send message, got exception of type {exc}"
+            )
+
     async def recieve(self, use_lock: bool = False) -> dict:
         """
         Asynchrounsly recieves data from the server.
@@ -121,13 +128,14 @@ class AsyncZMQClient(ZMQClient):
                 await self._lock.acquire()
                 buffer = await self._socket.recv_multipart()
                 self._lock.release()
-            else:            
+            else:
                 buffer = await self._socket.recv_multipart()
             response = extract_reponse(buffer)
             return response
         except Exception as exc:
             if self._lock and self._lock.locked():
-                self._lock.release()           
-            self._logger.error(f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}")
+                self._lock.release()
+            self._logger.error(
+                f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}"
+            )
             return {}
-

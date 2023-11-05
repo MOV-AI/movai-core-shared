@@ -9,6 +9,7 @@ from movai_core_shared.core.zmq.zmq_publisher import ZMQPublisher, AsyncZMQPubli
 from movai_core_shared.core.zmq.zmq_helpers import generate_zmq_identity
 from movai_core_shared.exceptions import ArgumentError
 
+
 class ZMQType(Enum):
     client = 1
     AsyncClient = 2
@@ -17,14 +18,16 @@ class ZMQType(Enum):
     Subscriber = 5
     AsyncSubscriber = 6
 
+
 ZMQ_TYPES = {
-    ZMQType.client:             {"type": ZMQClient,             "identity": "dealer"},
-    ZMQType.AsyncClient:        {"type": AsyncZMQClient,        "identity": "dealer"},
-    ZMQType.publisher:          {"type": ZMQPublisher,          "identity": "pub"},
-    ZMQType.AsyncPublisher:     {"type": AsyncZMQPublisher,     "identity": "pub"},
-    ZMQType.Subscriber:         {"type": ZMQSubscriber,         "identity": "sub"},
-    ZMQType.AsyncSubscriber:    {"type": AsyncZMQSubscriber,    "identity": "sub"}
+    ZMQType.client: {"type": ZMQClient, "identity": "dealer"},
+    ZMQType.AsyncClient: {"type": AsyncZMQClient, "identity": "dealer"},
+    ZMQType.publisher: {"type": ZMQPublisher, "identity": "pub"},
+    ZMQType.AsyncPublisher: {"type": AsyncZMQPublisher, "identity": "pub"},
+    ZMQType.Subscriber: {"type": ZMQSubscriber, "identity": "sub"},
+    ZMQType.AsyncSubscriber: {"type": AsyncZMQSubscriber, "identity": "sub"},
 }
+
 
 class ZMQManager:
     _logger = getLogger("ZMQManager")
@@ -34,9 +37,9 @@ class ZMQManager:
         ZMQType.publisher: {},
         ZMQType.AsyncPublisher: {},
         ZMQType.Subscriber: {},
-        ZMQType.AsyncSubscriber: {}
+        ZMQType.AsyncSubscriber: {},
     }
-    
+
     @classmethod
     def validate_server_addr(cls, server_addr: str):
         if not isinstance(server_addr, str):
@@ -47,10 +50,9 @@ class ZMQManager:
     @classmethod
     @beartype
     def _get_or_create_zmq_object(cls, server_addr: str, zmq_type: ZMQType) -> ZMQBase:
-
         if zmq_type not in cls._clients:
             raise TypeError(f"{zmq_type} does not exist!")
-        
+
         if server_addr in cls._clients[zmq_type]:
             return cls._clients[zmq_type][server_addr]
         else:

@@ -32,7 +32,7 @@ class ZMQSubscriber(ZMQBase):
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         self.subscribe(b"", self._addr)
 
-    def subscribe(self, topic: str, pub_addr:str) -> None:
+    def subscribe(self, topic: str, pub_addr: str) -> None:
         """
         Adds a topic to subscribe to.
 
@@ -43,9 +43,9 @@ class ZMQSubscriber(ZMQBase):
         if isinstance(topic, str):
             self._socket.setsockopt_string(zmq.SUBSCRIBE, topic)
         elif isinstance(topic, bytes):
-            self._socket.setsockopt(zmq.SUBSCRIBE, b"")    
+            self._socket.setsockopt(zmq.SUBSCRIBE, b"")
         self._socket.connect(pub_addr)
-    
+
     def recieve(self, use_lock: bool = False) -> dict:
         """
         Synchronously recieves data from the server.
@@ -65,11 +65,15 @@ class ZMQSubscriber(ZMQBase):
         except Exception as exc:
             if self._lock and self._lock.locked():
                 self._lock.release()
-            self._logger.error(f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}")
+            self._logger.error(
+                f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}"
+            )
             return {}
+
 
 class AsyncZMQSubscriber(ZMQSubscriber):
     """An Async implementation of ZMQ subscriber"""
+
     _context = zmq.asyncio.Context()
 
     def _init_lock(self) -> None:
@@ -95,6 +99,7 @@ class AsyncZMQSubscriber(ZMQSubscriber):
         except Exception as exc:
             if self._lock and self._lock.locked():
                 self._lock.release()
-            self._logger.error(f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}")
+            self._logger.error(
+                f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}"
+            )
             return {}
-

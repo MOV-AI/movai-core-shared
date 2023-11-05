@@ -28,6 +28,7 @@ def create_msg(msg: dict):
         )
         return None
 
+
 def extract_reponse(buffer: bytes):
     """Extracts the response from the buffer.
 
@@ -51,6 +52,7 @@ def extract_reponse(buffer: bytes):
             f"Got error of type {error.__class__.__name__} while trying to recieve the message."
         )
         return {}
+
 
 def generate_zmq_identity(zmq_type: str) -> str:
     random.seed()  # setting the seed for the random number generator

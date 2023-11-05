@@ -49,15 +49,18 @@ class ZMQPublisher(ZMQBase):
                 self._socket.send(data)
                 self._lock.release()
             else:
-                self._socket.send(data)            
+                self._socket.send(data)
         except Exception as exc:
             if self._lock and self._lock.locked():
                 self._lock.release()
-            self._logger.error(f"{self.__class__.__name__} failed to publish message, got exception of type {exc}")
+            self._logger.error(
+                f"{self.__class__.__name__} failed to publish message, got exception of type {exc}"
+            )
 
 
 class AsyncZMQPublisher(ZMQPublisher):
     """An Async implementation of ZMQ Publisher"""
+
     _context = zmq.asyncio.Context()
 
     def _init_lock(self) -> None:
@@ -70,7 +73,7 @@ class AsyncZMQPublisher(ZMQPublisher):
 
         Args:
             msg (dict): The message to be sent
-        """       
+        """
         try:
             data = create_msg(msg)
             if use_lock and self._lock:
@@ -82,4 +85,6 @@ class AsyncZMQPublisher(ZMQPublisher):
         except Exception as exc:
             if self._lock and self._lock.locked():
                 self._lock.release()
-            self._logger.error(f"{self.__class__.__name__} failed to publish message, got exception of type {exc}")
+            self._logger.error(
+                f"{self.__class__.__name__} failed to publish message, got exception of type {exc}"
+            )

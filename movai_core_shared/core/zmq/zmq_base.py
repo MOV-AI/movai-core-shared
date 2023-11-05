@@ -4,10 +4,10 @@ import zmq
 
 
 class ZMQBase(ABC):
-    """A base class for zmq components.
-    """
+    """A base class for zmq components."""
+
     _context = zmq.Context()
-    
+
     def __init__(self, identity: str, addr: str) -> None:
         """Initializes the object and the connection to the server.
 
@@ -23,7 +23,7 @@ class ZMQBase(ABC):
         self._lock = None
         self._socket = None
         self.init_socket()
-         
+
     def __del__(self):
         """closes the socket when the object is destroyed."""
         # Close all sockets associated with this context and then terminate the context.
@@ -37,4 +37,3 @@ class ZMQBase(ABC):
         it's own needs.
         """
         pass
-
