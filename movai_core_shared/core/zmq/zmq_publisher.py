@@ -35,7 +35,7 @@ class ZMQPublisher(ZMQBase):
         self._socket.bind(self._addr)
         self._logger.info(f"{self.__class__.__name__} is bounded to: {self._addr}")
 
-    def publish(self, topic: str, msg: dict, use_lock: bool = False) -> None:
+    def send(self, msg: dict, use_lock: bool = False) -> None:
         """
         Send the message request over ZeroMQ to the local robot message server.
 
@@ -54,7 +54,7 @@ class ZMQPublisher(ZMQBase):
             if self._lock and self._lock.locked():
                 self._lock.release()
             self._logger.error(
-                f"{self.__class__.__name__} failed to publish message, got exception of type {exc}"
+                f"{self.__class__.__name__} failed to send message, got exception of type {exc}"
             )
 
 
@@ -67,7 +67,7 @@ class AsyncZMQPublisher(ZMQPublisher):
         """Initializes the lock."""
         self._lock = asyncio.Lock()
 
-    async def publish(self, topic: str, msg: dict, use_lock: bool = False) -> None:
+    async def send(self, msg: dict, use_lock: bool = False) -> None:
         """
         Send the message over ZeroMQ subscribers.
 
@@ -86,5 +86,5 @@ class AsyncZMQPublisher(ZMQPublisher):
             if self._lock and self._lock.locked():
                 self._lock.release()
             self._logger.error(
-                f"{self.__class__.__name__} failed to publish message, got exception of type {exc}"
+                f"{self.__class__.__name__} failed to send message, got exception of type {exc}"
             )

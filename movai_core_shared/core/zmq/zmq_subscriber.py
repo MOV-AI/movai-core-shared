@@ -11,7 +11,6 @@
 """
 import asyncio
 import threading
-from typing import Union
 import zmq
 import zmq.asyncio
 
@@ -22,13 +21,6 @@ from movai_core_shared.core.zmq.zmq_helpers import extract_reponse
 class ZMQSubscriber(ZMQBase):
     """A very basic implementation of ZMQ Subscriber"""
 
-    def __init__(self, topic: Union(str|bytes), identity: str, addr: str) -> None:
-        super().__init__(identity, addr)
-        if isinstance(topic, str):
-            self._topic = bytes(topic, encoding='utf-8')
-        else:
-            raise TypeError("topic type is unknown.")
-
     def _init_lock(self) -> None:
         """Initializes the lock."""
         self._lock = threading.Lock()
@@ -38,21 +30,8 @@ class ZMQSubscriber(ZMQBase):
         self._init_lock()
         self._socket: zmq.Socket = self._context.socket(zmq.SUB)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
-        self.subscribe(self._topic, self._addr)
-
-    def subscribe(self, topic: str, pub_addr: str) -> None:
-        """
-        Adds a topic to subscribe to.
-
-        Args:
-            topic (str): The name of the topic to subscribe.
-            pub_addr (str): The address of the publisher.
-        """
-        if isinstance(topic, str):
-            self._socket.setsockopt_string(zmq.SUBSCRIBE, topic)
-        elif isinstance(topic, bytes):
-            self._socket.setsockopt(zmq.SUBSCRIBE, b"")
-        self._socket.connect(pub_addr)
+        self._socket.setsockopt_string(zmq.SUBSCRIBE, "")
+        self._socket.connect(self._addr)
 
     def recieve(self, use_lock: bool = False) -> dict:
         """
@@ -68,13 +47,14 @@ class ZMQSubscriber(ZMQBase):
                 self._lock.release()
             else:
                 buffer = self._socket.recv_multipart()
-            response = extract_reponse(buffer)
-            return response
+            
+            msg = extract_reponse(buffer)
+            return msg
         except Exception as exc:
             if self._lock and self._lock.locked():
                 self._lock.release()
             self._logger.error(
-                f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}"
+                f"{self.__class__.__name__} failed to recieve msg, got error of type: {exc}"
             )
             return {}
 
@@ -102,12 +82,12 @@ class AsyncZMQSubscriber(ZMQSubscriber):
                 self._lock.release()
             else:
                 buffer = await self._socket.recv_multipart()
-            response = extract_reponse(buffer)
-            return response
+            msg = extract_reponse(buffer)
+            return msg
         except Exception as exc:
             if self._lock and self._lock.locked():
                 self._lock.release()
             self._logger.error(
-                f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}"
+                f"{self.__class__.__name__} failed to recieve msg, got error of type: {exc}"
             )
             return {}
