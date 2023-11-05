@@ -10,10 +10,9 @@
    - Ofer Katz (ofer@mov.ai) - 2022
    - Erez Zomer (erez@mov.ai) - 2022
 """
-import random
 import time
 
-from movai_core_shared.core.zmq_client import ZMQClient, AsyncZMQClient
+from movai_core_shared.core.zmq.zmq_manager import ZMQManager, ZMQType
 from movai_core_shared.envvars import DEVICE_NAME, FLEET_NAME, SERVICE_NAME
 from movai_core_shared.exceptions import ArgumentError, MessageFormatError
 
@@ -49,18 +48,14 @@ class MessageClient:
             "service": SERVICE_NAME,
             "id": robot_id,
         }
-        random.seed()  # setting the seed for the random number generator
-        identity = f"{DEVICE_NAME}_message_client_{random.getrandbits(24)}"
         self._zmq_client = None
-        self._init_zmq_client(identity)
+        self._init_zmq_client()
 
-    def _init_zmq_client(self, identity: str):
-        """initializes the ZMQClient object
-
-        Args:
-            identity (str): A string represent unique identity for the client.
+    def _init_zmq_client(self) -> None:
         """
-        self._zmq_client = ZMQClient(identity, self._server_addr)
+        Initializes the ZMQ attributute.
+        """
+        self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.CLIENT)
 
     def _build_request(
         self, msg_type: str, data: dict, creation_time: str = None, response_required: bool = False
@@ -90,7 +85,7 @@ class MessageClient:
         }
         return request
 
-    def _extract_response(self, msg) -> dict:
+    def _fetch_response(self, msg) -> dict:
         """Extracts the response from the message.
 
         Args:
@@ -127,10 +122,10 @@ class MessageClient:
         # Add tags to the request data
         request = self._build_request(msg_type, data, creation_time, respose_required)
 
-        self._zmq_client.send(request)
+        self._zmq_client.send(request, use_lock=True)
         if respose_required:
-            msg = self._zmq_client.recieve()
-            response = self._extract_response(msg)
+            msg = self._zmq_client.recieve(use_lock=True)
+            response = self._fetch_response(msg)
             return response
 
         return {}
@@ -144,11 +139,11 @@ class MessageClient:
         """
         if "request" not in request_msg:
             request = {"request": request_msg}
-        self._zmq_client.send(request)
+        self._zmq_client.send(request, use_lock=True)
         response_required = request_msg.get("response_required")
 
         if response_required:
-            response = self._zmq_client.recieve()
+            response = self._zmq_client.recieve(use_lock=True)
             return response
         return {}
 
@@ -165,12 +160,15 @@ class MessageClient:
 
         msg.update(kwargs)
 
-        self._zmq_client.send(msg)
+        self._zmq_client.send(msg, use_lock=True)
 
 
 class AsyncMessageClient(MessageClient):
-    def _init_zmq_client(self, identity: str):
-        self._zmq_client = AsyncZMQClient(identity, self._server_addr)
+    def _init_zmq_client(self) -> None:
+        """
+        Initializes the ZMQ attributute.
+        """
+        self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.ASYNC_CLIENT)
 
     async def send_request(
         self, msg_type: str, data: dict, creation_time: str = None, respose_required: bool = False
@@ -190,7 +188,7 @@ class AsyncMessageClient(MessageClient):
         await self._zmq_client.send(request)
         if respose_required:
             msg = await self._zmq_client.recieve()
-            response = self._extract_response(msg)
+            response = self._fetch_response(msg)
             return response
 
         return {}
