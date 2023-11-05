@@ -45,9 +45,8 @@ class ZMQClient(ZMQBase):
         try:
             data = create_msg(msg)
             if use_lock and self._lock:
-                self._lock.acquire()
-                self._socket.send(data)
-                self._lock.release()
+                with self._lock:
+                    self._socket.send(data)
             else:
                 self._socket.send(data)
         except Exception as exc:
@@ -66,9 +65,8 @@ class ZMQClient(ZMQBase):
         """
         try:
             if use_lock and self._lock:
-                self._lock.acquire()
-                buffer = self._socket.recv_multipart()
-                self._lock.release()
+                with self._lock:
+                    buffer = self._socket.recv_multipart()
             else:
                 buffer = self._socket.recv_multipart()
             response = extract_reponse(buffer)
@@ -101,9 +99,8 @@ class AsyncZMQClient(ZMQClient):
         try:
             data = create_msg(msg)
             if use_lock and self._lock:
-                await self._lock.acquire()
-                await self._socket.send(data)
-                self._lock.release()
+                async with self._lock:
+                    await self._socket.send(data)
             else:
                 await self._socket.send(data)
         except Exception as exc:
@@ -122,9 +119,8 @@ class AsyncZMQClient(ZMQClient):
         """
         try:
             if use_lock and self._lock:
-                await self._lock.acquire()
-                buffer = await self._socket.recv_multipart()
-                self._lock.release()
+                async with self._lock:
+                    buffer = await self._socket.recv_multipart()
             else:
                 buffer = await self._socket.recv_multipart()
             response = extract_reponse(buffer)

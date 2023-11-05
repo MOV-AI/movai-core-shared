@@ -45,9 +45,8 @@ class ZMQPublisher(ZMQBase):
         try:
             data = create_msg(msg)
             if use_lock and self._lock:
-                self._lock.acquire()
-                self._socket.send(data)
-                self._lock.release()
+                with self._lock:
+                    self._socket.send(data)
             else:
                 self._socket.send(data)
         except Exception as exc:
@@ -77,9 +76,8 @@ class AsyncZMQPublisher(ZMQPublisher):
         try:
             data = create_msg(msg)
             if use_lock and self._lock:
-                await self._lock.acquire()
-                await self._socket.send(data)
-                self._lock.release()
+                async with self._lock:
+                    await self._socket.send(data)
             else:
                 await self._socket.send(data)
         except Exception as exc:

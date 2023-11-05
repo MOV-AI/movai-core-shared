@@ -42,9 +42,8 @@ class ZMQSubscriber(ZMQBase):
         """
         try:
             if use_lock and self._lock:
-                self._lock.acquire()
-                buffer = self._socket.recv_multipart()
-                self._lock.release()
+                with self._lock:
+                    buffer = self._socket.recv_multipart()
             else:
                 buffer = self._socket.recv_multipart()
             
@@ -77,9 +76,8 @@ class AsyncZMQSubscriber(ZMQSubscriber):
         """
         try:
             if use_lock and self._lock:
-                await self._lock.acquire()
-                buffer = await self._socket.recv_multipart()
-                self._lock.release()
+                async with self._lock:
+                    buffer = await self._socket.recv_multipart()
             else:
                 buffer = await self._socket.recv_multipart()
             msg = extract_reponse(buffer)
