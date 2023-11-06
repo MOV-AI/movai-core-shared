@@ -1,10 +1,7 @@
 import unittest
 from pydantic import BaseModel
-from multiprocessing import Process
 from movai_core_shared.logger import Log
-from movai_core_shared.core.zmq_client import ZMQClient
-from movai_core_shared.core.zmq_server import ZMQServer
-from movai_core_shared.core.message_client import MessageClient
+from movai_core_shared.core.zmq.zmq_server import ZMQServer
 from movai_core_shared.messages.general_data import Request
 
 LOGGER = Log.get_logger(__name__)
