@@ -10,7 +10,6 @@
    - Ofer Katz (ofer@mov.ai) - 2022
    - Erez Zomer (erez@mov.ai) - 2022
 """
-import random
 import time
 
 from movai_core_shared.core.zmq.zmq_manager import ZMQManager, ZMQType
@@ -56,8 +55,8 @@ class MessageClient:
         """
         Initializes the ZMQ attributute.
         """
-        self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.client)
-        
+        self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.CLIENT)
+
     def _build_request(
         self, msg_type: str, data: dict, creation_time: str = None, response_required: bool = False
     ) -> dict:
@@ -165,12 +164,11 @@ class MessageClient:
 
 
 class AsyncMessageClient(MessageClient):
-
     def _init_zmq_client(self) -> None:
         """
         Initializes the ZMQ attributute.
         """
-        self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.AsyncClient)
+        self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.ASYNC_CLIENT)
 
     async def send_request(
         self, msg_type: str, data: dict, creation_time: str = None, respose_required: bool = False

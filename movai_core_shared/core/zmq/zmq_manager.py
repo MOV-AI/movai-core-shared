@@ -1,6 +1,18 @@
-from beartype import beartype
+"""
+   Copyright (C) Mov.ai  - All Rights Reserved
+   Unauthorized copying of this file, via any medium is strictly prohibited
+   Proprietary and confidential
+
+   Usage:
+        Basic 0MQ client for connecting 0MQ servers.
+
+   Developers:
+   - Erez Zomer (erez@mov.ai) - 2023
+"""
 from enum import Enum
 from logging import getLogger
+
+from beartype import beartype
 
 from movai_core_shared.core.zmq.zmq_base import ZMQBase
 from movai_core_shared.core.zmq.zmq_client import ZMQClient, AsyncZMQClient
@@ -9,34 +21,38 @@ from movai_core_shared.core.zmq.zmq_publisher import ZMQPublisher, AsyncZMQPubli
 from movai_core_shared.core.zmq.zmq_helpers import generate_zmq_identity
 from movai_core_shared.exceptions import ArgumentError
 
+
 class ZMQType(Enum):
-    client = 1
-    AsyncClient = 2
-    publisher = 3
-    AsyncPublisher = 4
-    Subscriber = 5
-    AsyncSubscriber = 6
+    CLIENT = 1
+    ASYNC_CLIENT = 2
+    PUBLISHER = 3
+    ASYNC_PUBLISHER = 4
+    SUBSCRIBER = 5
+    ASYNC_SUBSCRIBER = 6
+
 
 ZMQ_TYPES = {
-    ZMQType.client:             {"type": ZMQClient,             "identity": "dealer"},
-    ZMQType.AsyncClient:        {"type": AsyncZMQClient,        "identity": "dealer"},
-    ZMQType.publisher:          {"type": ZMQPublisher,          "identity": "pub"},
-    ZMQType.AsyncPublisher:     {"type": AsyncZMQPublisher,     "identity": "pub"},
-    ZMQType.Subscriber:         {"type": ZMQSubscriber,         "identity": "sub"},
-    ZMQType.AsyncSubscriber:    {"type": AsyncZMQSubscriber,    "identity": "sub"}
+    ZMQType.CLIENT: {"type": ZMQClient, "identity": "dealer"},
+    ZMQType.ASYNC_CLIENT: {"type": AsyncZMQClient, "identity": "dealer"},
+    ZMQType.PUBLISHER: {"type": ZMQPublisher, "identity": "pub"},
+    ZMQType.ASYNC_PUBLISHER: {"type": AsyncZMQPublisher, "identity": "pub"},
+    ZMQType.SUBSCRIBER: {"type": ZMQSubscriber, "identity": "sub"},
+    ZMQType.ASYNC_SUBSCRIBER: {"type": AsyncZMQSubscriber, "identity": "sub"},
 }
 
+
 class ZMQManager:
+    """This class will host ZMQ objects by their type and address."""
     _logger = getLogger("ZMQManager")
     _clients = {
-        ZMQType.client: {},
-        ZMQType.AsyncClient: {},
-        ZMQType.publisher: {},
-        ZMQType.AsyncPublisher: {},
-        ZMQType.Subscriber: {},
-        ZMQType.AsyncSubscriber: {}
+        ZMQType.CLIENT: {},
+        ZMQType.ASYNC_CLIENT: {},
+        ZMQType.PUBLISHER: {},
+        ZMQType.ASYNC_PUBLISHER: {},
+        ZMQType.SUBSCRIBER: {},
+        ZMQType.ASYNC_SUBSCRIBER: {},
     }
-    
+
     @classmethod
     def validate_server_addr(cls, server_addr: str):
         if not isinstance(server_addr, str):
@@ -47,18 +63,17 @@ class ZMQManager:
     @classmethod
     @beartype
     def _get_or_create_zmq_object(cls, server_addr: str, zmq_type: ZMQType) -> ZMQBase:
-
         if zmq_type not in cls._clients:
             raise TypeError(f"{zmq_type} does not exist!")
-        
+
         if server_addr in cls._clients[zmq_type]:
             return cls._clients[zmq_type][server_addr]
-        else:
-            identity_type = ZMQ_TYPES[zmq_type]["identity"]
-            identity = generate_zmq_identity(identity_type)
-            zmq_object = ZMQ_TYPES[zmq_type]["type"](identity, server_addr)
-            cls._clients[zmq_type][server_addr] = zmq_object
-            return zmq_object
+
+        identity_type = ZMQ_TYPES[zmq_type]["identity"]
+        identity = generate_zmq_identity(identity_type)
+        zmq_object = ZMQ_TYPES[zmq_type]["type"](identity, server_addr)
+        cls._clients[zmq_type][server_addr] = zmq_object
+        return zmq_object
 
     @classmethod
     def get_client(cls, server_addr: str, client_type: ZMQType) -> ZMQClient:

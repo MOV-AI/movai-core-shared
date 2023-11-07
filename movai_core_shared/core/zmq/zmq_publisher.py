@@ -7,7 +7,7 @@
         Basic 0MQ client for connecting 0MQ servers.
 
    Developers:
-   - Erez Zomer (erez@mov.ai) - 2022
+   - Erez Zomer (erez@mov.ai) - 2023
 """
 import asyncio
 import threading
@@ -35,7 +35,7 @@ class ZMQPublisher(ZMQBase):
         self._socket.bind(self._addr)
         self._logger.info(f"{self.__class__.__name__} is bounded to: {self._addr}")
 
-    def publish(self, topic: str, msg: dict, use_lock: bool = False) -> None:
+    def send(self, msg: dict, use_lock: bool = False) -> None:
         """
         Send the message request over ZeroMQ to the local robot message server.
 
@@ -45,15 +45,16 @@ class ZMQPublisher(ZMQBase):
         try:
             data = create_msg(msg)
             if use_lock and self._lock:
-                self._lock.acquire()
-                self._socket.send(data)
-                self._lock.release()
+                with self._lock:
+                    self._socket.send(data)
             else:
-                self._socket.send(data)            
+                self._socket.send(data)
         except Exception as exc:
             if self._lock and self._lock.locked():
                 self._lock.release()
-            self._logger.error(f"{self.__class__.__name__} failed to publish message, got exception of type {exc}")
+            self._logger.error(
+                f"{self.__class__.__name__} failed to send message, got exception of type {exc}"
+            )
 
 
 class AsyncZMQPublisher(ZMQPublisher):
@@ -64,22 +65,23 @@ class AsyncZMQPublisher(ZMQPublisher):
         """Initializes the lock."""
         self._lock = asyncio.Lock()
 
-    async def publish(self, topic: str, msg: dict, use_lock: bool = False) -> None:
+    async def send(self, msg: dict, use_lock: bool = False) -> None:
         """
         Send the message over ZeroMQ subscribers.
 
         Args:
             msg (dict): The message to be sent
-        """       
+        """
         try:
             data = create_msg(msg)
             if use_lock and self._lock:
-                await self._lock.acquire()
-                await self._socket.send(data)
-                self._lock.release()
+                async with self._lock:
+                    await self._socket.send(data)
             else:
                 await self._socket.send(data)
         except Exception as exc:
             if self._lock and self._lock.locked():
                 self._lock.release()
-            self._logger.error(f"{self.__class__.__name__} failed to publish message, got exception of type {exc}")
+            self._logger.error(
+                f"{self.__class__.__name__} failed to send message, got exception of type {exc}"
+            )

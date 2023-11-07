@@ -1,3 +1,14 @@
+"""
+   Copyright (C) Mov.ai  - All Rights Reserved
+   Unauthorized copying of this file, via any medium is strictly prohibited
+   Proprietary and confidential
+
+   Usage:
+        Basic 0MQ client for connecting 0MQ servers.
+
+   Developers:
+   - Erez Zomer (erez@mov.ai) - 2023
+"""
 import json
 from logging import getLogger
 import random
@@ -24,9 +35,11 @@ def create_msg(msg: dict):
         return data
     except (json.JSONDecodeError, TypeError) as error:
         LOGGER.error(
-            f"Got error of type {error.__class__.__name__} while trying to convert dictionary to json."
+            f"Got error of type {error.__class__.__name__} while trying to convert \
+                dictionary to json."
         )
         return None
+
 
 def extract_reponse(buffer: bytes):
     """Extracts the response from the buffer.
@@ -53,6 +66,14 @@ def extract_reponse(buffer: bytes):
         return {}
 
 def generate_zmq_identity(zmq_type: str) -> str:
+    """Generate a unique identity for ZMQ clients
+
+    Args:
+        zmq_type (str): The type of zmq object.
+
+    Returns:
+        str: The unique identity.
+    """
     random.seed()  # setting the seed for the random number generator
     identity = f"{DEVICE_NAME}_{SERVICE_NAME}_{zmq_type}_{random.getrandbits(24)}"
     return identity
