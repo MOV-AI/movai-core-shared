@@ -38,6 +38,11 @@ class ZMQServer(ABC):
         self._running = False
         self._ctx = None
         self._socket = None
+        self._parallel_tasks = []
+        self.add_parallel_task(self._accept())
+
+    def add_parallel_task(self, task) -> None:
+        self._parallel_tasks.append(task)
 
     def _init_socket(self) -> None:
         """Initializes the zmq context."""
@@ -54,13 +59,14 @@ class ZMQServer(ABC):
 
     async def _accept(self) -> None:
         """accepts new connections requests to zmq."""
-        await self.startup()
+#        await self.startup()
         while self._running:
             try:
                 if self._debug:
                     self._logger.debug("Waiting for new requests.\n")
                 buffer = await self._socket.recv_multipart()
                 asyncio.create_task(self.handle(buffer))
+                await asyncio.sleep(1)
             except Exception as error:
                 self._logger.error(f"ZMQServer Error: {str(error)}")
                 continue
@@ -101,7 +107,7 @@ class ZMQServer(ABC):
                 return True
             self._running = True
             if asyncio._get_running_loop() is None:
-                asyncio.run(self._accept())
+                asyncio.run(self.execute())
             else:
                 asyncio.create_task(self._accept())
             self._logger.info("%s is running!!!", self._name)
@@ -113,6 +119,9 @@ class ZMQServer(ABC):
     def stop(self):
         """Stops the server from running."""
         self._running = False
+
+    async def execute(self) -> None:
+        await asyncio.gather(*self._parallel_tasks)
 
     @abstractmethod
     async def handle(self, buffer: bytes) -> None:
