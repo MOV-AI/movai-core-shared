@@ -31,7 +31,7 @@ class CommandData(BaseModel):
         return text
 
 class Command(BaseModel):
-    command: CommandData
+    command_data: CommandData
     dst: Destination
 
     
