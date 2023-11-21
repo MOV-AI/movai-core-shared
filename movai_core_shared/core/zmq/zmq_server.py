@@ -9,9 +9,10 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2023
 """
+from abc import ABC, abstractmethod
 import asyncio
 import logging
-from abc import ABC, abstractmethod
+from typing import Callable
 
 import zmq
 import zmq.asyncio
@@ -34,15 +35,11 @@ class ZMQServer(ABC):
         self._addr = bind_addr
         self._logger = logging.getLogger(server_name)
         self._debug = debug
+        self.loop = None
         self._initialized = False
         self._running = False
         self._ctx = None
         self._socket = None
-        self._parallel_tasks = []
-        self.add_parallel_task(self._accept())
-
-    def add_parallel_task(self, task) -> None:
-        self._parallel_tasks.append(task)
 
     def _init_socket(self) -> None:
         """Initializes the zmq context."""
@@ -59,17 +56,18 @@ class ZMQServer(ABC):
 
     async def _accept(self) -> None:
         """accepts new connections requests to zmq."""
-#        await self.startup()
+        await self.at_startup()
         while self._running:
             try:
                 if self._debug:
                     self._logger.debug("Waiting for new requests.\n")
                 buffer = await self._socket.recv_multipart()
                 asyncio.create_task(self.handle(buffer))
-                await asyncio.sleep(1)
+                await asyncio.sleep(0)
             except Exception as error:
                 self._logger.error(f"ZMQServer Error: {str(error)}")
                 continue
+        await self.at_shutdown()
         self.close()
 
     def close(self) -> None:
@@ -106,10 +104,12 @@ class ZMQServer(ABC):
                 self._logger.warning("%s is already running", self._name)
                 return True
             self._running = True
-            if asyncio._get_running_loop() is None:
-                asyncio.run(self.execute())
-            else:
+            try:
+                self.loop = asyncio.get_running_loop()
                 asyncio.create_task(self._accept())
+            except RuntimeError:
+                asyncio.run(self._accept())
+            
             self._logger.info("%s is running!!!", self._name)
             return True
         except Exception:
@@ -127,8 +127,14 @@ class ZMQServer(ABC):
     async def handle(self, buffer: bytes) -> None:
         pass
 
-    async def startup(self):
+    async def at_startup(self):
         """A funtion which is called once at server startup and can be used for initializing
+        other tasks.
+        """
+        pass
+
+    async def at_shutdown(self):
+        """A funtion which is called once at server shutdown and can be used for initializing
         other tasks.
         """
         pass
