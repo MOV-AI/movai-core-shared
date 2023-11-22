@@ -12,7 +12,6 @@
 from abc import ABC, abstractmethod
 import asyncio
 import logging
-from typing import Callable
 
 import zmq
 import zmq.asyncio
@@ -119,9 +118,6 @@ class ZMQServer(ABC):
     def stop(self):
         """Stops the server from running."""
         self._running = False
-
-    async def execute(self) -> None:
-        await asyncio.gather(*self._parallel_tasks)
 
     @abstractmethod
     async def handle(self, buffer: bytes) -> None:
