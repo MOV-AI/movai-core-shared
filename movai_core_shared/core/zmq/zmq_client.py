@@ -38,7 +38,6 @@ class ZMQClient(ZMQBase):
     def send(self, msg: dict, use_lock: bool = False) -> None:
         """
         Synchronously sends a message to the server.
-
         Args:
             data (dict): the msg representation
         """
@@ -82,7 +81,6 @@ class ZMQClient(ZMQBase):
 
 class AsyncZMQClient(ZMQClient):
     """An Async implementation of ZMQ Client"""
-
     _context = zmq.asyncio.Context()
 
     def _init_lock(self) -> None:
