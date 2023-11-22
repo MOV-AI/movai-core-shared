@@ -139,6 +139,7 @@ STRESS_MEASUREMENT = "stress_logs"
 
 # Message-Server msgs types:
 LOGS_HANDLER_MSG_TYPE = "logs"
+COMMAND_HANDLER_MSG_TYPE = "command"
 SYSLOGS_HANDLER_MSG_TYPE = "syslog"
 LOGS_QUERY_HANDLER_MSG_TYPE = "logs_query"
 METRICS_HANDLER_MSG_TYPE = "metrics"

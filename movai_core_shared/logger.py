@@ -39,8 +39,8 @@ from movai_core_shared.envvars import (
     MOVAI_FLEET_LOGS_VERBOSITY_LEVEL,
     MOVAI_STDOUT_VERBOSITY_LEVEL,
     MOVAI_GENERAL_VERBOSITY_LEVEL,
-    MESSAGE_SERVER_LOCAL_ADDR,
-    MESSAGE_SERVER_REMOTE_ADDR,
+    LOCAL_MESSAGE_SERVER,
+    MASTER_MESSAGE_SERVER,
     SERVICE_NAME,
     SYSLOG_ENABLED,
 )
@@ -131,8 +131,8 @@ class RemoteHandler(logging.StreamHandler):
         Constructor
         """
         logging.StreamHandler.__init__(self, None)
-        self._message_client = MessageClient(MESSAGE_SERVER_LOCAL_ADDR)
-        self._async_message_client = AsyncMessageClient(MESSAGE_SERVER_LOCAL_ADDR)
+        self._message_client = MessageClient(LOCAL_MESSAGE_SERVER)
+        self._async_message_client = AsyncMessageClient(LOCAL_MESSAGE_SERVER)
 
     def emit(self, record):
         """
@@ -477,9 +477,9 @@ class LogsQuery:
         **kwrargs,
     ):
         """Get logs from message-server"""
-        server_addr = MESSAGE_SERVER_REMOTE_ADDR
+        server_addr = MASTER_MESSAGE_SERVER
         if is_manager():
-            server_addr = MESSAGE_SERVER_LOCAL_ADDR
+            server_addr = LOCAL_MESSAGE_SERVER
 
         message_client = AsyncMessageClient(server_addr)
         params = {}
