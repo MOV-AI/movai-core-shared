@@ -85,7 +85,12 @@ class AsyncZMQClient(ZMQClient):
 
     def _init_lock(self) -> None:
         """Initializes the lock."""
-        self._lock = asyncio.Lock()
+        if self._lock is None:
+            try:
+                asyncio.get_running_loop()
+                self._lock = asyncio.Lock()
+            except RuntimeError:
+                pass
 
     async def send(self, msg: dict, use_lock: bool = False) -> None:
         """
@@ -94,6 +99,8 @@ class AsyncZMQClient(ZMQClient):
         Args:
             data (bytes): the msg representation
         """
+        if use_lock:
+            self._init_lock()
         try:
             data = create_msg(msg)
             if use_lock and self._lock:
@@ -115,6 +122,8 @@ class AsyncZMQClient(ZMQClient):
         Returns:
             (dict): A response from the server.
         """
+        if use_lock:
+            self._init_lock()
         try:
             if use_lock and self._lock:
                 async with self._lock:
