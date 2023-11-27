@@ -106,18 +106,17 @@ class ZMQServer(ABC):
         Returns:
             bool: True on success, False otherwise.
         """
-        res = True
         try:
             self.loop = asyncio.get_running_loop()
             asyncio.create_task(self.spin())
+            return True
         except RuntimeError:
             asyncio.run(self.spin())            
             self._logger.info("%s is running!!!", self._name)
+            return True
         except Exception:
             self._logger.error("Failed to start %s", self._name)
-            res = False
-        finally:
-            return res
+            return False
 
     def stop(self):
         """Stops the server from running."""
