@@ -63,7 +63,12 @@ class AsyncZMQPublisher(ZMQPublisher):
 
     def _init_lock(self) -> None:
         """Initializes the lock."""
-        self._lock = asyncio.Lock()
+        if self._lock is None:
+            try:
+                asyncio.get_running_loop()
+                self._lock = asyncio.Lock()
+            except RuntimeError:
+                self._logger.warning("The loop is not running, unable to initialize the lock!")
 
     async def send(self, msg: dict, use_lock: bool = False) -> None:
         """
@@ -72,6 +77,8 @@ class AsyncZMQPublisher(ZMQPublisher):
         Args:
             msg (dict): The message to be sent
         """
+        if use_lock:
+            self._init_lock()
         try:
             data = create_msg(msg)
             if use_lock and self._lock:
