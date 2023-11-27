@@ -53,8 +53,17 @@ class ZMQServer(ABC):
             self._logger.error(f"failed to bind socket on address {self._addr}")
             raise        
 
-    async def _accept(self) -> None:
+    async def spin(self) -> None:
         """accepts new connections requests to zmq."""
+        try:
+            self.init_server()
+            if self._running:
+                self._logger.warning("%s is already running", self._name)
+            self._running = True
+        except Exception:
+            self._logger.error("Failed to start %s", self._name)
+            return
+        
         await self.at_startup()
         while self._running:
             try:
@@ -95,26 +104,20 @@ class ZMQServer(ABC):
         """The main message dispatch loop.
 
         Returns:
-            int: 0 on success, 1 in case of exception.
+            bool: True on success, False otherwise.
         """
         try:
-            self.init_server()
-            if self._running:
-                self._logger.warning("%s is already running", self._name)
-                return True
-            self._running = True
-            try:
-                self.loop = asyncio.get_running_loop()
-                asyncio.create_task(self._accept())
-            except RuntimeError:
-                asyncio.run(self._accept())
-            
+            self.loop = asyncio.get_running_loop()
+            asyncio.create_task(self.spin())
+            return True
+        except RuntimeError:
+            asyncio.run(self.spin())            
             self._logger.info("%s is running!!!", self._name)
             return True
         except Exception:
             self._logger.error("Failed to start %s", self._name)
             return False
-        
+
     def stop(self):
         """Stops the server from running."""
         self._running = False
