@@ -18,6 +18,7 @@ class ZMQBase(ABC):
     """A base class for zmq components."""
 
     _context = zmq.Context()
+    _num_of_sockets = 0
 
     def __init__(self, identity: str, addr: str) -> None:
         """Initializes the object and the connection to the server.
@@ -34,12 +35,16 @@ class ZMQBase(ABC):
         self._lock = None
         self._socket = None
         self.init_socket()
+        ZMQBase._num_of_sockets += 1
 
     def __del__(self):
         """closes the socket when the object is destroyed."""
         # Close all sockets associated with this context and then terminate the context.
         if self._socket:
             self._socket.close()
+        ZMQBase._num_of_sockets -= 1
+        if ZMQBase._num_of_sockets == 0:
+            ZMQBase._context.term()
 
     @abstractmethod
     def init_socket(self):

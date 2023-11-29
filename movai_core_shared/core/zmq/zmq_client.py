@@ -108,6 +108,9 @@ class AsyncZMQClient(ZMQClient):
                     await self._socket.send(data)
             else:
                 await self._socket.send(data)
+        except asyncio.CancelledError:
+            # This is a normal exception that is raised when the task is CancelledError
+            self._socket.close()
         except Exception as exc:
             if self._lock and self._lock.locked():
                 self._lock.release()
@@ -132,6 +135,10 @@ class AsyncZMQClient(ZMQClient):
                 buffer = await self._socket.recv_multipart()
             response = extract_reponse(buffer)
             return response
+        except asyncio.CancelledError:
+            # This is a normal exception that is raised when the task is CancelledError
+            self._socket.close()
+            return {}
         except Exception as exc:
             if self._lock and self._lock.locked():
                 self._lock.release()
