@@ -65,7 +65,12 @@ class AsyncZMQSubscriber(ZMQSubscriber):
 
     def _init_lock(self) -> None:
         """Initializes the lock."""
-        self._lock = asyncio.Lock()
+        if self._lock is None:
+            try:
+                asyncio.get_running_loop()
+                self._lock = asyncio.Lock()
+            except RuntimeError:
+                self._logger.warning("The loop is not running, unable to initialize the lock!")
 
     async def recieve(self, use_lock: bool = False) -> dict:
         """
@@ -74,6 +79,8 @@ class AsyncZMQSubscriber(ZMQSubscriber):
         Returns:
             (dict): raw data from the server.
         """
+        if use_lock:
+            self._init_lock()
         try:
             if use_lock and self._lock:
                 async with self._lock:
