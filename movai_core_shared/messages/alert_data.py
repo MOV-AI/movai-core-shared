@@ -22,8 +22,6 @@ class AlertFields(BaseModel):
 
 
 class AlertData(MetricData):
-    measurement: str
-    metric_type: str
     metric_fields: AlertFields
 
 

@@ -9,9 +9,11 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2022
 """
+import asyncio
 import socket
 from pkg_resources import get_distribution
 from movai_core_shared.envvars import REDIS_MASTER_HOST
+
 
 def is_manager() -> bool:
     """Identify if this robot is the manager host machine.
@@ -21,7 +23,8 @@ def is_manager() -> bool:
     """
     return REDIS_MASTER_HOST in (None, "redis-master")
 
-def is_enterprise() -> bool:
+
+def is_enteprise() -> bool:
     """Check the existence of the movai_core_enterprise package.
 
     Returns:
@@ -29,9 +32,11 @@ def is_enterprise() -> bool:
     """
     try:
         import movai_core_enterprise
+
         return True
     except ImportError:
         return False
+
 
 def create_principal_name(domain_name: str, account_name: str) -> str:
     """build principal name -> "account_name@domain_name
@@ -45,6 +50,7 @@ def create_principal_name(domain_name: str, account_name: str) -> str:
     """
     principal_name = f"{account_name}@{domain_name}"
     return principal_name
+
 
 def get_ip_address() -> str:
     """Returns the host(container) ip address.
@@ -67,3 +73,19 @@ def get_package_version(package_name: str) -> str:
         str: The version of the package.
     """
     return get_distribution(package_name).version
+
+
+async def run_blocking_code(executor, blocking_func, *args):
+    """runs a blocking code in another thread to free the main loop for other tasks.
+
+    Args:
+        executor (_type_): A thread or process to execute the code.
+        blocking_func (_type_): The fucntion to execute.
+
+    Returns:
+        Any: The results from the blocking_func
+    """
+    loop = asyncio.get_running_loop()
+    future = loop.run_in_executor(executor, blocking_func, *args)
+    results = await future
+    return results

@@ -28,6 +28,7 @@ def password_checker(func):
     Args:
         func (callable): The function to be decorated
     """
+
     def inner(*args, **kwargs):
         """This function is encapsulates the decorated function and
         add the validation of the password.
@@ -46,17 +47,17 @@ def password_checker(func):
                 LOGGER.error(error_msg)
                 raise PasswordASCIIFormatError(error_msg)
         return func(*args, **kwargs)
+
     return inner
 
 
 class SecurePassword:
-    """A class for securing password by encryption or hashing.
-    """
+    """A class for securing password by encryption or hashing."""
 
     def __init__(self, secret: str = None) -> None:
         if secret is None:
             secret = generate_secret_string(32)
-        key = urlsafe_b64encode(secret[:32].encode('ascii'))
+        key = urlsafe_b64encode(secret[:32].encode("ascii"))
         self.cipher_suite = Fernet(key)
 
     def encrypt_password(self, plain_text: str) -> bytes:
@@ -68,7 +69,7 @@ class SecurePassword:
         Returns:
             bytes: the cipher text of the encrypted password.
         """
-        cipher_text = self.cipher_suite.encrypt(plain_text.encode('ascii'))
+        cipher_text = self.cipher_suite.encrypt(plain_text.encode("ascii"))
         return cipher_text
 
     def decrypt_password(self, cipher_text: bytes) -> str:
@@ -81,7 +82,7 @@ class SecurePassword:
             string: A plain text of the encrypted password.
         """
         plain_text = self.cipher_suite.decrypt(cipher_text)
-        return plain_text.decode('ascii')
+        return plain_text.decode("ascii")
 
     @staticmethod
     def create_salt() -> str:
@@ -112,10 +113,8 @@ class SecurePassword:
             bytes: a secure hash (message digest) of the password.
         """
         hash = binascii.hexlify(
-            hashlib.pbkdf2_hmac("sha256",
-                                password.encode("ascii"),
-                                salt,
-                                100000))
+            hashlib.pbkdf2_hmac("sha256", password.encode("ascii"), salt, 100000)
+        )
         return hash
 
     @staticmethod

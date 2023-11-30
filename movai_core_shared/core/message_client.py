@@ -10,10 +10,9 @@
    - Ofer Katz (ofer@mov.ai) - 2022
    - Erez Zomer (erez@mov.ai) - 2022
 """
-import random
 import time
 
-from movai_core_shared.core.zmq_client import ZMQClient
+from movai_core_shared.core.zmq.zmq_manager import ZMQManager, ZMQType
 from movai_core_shared.envvars import DEVICE_NAME, FLEET_NAME, SERVICE_NAME
 from movai_core_shared.exceptions import ArgumentError, MessageFormatError
 
@@ -30,8 +29,8 @@ class MessageClient:
         constructor - initializes the object.
 
         Args:
-            msg_type (str): The type of the message, this will affect which
-            handler will be used to handle the request.
+            server_addr (str): The address of the server to connect with.
+            robot_id (str): The id of the robot issuing the request.
 
         Raises:
             TypeError: In case the supplied argument is not in the correct type.
@@ -49,9 +48,64 @@ class MessageClient:
             "service": SERVICE_NAME,
             "id": robot_id,
         }
-        random.seed()  # setting the seed for the random number generator
-        identity = f"{DEVICE_NAME}_message_client_{random.getrandbits(24)}"
-        self._zmq_client = ZMQClient(identity, self._server_addr)
+        self._zmq_client = None
+        self._init_zmq_client()
+
+    def _init_zmq_client(self) -> None:
+        """
+        Initializes the ZMQ attributute.
+        """
+        self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.CLIENT)
+
+    def _build_request(
+        self, msg_type: str, data: dict, creation_time: str = None, response_required: bool = False
+    ) -> dict:
+        """Build a request in the format accepted by the message server.
+
+        Args:
+            msg_type (str): The type of the message (logs, alerts, metrics....)
+            data (dict): The data to include in the request.
+            creation_time (str, optional): The time the request was created.
+            response_required (bool, optional): Tells the message-server if the client is wainting for response.
+
+        Returns:
+            {dict}: The message request to send the message-server
+        """
+        if creation_time is None:
+            creation_time = time.time_ns()
+
+        request = {
+            "request": {
+                "req_type": msg_type,
+                "created": creation_time,
+                "response_required": response_required,
+                "req_data": data,
+                "robot_info": self._robot_info,
+            }
+        }
+        return request
+
+    def _fetch_response(self, msg) -> dict:
+        """Extracts the response from the message.
+
+        Args:
+            msg (msg): The msg got from message-server.
+
+        Raises:
+            MessageFormatError: in case the message is not in the acceptable format.
+
+        Returns:
+            (dict): The actual response
+        """
+        if not isinstance(msg, dict):
+            raise MessageFormatError(f"The message format is unknown: {msg}.")
+
+        if "response" in msg:
+            response = msg
+        else:
+            response = {"response": msg}
+
+        return response
 
     def send_request(
         self, msg_type: str, data: dict, creation_time: str = None, respose_required: bool = False
@@ -60,37 +114,20 @@ class MessageClient:
         Wrap the data into a message request and sent it to the robot message server
 
         Args:
+            msg_type (str): the type of message.
             data (dict): The message data to be sent to the robot message server.
             creation_time (str): The time where the request is created.
+            response_required (bool): whether to wait for response, Default False.
         """
         # Add tags to the request data
+        request = self._build_request(msg_type, data, creation_time, respose_required)
 
-        if creation_time is None:
-            creation_time = time.time_ns()
-
-        request = {
-            "request": {
-                "req_type": msg_type,
-                "created": creation_time,
-                "response_required": respose_required,
-                "req_data": data,
-                "robot_info": self._robot_info,
-            }
-        }
-
-        self._zmq_client.send(request)
+        self._zmq_client.send(request, use_lock=True)
         if respose_required:
-            raw_response = self._zmq_client.recieve()
-
-            if not isinstance(raw_response, dict):
-                raise MessageFormatError(f"The message format is unknown: {raw_response}.")
-
-            if "response" in raw_response:
-                response = raw_response
-            else:
-                response = {"reponse": raw_response}
-
+            msg = self._zmq_client.recieve(use_lock=True)
+            response = self._fetch_response(msg)
             return response
+
         return {}
 
     def foraward_request(self, request_msg: dict) -> dict:
@@ -100,13 +137,17 @@ class MessageClient:
         Args:
             request_msg (dict): The request to forward.
         """
-        request = {"request": request_msg}
-        self._zmq_client.send(request)
-        if request_msg["response_required"]:
-            return self._zmq_client.recieve()
+        if "request" not in request_msg:
+            request = {"request": request_msg}
+        self._zmq_client.send(request, use_lock=True)
+        response_required = request_msg.get("response_required")
+
+        if response_required:
+            response = self._zmq_client.recieve(use_lock=True)
+            return response
         return {}
 
-    async def send_msg(self, data: dict, **kwargs) -> None:
+    def send_msg(self, data: dict, **kwargs) -> None:
         """sends a simple message as raw data, won't wait for response
 
         Args:
@@ -119,4 +160,73 @@ class MessageClient:
 
         msg.update(kwargs)
 
-        self._zmq_client.send(msg)
+        self._zmq_client.send(msg, use_lock=True)
+
+
+class AsyncMessageClient(MessageClient):
+    def _init_zmq_client(self) -> None:
+        """
+        Initializes the ZMQ attributute.
+        """
+        self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.ASYNC_CLIENT)
+
+    async def send_request(
+        self, msg_type: str, data: dict, creation_time: str = None, respose_required: bool = False
+    ) -> dict:
+        """
+        Wrap the data into a message request and sent it asynchonously to the robot message server
+        (can not wait for a response).
+
+        Args:
+            msg_type (str): the type of message.
+            data (dict): The message data to be sent to the robot message server.
+            creation_time (str): The time where the request is created.
+            response_required (bool): whether to wait for response, Default False.
+        """
+        request = self._build_request(msg_type, data, creation_time, respose_required)
+
+        await self._zmq_client.send(request)
+        if respose_required:
+            msg = await self._zmq_client.recieve()
+            response = self._fetch_response(msg)
+            return response
+
+        return {}
+
+    async def foraward_request(self, request_msg: dict) -> dict:
+        """
+        Send the request asynchronously to different message-server (This function does
+        not adds the meta-data info as send_request does).
+
+        Args:
+            request_msg (dict): The request to forward.
+        """
+        if "request" not in request_msg:
+            request = {"request": request_msg}
+        else:
+            request = request_msg
+        await self._zmq_client.send(request)
+
+        response_required = request_msg.get("response_required")
+        if response_required is None:
+            raise MessageFormatError("The field response_required is missing from request message")
+
+        if response_required:
+            response = await self._zmq_client.recieve()
+            return response
+        return {}
+
+    async def send_msg(self, data: dict, **kwargs) -> None:
+        """sends a simple message as raw data asynchrously, won't wait for response
+
+        Args:
+            data (dict): The data to send to server.
+        """
+        msg = {"data": data}
+
+        if "data" in kwargs:
+            kwargs.pop("data")
+
+        msg.update(kwargs)
+
+        await self._zmq_client.send(msg)

@@ -2,30 +2,22 @@
 import os
 from logging import DEBUG, NOTSET, INFO
 import socket
-from .consts import MESSAGE_SERVER_HOST, ADMIN_ROLE
+from .consts import MESSAGE_SERVER_HOST, ADMIN_ROLE, LOGS_INFLUX_DB, METRICS_INFLUX_DB, STRESS_INFLUX_DB
 
 # Setting for logging verbosity levels
 # Will be set only once at startup
-MOVAI_STDOUT_VERBOSITY_LEVEL = int(
-    os.getenv("MOVAI_STDOUT_VERBOSITY_LEVEL", str(DEBUG))
-)
-MOVAI_FLEET_LOGS_VERBOSITY_LEVEL = int(
-    os.getenv("MOVAI_FLEET_LOGS_VERBOSITY_LEVEL", str(DEBUG))
-)
+MOVAI_STDOUT_VERBOSITY_LEVEL = int(os.getenv("MOVAI_STDOUT_VERBOSITY_LEVEL", str(DEBUG)))
+MOVAI_FLEET_LOGS_VERBOSITY_LEVEL = int(os.getenv("MOVAI_FLEET_LOGS_VERBOSITY_LEVEL", str(DEBUG)))
 MOVAI_LOG_FILE = os.getenv("MOVAI_LOG_FILE", "/opt/mov.ai/app/movai.log")
 # default as NOTSET that will turn off the output for the addition log file
-MOVAI_LOGFILE_VERBOSITY_LEVEL = int(
-    os.getenv("MOVAI_LOGFILE_VERBOSITY_LEVEL", str(NOTSET))
-)
-MOVAI_GENERAL_VERBOSITY_LEVEL = int(
-    os.getenv("MOVAI_GENERAL_VERBOSITY_LEVEL", str(DEBUG))
-)
-LOG_HTTP_HOST = os.environ.get('LOG_HTTP_HOST', 'http://health-node:8081')
+MOVAI_LOGFILE_VERBOSITY_LEVEL = int(os.getenv("MOVAI_LOGFILE_VERBOSITY_LEVEL", str(NOTSET)))
+MOVAI_GENERAL_VERBOSITY_LEVEL = int(os.getenv("MOVAI_GENERAL_VERBOSITY_LEVEL", str(DEBUG)))
+LOG_HTTP_HOST = os.environ.get("LOG_HTTP_HOST", "http://health-node:8081")
 
 # Read variables from current environment
 APP_PATH = os.getenv("APP_PATH")
 APP_LOGS = os.getenv("APP_LOGS")
-SYSLOG_ENABLED = os.getenv("SYSLOG_ENABLED", True)
+SYSLOG_ENABLED = os.getenv("SYSLOG_ENABLED", "False").lower() in ("true", "1", "t")
 LD_LIBRARY_PATH = os.getenv("LD_LIBRARY_PATH")
 MOVAI_HOME = os.getenv("MOVAI_HOME")
 PATH = os.getenv("PATH")
@@ -50,15 +42,45 @@ ROS1_USER_WS = os.getenv("ROS1_USER_WS")
 ROS1_WS = ROS1_MOVAI_WS
 ROS2_DISTRO = "dashing"
 
+#spawner environment variables
+SPAWNER_BIND_IP = os.getenv("SPAWNER_BIND_IP", "0.0.0.0")
+SPAWNER_BIND_PORT = os.getenv("SPAWNER_BIND_PORT", "9999")
+SPAWNER_BIND_ADDR = f"tcp://{SPAWNER_BIND_IP}:{SPAWNER_BIND_PORT}"
+SPAWNER_DEBUG_MODE = os.getenv("SPAWNER_DEBUG_MODE", "False").lower() in (
+    "true",
+    "1",
+    "t",
+)
 # message-server environment variables
 MESSAGE_SERVER_BIND_IP = os.getenv("MESSAGE_SERVER_BIND_IP", "0.0.0.0")
 MESSAGE_SERVER_PORT = os.getenv("MESSAGE_SERVER_PORT", "9000")
+MESSAGE_SERVER_LOG_PUBLISHER_PORT = os.getenv("MESSAGE_SERVER_LOG_PUBLISHER_PORT", "9001")
 MESSAGE_SERVER_BIND_ADDR = f"tcp://{MESSAGE_SERVER_BIND_IP}:{MESSAGE_SERVER_PORT}"
-MESSAGE_SERVER_LOCAL_ADDR = f"tcp://{MESSAGE_SERVER_HOST}:{MESSAGE_SERVER_PORT}"
-MESSAGE_SERVER_REMOTE_ADDR = f"tcp://{REDIS_MASTER_HOST}:{MESSAGE_SERVER_PORT}"
-MOVAI_ZMQ_TIMEOUT_MS = int(os.getenv("MOVAI_ZMQ_TIMEOUT_MS", "1000"))
-LOG_STREAMER_BIND_IP = os.getenv("LOG_STREAMER_BIND_IP", "0.0.0.0")
-LOG_STREAMER_BIND_ADDR = f"tcp://{LOG_STREAMER_BIND_IP}:{MESSAGE_SERVER_PORT}"
+LOCAL_MESSAGE_SERVER = f"tcp://{MESSAGE_SERVER_HOST}:{MESSAGE_SERVER_PORT}"
+MASTER_MESSAGE_SERVER_HOST = os.getenv("MANAGER_MESSAGE_SERVER_ADDR", "haproxy")
+MASTER_MESSAGE_SERVER_PORT = os.getenv("MANAGER_MESSAGE_SERVER_PORT", "9009")
+MASTER_MESSAGE_SERVER = f"tcp://{MASTER_MESSAGE_SERVER_HOST}:{MASTER_MESSAGE_SERVER_PORT}"
+MOVAI_ZMQ_RECV_TIMEOUT_MS = int(os.getenv("MOVAI_ZMQ_RECV_TIMEOUT_MS", "2500"))
+MOVAI_ZMQ_SEND_TIMEOUT_MS = int(os.getenv("MOVAI_ZMQ_SEND_TIMEOUT_MS", "1000"))
+MESSAGE_SERVER_DEBUG_MODE = os.getenv("MESSAGE_SERVER_DEBUG_MODE", "False").lower() in (
+    "true",
+    "1",
+    "t",
+)
+MESSAGE_SERVER_PERIODIC_WRITE = float(os.getenv("MESSAGE_SERVER_PERIODIC_WRITE", "1.0"))
+MESSAGE_SERVER_STRESS_MODE = os.getenv("MESSAGE_SERVER_STRESS_MODE", "False").lower() in (
+    "true",
+    "1",
+    "t",
+)
+
+# DBWriter environment variables
+DBWRITER_EMPTY_THREASHOULD = int(os.getenv("DBWRITER_EMPTY_THREASHOULD", "1000"))
+DBWRITER_IPC_PATH = os.getenv("DBWRITER_IPC_PATH", APP_PATH)
+LOGS_DBWRITER_BIND_ADDR = f"ipc://{DBWRITER_IPC_PATH}/{LOGS_INFLUX_DB}"
+METRICS_DBWRITER_BIND_ADDR = f"ipc://{DBWRITER_IPC_PATH}/{METRICS_INFLUX_DB}"
+STRESS_DBWRITER_BIND_ADDR = f"ipc://{DBWRITER_IPC_PATH}/{STRESS_INFLUX_DB}"
+
 # Custom vars
 ROS1_LIB = f"/opt/ros/{ROS_DISTRO}/lib"
 ROS2_LIB = f"/opt/ros/{ROS2_DISTRO}/lib"
@@ -110,31 +132,35 @@ SCOPES_TO_TRACK = [
     "Configuration",
     "Annotation",
     "Layout",
-    "GraphicScene"
+    "GraphicScene",
 ]
 
-#LDAP vars
-LDAP_SEARCH_TIME_LIMIT = int(os.getenv('LDAP_SEARCH_TIME_LIMIT', "10"))
-LDAP_POOLING_LOOP_TIMEOUT = int(os.getenv('LDAP_POOLING_LOOP_TIMEOUT', "5"))
-LDAP_CONNECTION_RECEIVE_TIMEOUT = int(os.getenv('LDAP_CONNECTION_RECEIVE_TIMEOUT', "5"))
-LDAP_KEY_LENGTH = int(os.getenv('LDAP_KEY_LENGTH', "32"))
+# LDAP vars
+LDAP_SEARCH_TIME_LIMIT = int(os.getenv("LDAP_SEARCH_TIME_LIMIT", "10"))
+LDAP_POOLING_LOOP_TIMEOUT = int(os.getenv("LDAP_POOLING_LOOP_TIMEOUT", "5"))
+LDAP_CONNECTION_RECEIVE_TIMEOUT = int(os.getenv("LDAP_CONNECTION_RECEIVE_TIMEOUT", "5"))
+LDAP_KEY_LENGTH = int(os.getenv("LDAP_KEY_LENGTH", "32"))
 
-#Token Vars
-DEFAULT_JWT_ACCESS_DELTA_SECS = int(os.getenv('DEFAULT_JWT_ACCESS_DELTA_SECS', "3600"))
-DEFAULT_JWT_REFRESH_DELTA_DAYS = int(os.getenv('DEFAULT_JWT_REFRESH_DELTA_DAYS', "7"))
+# Token Vars
+DEFAULT_JWT_ACCESS_DELTA_SECS = int(os.getenv("DEFAULT_JWT_ACCESS_DELTA_SECS", "3600"))
+DEFAULT_JWT_REFRESH_DELTA_DAYS = int(os.getenv("DEFAULT_JWT_REFRESH_DELTA_DAYS", "7"))
 
-#General Vars
+# General Vars
+DEFAULT_ROLE_NAME = os.getenv("DEFAULT_ROLE_NAME", ADMIN_ROLE)
+FLEET_NAME = os.getenv("FLEET_NAME", "movai")
+DEVICE_NAME = os.getenv("DEVICE_NAME", "UNDEFINED_ROBOT_NAME")
+SERVICE_NAME = os.getenv("HOSTNAME", socket.gethostname())
 
-DEFAULT_ROLE_NAME = os.getenv('DEFAULT_ROLE_NAME', ADMIN_ROLE)
-FLEET_NAME = os.getenv('FLEET_NAME', "movai")
-DEVICE_NAME = os.getenv('DEVICE_NAME', "UNDEFINED_ROBOT_NAME")
-SERVICE_NAME = os.getenv('HOSTNAME', socket.gethostname())
+# Docker configuration
+DOCKERD_ATTEMPTS = os.getenv("DOCKERD_ATTEMPTS", 3)
+DOCKER_TIMEOUT = int(os.getenv("DOCKER_TIMEOUT", 30))
+DOCKER_REGISTRY = os.getenv("DOCKER_REGISTRY", "registry.cloud.mov.ai")
 
-#SMTP Vars
-SMTP_EMAIL = os.getenv('SMTP_EMAIL', "do-not-reply@mov.ai")
-SMTP_HOST = os.getenv('SMTP_HOST')
-SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
-SMTP_USER = os.getenv('SMTP_USER')
-SMTP_PASS = os.getenv('SMTP_PASS')
+# SMTP Vars
+SMTP_EMAIL = os.getenv("SMTP_EMAIL", "do-not-reply@mov.ai")
+SMTP_HOST = os.getenv("SMTP_HOST")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+SMTP_USER = os.getenv("SMTP_USER")
+SMTP_PASS = os.getenv("SMTP_PASS")
 
-AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY', "")
+AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY", "")

@@ -1,21 +1,19 @@
 import unittest
 from pydantic import BaseModel
-from multiprocessing import Process
 from movai_core_shared.logger import Log
-from movai_core_shared.core.zmq_client import ZMQClient
-from movai_core_shared.core.zmq_server import ZMQServer
-from movai_core_shared.core.message_client import MessageClient
+from movai_core_shared.core.zmq.zmq_server import ZMQServer
 from movai_core_shared.messages.general_data import Request
 
 LOGGER = Log.get_logger(__name__)
 TEST_SERVER_ADDR = "tcp://0.0.0.0:30000"
 
+
 class SimpleData(BaseModel):
     msg: str
 
+
 class SimpleRequest(Request):
     req_data: SimpleData
-
 
 
 class TestServer(ZMQServer):
@@ -27,9 +25,7 @@ class TestServer(ZMQServer):
         LOGGER.debug(request)
         request = SimpleRequest(**request)
         LOGGER.info(request.req_data.msg)
-        response = {
-                "status": "ok"
-        }
+        response = {"status": "ok"}
         return response
 
     async def handle_response(self, response):
@@ -41,6 +37,6 @@ def create_test_server():
     server = TestServer()
     server.run()
 
-        
+
 if __name__ == "__main__":
     create_test_server()
