@@ -112,11 +112,12 @@ class AsyncZMQClient(ZMQClient):
             # This is a normal exception that is raised when the task is CancelledError
             self._socket.close()
         except Exception as exc:
-            if self._lock and self._lock.locked():
-                self._lock.release()
             self._logger.error(
                 f"{self.__class__.__name__} failed to send message, got exception of type {exc}"
             )
+        finally:
+            if self._lock and self._lock.locked():
+                self._lock.release()
 
     async def recieve(self, use_lock: bool = False) -> dict:
         """
@@ -125,6 +126,7 @@ class AsyncZMQClient(ZMQClient):
         Returns:
             (dict): A response from the server.
         """
+        response = {}
         if use_lock:
             self._init_lock()
         try:
@@ -134,15 +136,14 @@ class AsyncZMQClient(ZMQClient):
             else:
                 buffer = await self._socket.recv_multipart()
             response = extract_reponse(buffer)
-            return response
         except asyncio.CancelledError:
             # This is a normal exception that is raised when the task is CancelledError
             self._socket.close()
-            return {}
         except Exception as exc:
-            if self._lock and self._lock.locked():
-                self._lock.release()
             self._logger.error(
                 f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}"
             )
-            return {}
+        finally:
+            if self._lock and self._lock.locked():
+                self._lock.release()
+        return response
