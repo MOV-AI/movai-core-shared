@@ -266,3 +266,7 @@ class DBHandlerError(MovaiException):
 
 class TimeError(MovaiException):
     """The supplied time is not a timestamp"""
+
+
+class NotSupported(MovaiException):
+    """The method is not supported for this version"""
