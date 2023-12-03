@@ -49,10 +49,12 @@ class ActiveFlowError(MovaiException):
     Raise when the command requires an active flow
     """
 
+
 class RunError(MovaiException):
     """
     Run error elements exception
     """
+
 
 class InitializationError(MovaiException):
     """Failure to initialize an object."""
@@ -266,3 +268,7 @@ class DBHandlerError(MovaiException):
 
 class TimeError(MovaiException):
     """The supplied time is not a timestamp"""
+
+
+class NotSupported(MovaiException):
+    """The method is not supported for this version"""
