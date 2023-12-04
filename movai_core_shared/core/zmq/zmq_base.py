@@ -47,4 +47,3 @@ class ZMQBase(ABC):
         An abstract medthod which allows every ZMQ component to initiliaze the socket by
         it's own needs.
         """
-
