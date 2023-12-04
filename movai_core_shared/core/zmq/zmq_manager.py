@@ -43,6 +43,7 @@ ZMQ_TYPES = {
 
 class ZMQManager:
     """This class will host ZMQ objects by their type and address."""
+
     _logger = getLogger("ZMQManager")
     _clients = {
         ZMQType.CLIENT: {},

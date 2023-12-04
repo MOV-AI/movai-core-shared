@@ -26,9 +26,7 @@ class ZMQServer(ABC):
     """
 
     @beartype
-    def __init__(
-        self, server_name: str, bind_addr: str, debug: bool = False
-    ) -> None:
+    def __init__(self, server_name: str, bind_addr: str, debug: bool = False) -> None:
         """Constructor"""
         self._name = server_name
         self._addr = bind_addr
@@ -51,7 +49,7 @@ class ZMQServer(ABC):
             self._logger.info(f"{self._name} is listening on {self._addr}")
         except OSError:
             self._logger.error(f"failed to bind socket on address {self._addr}")
-            raise        
+            raise
 
     async def spin(self) -> None:
         """accepts new connections requests to zmq."""
@@ -63,7 +61,7 @@ class ZMQServer(ABC):
         except Exception:
             self._logger.error("Failed to start %s", self._name)
             return
-        
+
         await self.at_startup()
         while self._running:
             try:
@@ -111,7 +109,7 @@ class ZMQServer(ABC):
             asyncio.create_task(self.spin())
             return True
         except RuntimeError:
-            asyncio.run(self.spin())            
+            asyncio.run(self.spin())
             self._logger.info("%s is running!!!", self._name)
             return True
         except Exception:
