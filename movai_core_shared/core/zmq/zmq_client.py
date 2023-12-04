@@ -81,6 +81,7 @@ class ZMQClient(ZMQBase):
 
 class AsyncZMQClient(ZMQClient):
     """An Async implementation of ZMQ Client"""
+
     _context = zmq.asyncio.Context()
 
     def _init_lock(self) -> None:
