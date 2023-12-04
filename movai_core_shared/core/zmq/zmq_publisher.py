@@ -59,6 +59,7 @@ class ZMQPublisher(ZMQBase):
 
 class AsyncZMQPublisher(ZMQPublisher):
     """An Async implementation of ZMQ Publisher"""
+
     _context = zmq.asyncio.Context()
 
     def _init_lock(self) -> None:

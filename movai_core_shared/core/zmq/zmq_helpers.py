@@ -65,6 +65,7 @@ def extract_reponse(buffer: bytes):
         )
         return {}
 
+
 def generate_zmq_identity(zmq_type: str) -> str:
     """Generate a unique identity for ZMQ clients
 

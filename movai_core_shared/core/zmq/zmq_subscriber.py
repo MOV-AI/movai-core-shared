@@ -46,7 +46,7 @@ class ZMQSubscriber(ZMQBase):
                     buffer = self._socket.recv_multipart()
             else:
                 buffer = self._socket.recv_multipart()
-            
+
             msg = extract_reponse(buffer)
             return msg
         except Exception as exc:
