@@ -318,7 +318,6 @@ class LogAdapter(logging.LoggerAdapter):
         kwargs = {"extra": {"tags": raw_tags}}
 
         return f"[{tags}] {msg}", kwargs
- 
 
 
 class Log:
