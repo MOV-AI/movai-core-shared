@@ -12,7 +12,7 @@ from movai_core_shared.messages.general_data import Request
 from movai_core_shared.messages.metric_data import MetricData
 
 
-class AlertFields(BaseModel):
+class Alert(BaseModel):
     name: str
     info: str
     action: str
@@ -22,7 +22,7 @@ class AlertFields(BaseModel):
 
 
 class AlertData(MetricData):
-    metric_fields: AlertFields
+    metric_fields: Alert
 
 
 class AlertRequest(Request):

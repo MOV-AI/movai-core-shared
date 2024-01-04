@@ -36,7 +36,7 @@ class RobotInfo(BaseModel):
 
 
 class Request(BaseModel):
-    req_id: Optional[str]
+    req_id: Optional[str] = None
     req_type: str
     created: int
     response_required: bool
