@@ -9,14 +9,13 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2023
 """
-from abc import ABC, abstractmethod
 import asyncio
 import logging
+from abc import ABC, abstractmethod
 
 import zmq
 import zmq.asyncio
 from beartype import beartype
-
 from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS
 
 
