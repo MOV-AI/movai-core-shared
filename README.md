@@ -7,7 +7,6 @@ A package encapsulating all of the platform basic functionality
 
 > Prerequisites : None
 
-
 ## Build
 
 The complete build process:
