@@ -19,6 +19,7 @@ MOVAI_LOG_FILE = os.getenv("MOVAI_LOG_FILE", "/opt/mov.ai/app/movai.log")
 MOVAI_LOGFILE_VERBOSITY_LEVEL = int(os.getenv("MOVAI_LOGFILE_VERBOSITY_LEVEL", str(NOTSET)))
 MOVAI_GENERAL_VERBOSITY_LEVEL = int(os.getenv("MOVAI_GENERAL_VERBOSITY_LEVEL", str(DEBUG)))
 LOG_HTTP_HOST = os.environ.get("LOG_HTTP_HOST", "http://health-node:8081")
+MOVAI_IPC_PATH = os.getenv("MOVAI_IPC_PATH", "/opt/mov.ai/comm")
 
 # Read variables from current environment
 APP_PATH = os.getenv("APP_PATH")
@@ -48,15 +49,6 @@ ROS1_USER_WS = os.getenv("ROS1_USER_WS")
 ROS1_WS = ROS1_MOVAI_WS
 ROS2_DISTRO = "dashing"
 
-# spawner environment variables
-SPAWNER_BIND_IP = os.getenv("SPAWNER_BIND_IP", "0.0.0.0")
-SPAWNER_BIND_PORT = os.getenv("SPAWNER_BIND_PORT", "9999")
-SPAWNER_BIND_ADDR = f"tcp://{SPAWNER_BIND_IP}:{SPAWNER_BIND_PORT}"
-SPAWNER_DEBUG_MODE = os.getenv("SPAWNER_DEBUG_MODE", "False").lower() in (
-    "true",
-    "1",
-    "t",
-)
 # message-server environment variables
 MESSAGE_SERVER_BIND_IP = os.getenv("MESSAGE_SERVER_BIND_IP", "0.0.0.0")
 MESSAGE_SERVER_PORT = os.getenv("MESSAGE_SERVER_PORT", "9000")
@@ -157,9 +149,19 @@ FLEET_NAME = os.getenv("FLEET_NAME", "movai")
 DEVICE_NAME = os.getenv("DEVICE_NAME", "UNDEFINED_ROBOT_NAME")
 SERVICE_NAME = os.getenv("HOSTNAME", socket.gethostname())
 
+# spawner environment variables
+SPAWNER_BIND_ADDR = os.getenv(
+    "SPAWNER_BIND_ADDR", f"ipc://{MOVAI_IPC_PATH}/SpawnerServer-{DEVICE_NAME}-{FLEET_NAME}.sock"
+)
+SPAWNER_DEBUG_MODE = os.getenv("SPAWNER_DEBUG_MODE", "False").lower() in (
+    "true",
+    "1",
+    "t",
+)
+
 # Docker configuration
-DOCKERD_ATTEMPTS = os.getenv("DOCKERD_ATTEMPTS", 3)
-DOCKER_TIMEOUT = int(os.getenv("DOCKER_TIMEOUT", 30))
+DOCKERD_ATTEMPTS = int(os.getenv("DOCKERD_ATTEMPTS", "3"))
+DOCKER_TIMEOUT = int(os.getenv("DOCKER_TIMEOUT", "30"))
 DOCKER_REGISTRY = os.getenv("DOCKER_REGISTRY", "registry.cloud.mov.ai")
 
 # SMTP Vars
