@@ -272,3 +272,11 @@ class TimeError(MovaiException):
 
 class NotSupported(MovaiException):
     """The method is not supported for this version"""
+
+
+class ConfigurationError(MovaiException):
+    """The configuration cannot be parsed."""
+
+
+class PrimaryKeyError(MovaiException):
+    """The supplied key is in wrong format"""

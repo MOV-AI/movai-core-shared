@@ -9,14 +9,15 @@
 from typing import Optional
 
 from pydantic import BaseModel
+
 from movai_core_shared.messages.general_data import Request
 
 
 class MetricData(BaseModel):
     measurement: str
     metric_type: str
-    metric_fields: Optional[dict]
-    metric_tags: Optional[dict]
+    metric_fields: Optional[dict] = None
+    metric_tags: Optional[dict] = None
 
 
 class MetricRequest(Request):
@@ -26,10 +27,10 @@ class MetricRequest(Request):
 class QueryData(BaseModel):
     limit: int
     offset: int
-    tags: Optional[dict]
-    robots: Optional[list]
-    from_: Optional[int]
-    to_: Optional[int]
+    tags: Optional[dict] = None
+    robots: Optional[list] = None
+    from_: Optional[int] = None
+    to_: Optional[int] = None
 
 
 class MetricQueryData(BaseModel):
