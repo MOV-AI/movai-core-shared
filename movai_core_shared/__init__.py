@@ -48,7 +48,7 @@ from movai_core_shared.consts import (
     CONFIG_REGEX,
     TIMEOUT_PROCESS_SIGINT,
     TIMEOUT_PROCESS_SIGTERM,
-    INTERNAL_DOMAIN
+    INTERNAL_DOMAIN,
 )
 from movai_core_shared.envvars import (
     MOVAI_STDOUT_VERBOSITY_LEVEL,
@@ -90,7 +90,7 @@ from movai_core_shared.envvars import (
     ENVIRON_GDNODE_INJECT,
     REST_SCOPES,
     SCOPES_TO_TRACK,
-    )
+)
 
 from movai_core_shared.exceptions import (
     MovaiException,
