@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 requirements = [
     "beartype==0.14.1",
     "cryptography==2.8",
-    "requests==2.28.2",
+    "requests==2.31.0",
     "pyzmq==24.0.1",
     "pydantic==2.0.2",
 ]
@@ -14,7 +14,7 @@ requirements = [
 
 setuptools.setup(
     name="movai-core-shared",
-    version="2.5.0-8",
+    version="2.5.0-12",
     author="Backend team",
     author_email="backend@mov.ai",
     description="Shared objects for various Mov.AI projects",
