@@ -40,8 +40,10 @@ NODE_TYPE = [
 ]
 
 MOVAI_INIT = "MovAI/Init"
+MOVAI_TRANSITION = "MovAI/Transition"
 MOVAI_TRANSITIONFOR = "MovAI/TransitionFor"
 MOVAI_TRANSITIONTO = "MovAI/TransitionTo"
+MOVAI_CONTEXTCLIENTIN = "MovAI/ContextClientIn"
 MOVAI_DEPENDS = "MovAI/Depends"
 MOVAI_DEPENDENCY = "MovAI/Dependency"
 
