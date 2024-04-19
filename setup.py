@@ -7,7 +7,7 @@ requirements = [
     "beartype==0.14.1",
     "cryptography==2.8",
     "requests==2.31.0",
-    "pyzmq==26.0.0",
+    "pyzmq==26.0.1",
     "pydantic[email]==2.5.2"
 ]
 
