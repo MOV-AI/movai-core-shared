@@ -2,13 +2,18 @@ import logging
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import MovaiException
 import os
+import re
 
 from movai_core_shared.envvars import MOVAI_GENERAL_VERBOSITY_LEVEL
 
 
 def check_log(caplog, expected):
     """help function to validate the log"""
-    assert caplog.text == expected
+    # Replace the line number with a dummy string
+    pattern = r'test_logger:test_logger.py:\d+\s+\[\]'
+    expected_pattern = re.sub(r'test_logger.py:\d+', 'test_logger.py:XXX', expected)
+    text_pattern = re.sub(r'test_logger.py:\d+', 'test_logger.py:XXX', caplog.text)
+    assert text_pattern == expected_pattern
     caplog.clear()
 
 
