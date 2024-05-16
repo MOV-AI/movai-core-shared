@@ -33,14 +33,14 @@ def test_logger(caplog):
     logger = LogAdapter(log)
     try:
         log.info("in try log")
-        check_log(caplog, "INFO     test_logger:test_logger.py:30 in try log\n")
+        check_log(caplog, "INFO     test_logger:test_logger.py:36 in try log\n")
         logger.error("in try logger")
-        check_log(caplog, "ERROR    test_logger:test_logger.py:32 [] in try logger\n")
+        check_log(caplog, "ERROR    test_logger:test_logger.py:38 [] in try logger\n")
         log.debug("a %s 2 %f 3 %i" % ("a", 2, 3))
-        check_log(caplog, "DEBUG    test_logger:test_logger.py:34 a a 2 2.000000 3 3\n")
+        check_log(caplog, "DEBUG    test_logger:test_logger.py:40 a a 2 2.000000 3 3\n")
         msg = "message"
         logger.warning(f"this is a {msg}")
-        check_log(caplog, "WARNING  test_logger:test_logger.py:37 [] this is a message\n")
+        check_log(caplog, "WARNING  test_logger:test_logger.py:43 [] this is a message\n")
         raise MovaiException("test error")
     except MovaiException as e:
         logger.error("test error logger", e)
