@@ -9,8 +9,6 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2023
 """
-import asyncio
-import threading
 import zmq
 import zmq.asyncio
 
@@ -21,10 +19,6 @@ from movai_core_shared.core.zmq.zmq_helpers import extract_reponse
 class ZMQSubscriber(ZMQBase):
     """A very basic implementation of ZMQ Subscriber"""
 
-    def _init_lock(self) -> None:
-        """Initializes the lock."""
-        self._lock = threading.Lock()
-
     def init_socket(self) -> None:
         """Initializes the socket and set options."""
         self._init_lock()
@@ -33,9 +27,9 @@ class ZMQSubscriber(ZMQBase):
         self._socket.setsockopt_string(zmq.SUBSCRIBE, "")
         self._socket.connect(self._addr)
 
-    def recieve(self, use_lock: bool = False) -> dict:
+    def receive(self, use_lock: bool = False) -> dict:
         """
-        Synchronously recieves data from the server.
+        Synchronously receives data from the server.
 
         Returns:
             (dict): raw data from the server.
@@ -50,10 +44,9 @@ class ZMQSubscriber(ZMQBase):
             msg = extract_reponse(buffer)
             return msg
         except Exception as exc:
-            if self._lock and self._lock.locked():
-                self._lock.release()
+            self._release_lock()
             self._logger.error(
-                f"{self.__class__.__name__} failed to recieve msg, got error of type: {exc}"
+                f"{self.__class__.__name__} failed to receive msg, got error of type: {exc}"
             )
             return {}
 
@@ -63,24 +56,15 @@ class AsyncZMQSubscriber(ZMQSubscriber):
 
     _context = zmq.asyncio.Context()
 
-    def _init_lock(self) -> None:
-        """Initializes the lock."""
-        if self._lock is None:
-            try:
-                asyncio.get_running_loop()
-                self._lock = asyncio.Lock()
-            except RuntimeError:
-                self._logger.warning("The loop is not running, unable to initialize the lock!")
-
-    async def recieve(self, use_lock: bool = False) -> dict:
+    async def receive(self, use_lock: bool = False) -> dict:
         """
-        Asynchrounsly recieves data from the server.
+        Asynchrounsly receives data from the server.
 
         Returns:
             (dict): raw data from the server.
         """
         if use_lock:
-            self._init_lock()
+            self._init_lock(asyncio_lock=True)
         try:
             if use_lock and self._lock:
                 async with self._lock:
@@ -90,9 +74,8 @@ class AsyncZMQSubscriber(ZMQSubscriber):
             msg = extract_reponse(buffer)
             return msg
         except Exception as exc:
-            if self._lock and self._lock.locked():
-                self._lock.release()
+            self._release_lock()
             self._logger.error(
-                f"{self.__class__.__name__} failed to recieve msg, got error of type: {exc}"
+                f"{self.__class__.__name__} failed to receive msg, got error of type: {exc}"
             )
             return {}

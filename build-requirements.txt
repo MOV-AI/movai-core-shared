@@ -4,6 +4,7 @@ mock
 bump2version
 flake8
 pylint
+psutil
 black
 pytest-cov
 pytest-asyncio

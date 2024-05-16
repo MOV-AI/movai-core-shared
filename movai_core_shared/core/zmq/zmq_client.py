@@ -11,7 +11,6 @@
 """
 import asyncio
 import errno
-import threading
 import zmq
 import zmq.asyncio
 
@@ -22,13 +21,6 @@ from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS, MOVAI_ZMQ_RECV_
 
 class ZMQClient(ZMQBase):
     """A very basic implementation of ZMQ Client"""
-
-    _socket = None
-    _lock = None
-
-    def _init_lock(self) -> None:
-        """Initializes the lock."""
-        self._lock = threading.Lock()
 
     def init_socket(self) -> None:
         """Initializes the socket and connect to the server."""
@@ -51,6 +43,30 @@ class ZMQClient(ZMQBase):
         self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
         self._socket.connect(self._addr)
 
+    def handle_socket_errors(self, exc: zmq.error.ZMQError, reset_socket=False) -> None:
+        """Handles the socket errors."""
+        if exc.errno == errno.ENOTSOCK:
+            self._logger.warning(
+                f"{self.__class__.__name__} socket error. "
+                + f"Got exception: {exc} on ZMQ address {self._addr}. "
+                + "Resetting the socket with potential data loss."
+            )
+            if reset_socket:
+                self.reset(force=True)
+        elif exc.errno == errno.EAGAIN:
+            self._logger.warning(
+                f"{self.__class__.__name__} socket error. "
+                + f"Got exception: {exc} on ZMQ address {self._addr}. "
+                + "Resetting the socket."
+            )
+            if reset_socket:
+                self.reset()
+        else:
+            self._logger.error(
+                f"{self.__class__.__name__} socket error. "
+                + f"Got unhandled ZMQ exception: {exc} on ZMQ address {self._addr}"
+            )
+
     def send(self, msg: dict, use_lock: bool = False) -> None:
         """
         Synchronously sends a message to the server.
@@ -65,15 +81,14 @@ class ZMQClient(ZMQBase):
             else:
                 self._socket.send(data)
         except Exception as exc:
-            if self._lock and self._lock.locked():
-                self._lock.release()
+            self._release_lock()
             self._logger.error(
                 f"{self.__class__.__name__} failed to send message, got exception of type {exc}"
             )
 
-    def recieve(self, use_lock: bool = False) -> dict:
+    def receive(self, use_lock: bool = False) -> dict:
         """
-        Synchronously recieves data from the server.
+        Synchronously receives data from the server.
 
         Returns:
             (dict): A response from the server.
@@ -87,30 +102,12 @@ class ZMQClient(ZMQBase):
             response = extract_reponse(buffer)
             return response
         except zmq.error.ZMQError as exc:
-            if exc.errno == errno.ENOTSOCK:
-                self._logger.warning(
-                    f"{self.__class__.__name__} failed to recieve data. "
-                    + f"Got exception: {exc} on ZMQ address {self._addr}. "
-                    + "Resetting the socket with potential data loss."
-                )
-                self.reset(force=True)
-            elif exc.errno == errno.EAGAIN:
-                self._logger.warning(
-                    f"{self.__class__.__name__} failed to recieve data. "
-                    + f"Got exception: {exc} on ZMQ address {self._addr}. "
-                    + "Resetting the socket."
-                )
-                self.reset()
-            else:
-                self._logger.error(
-                    f"{self.__class__.__name__} failed to recieve data. "
-                    + f"Got unhandled ZMQ exception: {exc} on ZMQ address {self._addr}"
-                )
+            self.handle_socket_errors(exc)
+            return {}
         except Exception as exc:
-            if self._lock and self._lock.locked():
-                self._lock.release()
+            self._release_lock()
             self._logger.error(
-                f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}"
+                f"{self.__class__.__name__} failed to receive data, got error of type: {exc}"
             )
             return {}
 
@@ -119,15 +116,6 @@ class AsyncZMQClient(ZMQClient):
     """An Async implementation of ZMQ Client"""
 
     _context = zmq.asyncio.Context()
-
-    def _init_lock(self) -> None:
-        """Initializes the lock."""
-        if self._lock is None:
-            try:
-                asyncio.get_running_loop()
-                self._lock = asyncio.Lock()
-            except RuntimeError:
-                pass
 
     async def send(self, msg: dict, use_lock: bool = False) -> None:
         """
@@ -138,7 +126,7 @@ class AsyncZMQClient(ZMQClient):
         """
 
         if use_lock:
-            self._init_lock()
+            self._init_lock(asyncio_lock=True)
         try:
             data = create_msg(msg)
             if use_lock and self._lock:
@@ -160,43 +148,18 @@ class AsyncZMQClient(ZMQClient):
                 + f"Got value exception: {exc} on ZMQ address {self._addr}"
             )
         except zmq.error.ZMQError as exc:
-            if exc.errno == errno.ENOTSOCK:  # 88 Socket operation on non-socket
-                self._logger.warning(
-                    f"{self.__class__.__name__} failed to send message. "
-                    + f"Got exception: {exc} on ZMQ address {self._addr}. "
-                    + "Resetting the socket with potential data loss."
-                )
-                self.reset(force=True)
-            elif exc.errno == errno.EAGAIN:
-                self._logger.warning(
-                    f"{self.__class__.__name__} failed to send message. "
-                    + f"Got exception: {exc} on ZMQ address {self._addr}. "
-                    + "Resetting the socket."
-                )
-                self.reset()
-            else:
-                self._logger.error(
-                    f"{self.__class__.__name__} failed to send message. "
-                    + f"Got unhandled ZMQ exception: {exc} on ZMQ address {self._addr}"
-                )
+            self.handle_socket_errors(exc)
         except Exception as exc:
             self._logger.error(
                 f"{self.__class__.__name__} failed to send message. "
                 + f"Got exception: {exc} on ZMQ address {self._addr}"
             )
         finally:
-            try:
-                if self._lock and self._lock.locked():
-                    self._lock.release()
-            except Exception as exc:
-                self._logger.error(
-                    f"{self.__class__.__name__} failed to release the lock"
-                    + f"Got exception: {exc}"
-                )
+            self._release_lock()
 
-    async def recieve(self, use_lock: bool = False) -> dict:
+    async def receive(self, use_lock: bool = False) -> dict:
         """
-        Asynchrounsly recieves data from the server.
+        Asynchrounsly receives data from the server.
 
         Returns:
             (dict): A response from the server.
@@ -215,30 +178,11 @@ class AsyncZMQClient(ZMQClient):
             # This is a normal exception that is raised when the task is CancelledError
             self._socket.close()
         except zmq.error.ZMQError as exc:
-            if exc.errno == errno.ENOTSOCK:
-                self._logger.warning(
-                    f"{self.__class__.__name__} failed to recieve data. "
-                    + f"Got exception: {exc} on ZMQ address {self._addr}. "
-                    + "Resetting the socket with potential data loss."
-                )
-                self.reset(force=True)
-            elif exc.errno == errno.EAGAIN:
-                self._logger.warning(
-                    f"{self.__class__.__name__} failed to recieve data. "
-                    + f"Got exception: {exc} on ZMQ address {self._addr}. "
-                    + "Resetting the socket."
-                )
-                self.reset()
-            else:
-                self._logger.error(
-                    f"{self.__class__.__name__} failed to recieve data. "
-                    + f"Got unhandled ZMQ exception: {exc} on ZMQ address {self._addr}"
-                )
+            self.handle_socket_errors(exc)
         except Exception as exc:
             self._logger.error(
-                f"{self.__class__.__name__} failed to recieve data, got error of type: {exc}"
+                f"{self.__class__.__name__} failed to receive data, got error of type: {exc}"
             )
         finally:
-            if self._lock and self._lock.locked():
-                self._lock.release()
+            self._release_lock()
         return response

@@ -10,8 +10,6 @@
    - Erez Zomer (erez@mov.ai) - 2023
 """
 import asyncio
-import errno
-import threading
 import zmq
 import zmq.asyncio
 
@@ -22,10 +20,6 @@ from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS
 
 class ZMQPublisher(ZMQBase):
     """A very basic implementation of ZMQ publisher"""
-
-    def _init_lock(self) -> None:
-        """Initializes the lock."""
-        self._lock = threading.Lock()
 
     def init_socket(self):
         """Creates the socket and sets a lock."""
@@ -51,26 +45,17 @@ class ZMQPublisher(ZMQBase):
             else:
                 self._socket.send(data)
         except Exception as exc:
-            if self._lock and self._lock.locked():
-                self._lock.release()
             self._logger.error(
-                f"{self.__class__.__name__} failed to send message, got exception of type {exc}"
+                f"{self.__class__.__name__} failed to send message"
+                + f"Got exception of type {exc} on ZMQ address {self._addr}"
             )
+            self._release_lock()
 
 
 class AsyncZMQPublisher(ZMQPublisher):
     """An Async implementation of ZMQ Publisher"""
 
     _context = zmq.asyncio.Context()
-
-    def _init_lock(self) -> None:
-        """Initializes the lock."""
-        if self._lock is None:
-            try:
-                asyncio.get_running_loop()
-                self._lock = asyncio.Lock()
-            except RuntimeError:
-                self._logger.warning("The loop is not running, unable to initialize the lock!")
 
     async def send(self, msg: dict, use_lock: bool = False) -> None:
         """
@@ -80,7 +65,7 @@ class AsyncZMQPublisher(ZMQPublisher):
             msg (dict): The message to be sent
         """
         if use_lock:
-            self._init_lock()
+            self._init_lock(asyncio_lock=True)
         try:
             data = create_msg(msg)
             if use_lock and self._lock:
@@ -92,29 +77,11 @@ class AsyncZMQPublisher(ZMQPublisher):
             # This is a normal exception that is raised when the task is CancelledError
             self._socket.close()
         except zmq.error.ZMQError as exc:
-            if exc.errno == errno.ENOTSOCK:  # 88 Socket operation on non-socket
-                self._logger.warning(
-                    f"{self.__class__.__name__} failed to send message, got exception of type {exc} on ZMQ address {self._addr}. Resetting the socket with potential data loss."
-                )
-                self.reset(force=True)
-            elif exc.errno == errno.EAGAIN:
-                self._logger.warning(
-                    f"{self.__class__.__name__} failed to send message, got exception of type {exc} on ZMQ address {self._addr}. Resetting the socket."
-                )
-                self.reset()
-            else:
-                self._logger.error(
-                    f"{self.__class__.__name__} failed to send message, got unhandled ZMQ exception of type {exc} on ZMQ address {self._addr}"
-                )
+            self.handle_socket_errors(exc)
         except Exception as exc:
             self._logger.error(
-                f"{self.__class__.__name__} failed to send message, got exception of type {exc} on ZMQ address {self._addr}"
+                f"{self.__class__.__name__} failed to send message"
+                + f"Got exception of type {exc} on ZMQ address {self._addr}"
             )
         finally:
-            try:
-                if self._lock and self._lock.locked():
-                    self._lock.release()
-            except Exception as exc:
-                self._logger.error(
-                    f"{self.__class__.__name__} failed to release the lock, got exception of type {exc}"
-                )
+            self._release_lock()
