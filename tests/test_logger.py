@@ -1,6 +1,9 @@
 import logging
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import MovaiException
+import os
+
+from movai_core_shared.envvars import MOVAI_GENERAL_VERBOSITY_LEVEL
 
 
 def check_log(caplog, expected):
@@ -22,7 +25,9 @@ def test_logger(caplog):
     """Test for the logger that will generate new logger with get_logger
     and test out all the different verbosity and check the logs that are correct
     """
-    caplog.set_level(logging.DEBUG, logger="test_logger")
+    # caplog.set_level(logging.DEBUG, logger="test_logger")
+    aux_env_var = MOVAI_GENERAL_VERBOSITY_LEVEL
+    os.environ["MOVAI_GENERAL_VERBOSITY_LEVEL"] = "DEBUG"
     log = Log.get_logger("test_logger")
     log.addHandler(caplog.handler)
     logger = LogAdapter(log)
@@ -48,4 +53,6 @@ def test_logger(caplog):
         check_trackback(caplog, False)
         logger.critical("last")
         check_trackback(caplog, True)
+
+    os.environ["MOVAI_GENERAL_VERBOSITY_LEVEL"] = aux_env_var
     assert True
