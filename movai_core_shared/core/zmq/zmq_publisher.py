@@ -10,6 +10,7 @@
    - Erez Zomer (erez@mov.ai) - 2023
 """
 import asyncio
+import errno
 import threading
 import zmq
 import zmq.asyncio
@@ -87,9 +88,33 @@ class AsyncZMQPublisher(ZMQPublisher):
                     await self._socket.send(data)
             else:
                 await self._socket.send(data)
+        except asyncio.CancelledError:
+            # This is a normal exception that is raised when the task is CancelledError
+            self._socket.close()
+        except zmq.error.ZMQError as exc:
+            if exc.errno == errno.ENOTSOCK:  # 88 Socket operation on non-socket
+                self._logger.warning(
+                    f"{self.__class__.__name__} failed to send message, got exception of type {exc} on ZMQ address {self._addr}. Resetting the socket with potential data loss."
+                )
+                self.reset(force=True)
+            elif exc.errno == errno.EAGAIN:
+                self._logger.warning(
+                    f"{self.__class__.__name__} failed to send message, got exception of type {exc} on ZMQ address {self._addr}. Resetting the socket."
+                )
+                self.reset()
+            else:
+                self._logger.error(
+                    f"{self.__class__.__name__} failed to send message, got unhandled ZMQ exception of type {exc} on ZMQ address {self._addr}"
+                )
         except Exception as exc:
-            if self._lock and self._lock.locked():
-                self._lock.release()
             self._logger.error(
-                f"{self.__class__.__name__} failed to send message, got exception of type {exc}"
+                f"{self.__class__.__name__} failed to send message, got exception of type {exc} on ZMQ address {self._addr}"
             )
+        finally:
+            try:
+                if self._lock and self._lock.locked():
+                    self._lock.release()
+            except Exception as exc:
+                self._logger.error(
+                    f"{self.__class__.__name__} failed to release the lock, got exception of type {exc}"
+                )
