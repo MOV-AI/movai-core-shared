@@ -3,7 +3,7 @@ from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import MovaiException
 import os
 import re
-
+from mock import patch  
 from movai_core_shared import envvars
 
 
@@ -24,15 +24,15 @@ def check_trackback(caplog, should_have_trackback):
         assert "Traceback" not in caplog.text
     caplog.clear()
 
-
+@patch('movai_core_shared.envvars.MOVAI_GENERAL_VERBOSITY_LEVEL', 'DEBUG') 
 def test_logger(caplog):
     """Test for the logger that will generate new logger with get_logger
     and test out all the different verbosity and check the logs that are correct
     """
-    caplog.set_level(logging.DEBUG, logger="test_logger")
-    aux_env_var = envvars.MOVAI_GENERAL_VERBOSITY_LEVEL
-    envvars.MOVAI_GENERAL_VERBOSITY_LEVEL = "DEBUG"
-    os.environ["MOVAI_GENERAL_VERBOSITY_LEVEL"] = "DEBUG"
+    # caplog.set_level(logging.DEBUG, logger="test_logger")
+    # aux_env_var = envvars.MOVAI_GENERAL_VERBOSITY_LEVEL
+    # envvars.MOVAI_GENERAL_VERBOSITY_LEVEL = "DEBUG"
+    # os.environ["MOVAI_GENERAL_VERBOSITY_LEVEL"] = "DEBUG"
 
     log = Log.get_logger("test_logger")
     log.addHandler(caplog.handler)
@@ -60,5 +60,5 @@ def test_logger(caplog):
         logger.critical("last")
         check_trackback(caplog, True)
 
-    os.environ["MOVAI_GENERAL_VERBOSITY_LEVEL"] = aux_env_var
+    # os.environ["MOVAI_GENERAL_VERBOSITY_LEVEL"] = aux_env_var
     assert True
