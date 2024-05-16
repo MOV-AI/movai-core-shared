@@ -4,7 +4,7 @@ from movai_core_shared.exceptions import MovaiException
 import os
 import re
 
-from movai_core_shared.envvars import MOVAI_GENERAL_VERBOSITY_LEVEL
+from movai_core_shared import envvars
 
 
 def check_log(caplog, expected):
@@ -30,8 +30,8 @@ def test_logger(caplog):
     and test out all the different verbosity and check the logs that are correct
     """
     caplog.set_level(logging.DEBUG, logger="test_logger")
-    aux_env_var = MOVAI_GENERAL_VERBOSITY_LEVEL
-    MOVAI_GENERAL_VERBOSITY_LEVEL = "DEBUG"
+    aux_env_var = envvars.MOVAI_GENERAL_VERBOSITY_LEVEL
+    envvars.MOVAI_GENERAL_VERBOSITY_LEVEL = "DEBUG"
     os.environ["MOVAI_GENERAL_VERBOSITY_LEVEL"] = "DEBUG"
 
     log = Log.get_logger("test_logger")
