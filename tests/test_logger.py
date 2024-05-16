@@ -9,10 +9,9 @@ from movai_core_shared.envvars import MOVAI_GENERAL_VERBOSITY_LEVEL
 
 def check_log(caplog, expected):
     """help function to validate the log"""
-    # Replace the line number with a dummy string
-    pattern = r'test_logger:test_logger.py:\d+\s+\[\]'
-    expected_pattern = re.sub(r'test_logger.py:\d+', 'test_logger.py:XXX', expected)
-    text_pattern = re.sub(r'test_logger.py:\d+', 'test_logger.py:XXX', caplog.text)
+    # Replace the log line number with an X
+    expected_pattern = re.sub(r'test_logger.py:\d+', 'test_logger.py:X', expected)
+    text_pattern = re.sub(r'test_logger.py:\d+', 'test_logger.py:X', caplog.text)
     assert text_pattern == expected_pattern
     caplog.clear()
 
@@ -30,9 +29,11 @@ def test_logger(caplog):
     """Test for the logger that will generate new logger with get_logger
     and test out all the different verbosity and check the logs that are correct
     """
-    # caplog.set_level(logging.DEBUG, logger="test_logger")
+    caplog.set_level(logging.DEBUG, logger="test_logger")
     aux_env_var = MOVAI_GENERAL_VERBOSITY_LEVEL
+    MOVAI_GENERAL_VERBOSITY_LEVEL = "DEBUG"
     os.environ["MOVAI_GENERAL_VERBOSITY_LEVEL"] = "DEBUG"
+
     log = Log.get_logger("test_logger")
     log.addHandler(caplog.handler)
     logger = LogAdapter(log)
