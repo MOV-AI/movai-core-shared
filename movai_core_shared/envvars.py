@@ -1,6 +1,6 @@
 """ Compilation of necessary environment variables to push to the database """
 import os
-from logging import DEBUG, NOTSET, INFO
+from logging import NOTSET, INFO
 import socket
 from .consts import (
     MESSAGE_SERVER_HOST,
@@ -12,12 +12,12 @@ from .consts import (
 
 # Setting for logging verbosity levels
 # Will be set only once at startup
-MOVAI_STDOUT_VERBOSITY_LEVEL = int(os.getenv("MOVAI_STDOUT_VERBOSITY_LEVEL", str(DEBUG)))
-MOVAI_FLEET_LOGS_VERBOSITY_LEVEL = int(os.getenv("MOVAI_FLEET_LOGS_VERBOSITY_LEVEL", str(DEBUG)))
+MOVAI_STDOUT_VERBOSITY_LEVEL = int(os.getenv("MOVAI_STDOUT_VERBOSITY_LEVEL", str(INFO)))
+MOVAI_FLEET_LOGS_VERBOSITY_LEVEL = int(os.getenv("MOVAI_FLEET_LOGS_VERBOSITY_LEVEL", str(INFO)))
 MOVAI_LOG_FILE = os.getenv("MOVAI_LOG_FILE", "/opt/mov.ai/app/movai.log")
 # default as NOTSET that will turn off the output for the addition log file
 MOVAI_LOGFILE_VERBOSITY_LEVEL = int(os.getenv("MOVAI_LOGFILE_VERBOSITY_LEVEL", str(NOTSET)))
-MOVAI_GENERAL_VERBOSITY_LEVEL = int(os.getenv("MOVAI_GENERAL_VERBOSITY_LEVEL", str(DEBUG)))
+MOVAI_GENERAL_VERBOSITY_LEVEL = int(os.getenv("MOVAI_GENERAL_VERBOSITY_LEVEL", str(INFO)))
 LOG_HTTP_HOST = os.environ.get("LOG_HTTP_HOST", "http://health-node:8081")
 MOVAI_IPC_PATH = os.getenv("MOVAI_IPC_PATH", "/opt/mov.ai/comm")
 
