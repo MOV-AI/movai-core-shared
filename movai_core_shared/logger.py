@@ -113,8 +113,8 @@ class StdOutHandler(logging.StreamHandler):
                     stream = open("/dev/stderr", "w")
                 else:
                     stream = open("/dev/stdout", "w")
-            stream.write(self._COLORS.get(record.levelno, "") + msg + self._COLOR_RESET)
-            stream.write(self.terminator)
+            stream.write(self._COLORS.get(record.levelno, "") + msg + self._COLOR_RESET + self.terminator)
+            #stream.write()
             self.flush()
         except Exception:
             self.handleError(record)
