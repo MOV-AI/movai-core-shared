@@ -3,8 +3,7 @@ from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import MovaiException
 import os
 import re
-from mock import patch  
-from movai_core_shared import envvars
+import mock
 
 
 def check_log(caplog, expected):
@@ -24,29 +23,40 @@ def check_trackback(caplog, should_have_trackback):
         assert "Traceback" not in caplog.text
     caplog.clear()
 
-# @patch('movai_core_shared.envvars.MOVAI_GENERAL_VERBOSITY_LEVEL', 'DEBUG') 
+
 # def test_logger(caplog):
 #     """Test for the logger that will generate new logger with get_logger
 #     and test out all the different verbosity and check the logs that are correct
 #     """
-#     # caplog.set_level(logging.DEBUG, logger="test_logger")
-#     # aux_env_var = envvars.MOVAI_GENERAL_VERBOSITY_LEVEL
-#     # envvars.MOVAI_GENERAL_VERBOSITY_LEVEL = "DEBUG"
-#     # os.environ["MOVAI_GENERAL_VERBOSITY_LEVEL"] = "DEBUG"
-
+#     caplog.set_level(logging.DEBUG, logger="test_logger")
 #     log = Log.get_logger("test_logger")
 #     log.addHandler(caplog.handler)
 #     logger = LogAdapter(log)
 #     try:
-#         log.info("in try log")
-#         check_log(caplog, "INFO     test_logger:test_logger.py:36 in try log\n")
-#         logger.error("in try logger")
-#         check_log(caplog, "ERROR    test_logger:test_logger.py:38 [] in try logger\n")
-#         log.debug("a %s 2 %f 3 %i" % ("a", 2, 3))
-#         check_log(caplog, "DEBUG    test_logger:test_logger.py:40 a a 2 2.000000 3 3\n")
+#         # Info log
+#         log.info("in try log info")
+#         check_log(caplog, "INFO     test_logger:test_logger.py:36 in try log info\n")
+#         logger.info("in try logAdapter info")
+#         check_log(caplog, "INFO     test_logger:test_logger.py:36 [] in try logAdapter info\n")
+#         # Error log
+#         logger.error("in try logger error")
+#         check_log(caplog, "ERROR    test_logger:test_logger.py:38 [] in try logger error\n")
+#         logger.error("in try logAdapter error")
+#         check_log(caplog, "ERROR    test_logger:test_logger.py:38 [] in try logAdapter error\n")
+#         # Warning log
 #         msg = "message"
-#         logger.warning(f"this is a {msg}")
-#         check_log(caplog, "WARNING  test_logger:test_logger.py:43 [] this is a message\n")
+#         log.warning(f"log this is a {msg}")
+#         check_log(caplog, "WARNING  test_logger:test_logger.py:43 log this is a message\n")
+#         logger.warning(f"logAdapter this is a {msg}")
+#         check_log(caplog, "WARNING  test_logger:test_logger.py:43 [] logAdapter this is a message\n")
+#         # Debug log
+#         log.debug("in try log info")
+#         check_log(caplog, "")
+#         logger.debug("in try logAdapter info")
+#         check_log(caplog, "")
+#         # Test formats
+#         log.info("a %s 2 %f 3 %i" % ("a", 2, 3))
+#         check_log(caplog, "INFO     test_logger:test_logger.py:40 a a 2 2.000000 3 3\n")
 #         raise MovaiException("test error")
 #     except MovaiException as e:
 #         logger.error("test error logger", e)
@@ -60,5 +70,4 @@ def check_trackback(caplog, should_have_trackback):
 #         logger.critical("last")
 #         check_trackback(caplog, True)
 
-#     # os.environ["MOVAI_GENERAL_VERBOSITY_LEVEL"] = aux_env_var
 #     assert True
