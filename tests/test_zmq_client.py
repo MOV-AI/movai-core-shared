@@ -20,6 +20,20 @@ LOGGER.addHandler(logging.StreamHandler())
 class TestZMQClients:
     server = None
     server_thread = None
+    dummy_request = {
+        "request": {
+            "req_type": "test",
+            "created": 0,
+            "response_required": True,
+            "req_data": {"msg": "async_request"},
+            "robot_info": {
+                "fleet": "fleet",
+                "robot": "robot",
+                "service": "service",
+                "id": "id",
+            },
+        }
+    }
 
     @pytest.fixture(scope="class", autouse=True)
     def setup(self):
@@ -45,13 +59,13 @@ class TestZMQClients:
                 connections = proc.connections(kind="unix")
                 for conn in connections:
                     if path in conn.laddr:
-                        LOGGER.debug(
-                            f"PID: {proc.info['pid']}, Process Name: {proc.info['name']}, Path: {conn.laddr}, Type: {conn.type}, Status: {conn}"
-                        )
                         if conn.type == socket.SOCK_STREAM:
                             return True
                         else:
                             # break the loop if the socket is found but not the correct type
+                            LOGGER.debug(
+                                f"Found socket {conn.laddr} with type {conn.type} but expected {type}"
+                            )
                             return False
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
@@ -72,10 +86,10 @@ class TestZMQClients:
             # check if the socket is listening or established
             ret = self.list_unix_sockets()
             if ret:
-                LOGGER.info(f"Unix socket is found")
+                LOGGER.info("Unix socket is found")
                 return True
             else:
-                LOGGER.error(f"Unix socket is found but not of type STREAMING")
+                LOGGER.error("Unix socket is found but not of type STREAMING")
                 return False
         else:
             LOGGER.error("Unix socket is not found")
@@ -90,15 +104,15 @@ class TestZMQClients:
         """Test if the ZMQClient execute reset correctly after closing"""
         client = ZMQClient("TEST_CLIENT", addr=TEST_SERVER_ADDR)
         client.init_socket()
-        assert self.check_existing_unix_socket()
-        assert client._socket is not None
+        assert self.check_existing_unix_socket(), "Unix socket is not found"
+        assert client._socket is not None, "Socket is not initialized"
 
         client._socket.close()
 
         client.reset(force=force)
         sleep(1)
-        assert self.check_existing_unix_socket()
-        assert client._socket is not None
+        assert self.check_existing_unix_socket(), "Unix socket is not found after reset"
+        assert client._socket is not None, "Socket is not initialized after reset"
 
     @pytest.mark.parametrize("force", [True, False])
     def test_async_client_socket_reset(self, force):
@@ -123,25 +137,9 @@ class TestZMQClients:
         async_client = AsyncZMQClient("dealer", TEST_SERVER_ADDR)
         async_client.init_socket()
 
-        dummy_request = {
-            "request": {
-                "req_type": "test",
-                "created": 0,
-                "response_required": True,
-                "req_data": {"msg": "async_request"},
-                "robot_info": {
-                    "fleet": "fleet",
-                    "robot": "robot",
-                    "service": "service",
-                    "id": "id",
-                },
-            }
-        }
-        LOGGER.debug(f"Sending request: {dummy_request}")
-
-        # catch exception
+        LOGGER.debug("Sending dummy request")
         try:
-            await async_client.send(dummy_request, use_lock=use_lock)
+            await async_client.send(self.dummy_request, use_lock=use_lock)
         except zmq.error.ZMQError as e:
             LOGGER.error(f"Got exception: {e}")
             assert False, f"Got ZMQ exception: {e}"
@@ -150,6 +148,7 @@ class TestZMQClients:
             assert False, f"Got exception: {e}"
 
         del async_client
+        sleep(1)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("use_lock", [True, False])
@@ -178,8 +177,6 @@ class TestZMQClients:
             LOGGER.error(f"Got exception: {e}")
             assert False, f"Got exception: {e}"
 
-        sleep(1)
-
         if valid_request.get("response_required", False):
             # check socket is ready to receive
             assert self.check_existing_unix_socket()
@@ -191,3 +188,78 @@ class TestZMQClients:
             assert response["status"] == "ok"
 
         del async_client
+        sleep(1)
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("use_lock", [True, False])
+    async def test_sync_dummy_req(self, use_lock):
+        """Test if the ZMQClient can send a dummy request without waiting a response"""
+        LOGGER.info("--- Testing ZMQClient with dummy request ---")
+        sync_client = ZMQClient("dealer", TEST_SERVER_ADDR)
+        sync_client.init_socket()
+
+        dummy_request = {
+            "request": {
+                "req_type": "test",
+                "created": 0,
+                "response_required": True,
+                "req_data": {"msg": "async_request"},
+                "robot_info": {
+                    "fleet": "fleet",
+                    "robot": "robot",
+                    "service": "service",
+                    "id": "id",
+                },
+            }
+        }
+        LOGGER.debug(f"Sending request: {dummy_request}")
+
+        # catch exception
+        try:
+            sync_client.send(dummy_request, use_lock=use_lock)
+        except zmq.error.ZMQError as e:
+            LOGGER.error(f"Got exception: {e}")
+            assert False, f"Got ZMQ exception: {e}"
+        except Exception as e:
+            LOGGER.error(f"Got exception: {e}")
+            assert False, f"Got exception: {e}"
+
+        del sync_client
+
+    @pytest.mark.parametrize("use_lock", [True, False])
+    def test_sync_valid_req(self, use_lock):
+        """Test if the ZMQClient can send a valid request and receive a response"""
+        LOGGER.info("--- Testing ZMQClient with valid request ---")
+        sync_client = ZMQClient("dealer", TEST_SERVER_ADDR)
+        sync_client.init_socket()
+
+        valid_request = SimpleRequest(
+            req_data={"msg": "log"},
+            req_type="test",
+            created=0,
+            response_required=True,
+            robot_info={"fleet": "fleet", "robot": "robot", "service": "service", "id": "id"},
+        ).model_dump()
+        LOGGER.debug(f"Sending request: {valid_request}")
+
+        # catch exception
+        try:
+            sync_client.send(valid_request, use_lock=use_lock)
+        except zmq.error.ZMQError as e:
+            LOGGER.error(f"Got exception: {e}")
+            assert False, f"Got ZMQ exception: {e}"
+        except Exception as e:
+            LOGGER.error(f"Got exception: {e}")
+            assert False, f"Got exception: {e}"
+
+        if valid_request.get("response_required", False):
+            # check socket is ready to receive
+            assert self.check_existing_unix_socket()
+
+            LOGGER.debug("Waiting for response")
+            response = sync_client.receive(use_lock=use_lock)
+            assert response is not None
+            LOGGER.debug("Received response: %s", response)
+            assert response["status"] == "ok"
+
+        del sync_client

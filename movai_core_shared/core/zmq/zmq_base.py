@@ -11,8 +11,6 @@
 """
 from abc import ABC, abstractmethod
 from logging import getLogger
-import asyncio
-import threading
 import zmq
 
 
@@ -43,26 +41,6 @@ class ZMQBase(ABC):
         if self._socket:
             self._socket.close()
 
-    def _init_lock(self, asyncio_lock=False) -> None:
-        """Initializes the lock.
-        If asyncio_lock is True, it will use asyncio.Lock() instead of threading.Lock()
-        """
-        if asyncio_lock:
-            if self._lock is None:
-                try:
-                    asyncio.get_running_loop()
-                    self._lock = asyncio.Lock()
-                except RuntimeError:
-                    self._lock = None
-                    pass
-        else:
-            self._lock = threading.Lock()
-
-    def _release_lock(self) -> None:
-        """Releases the lock."""
-        if self._lock and self._lock.locked():
-            self._lock.release()
-
     @abstractmethod
     def init_socket(self):
         """
@@ -71,16 +49,45 @@ class ZMQBase(ABC):
         """
 
     @abstractmethod
+    def init_lock(self):
+        """
+        An abstract method which allows every ZMQ component to initiliaze the lock by
+        it's own needs.
+        """
+
+    def release_lock(self) -> None:
+        """
+        An abstract method which allows every ZMQ component to release the lock by
+        it's own needs.
+        """
+        if self._lock and self._lock.locked():
+            self._lock.release()
+
+    @abstractmethod
     def handle_socket_errors(self, exc):
         """
         An abstract method which allows every ZMQ component to handle the error by
         it's own needs.
         """
 
-    def recieve(self):
+    @abstractmethod
+    def receive(self, use_lock: bool = False):
+        """
+        An abstract method which allows every ZMQ component to receive the message by
+        it's own needs.
+        """
+
+    @abstractmethod
+    def send(self, msg: dict, use_lock: bool = False):
+        """
+        An abstract method which allows every ZMQ component to send the message by
+        it's own needs.
+        """
+
+    def recieve(self, use_lock: bool = False):
         """
         Function for retrocompatibility which call recieve() member function
         """
         if self.receive is None:
             raise NotImplementedError("receive() method is not implemented")
-        return self.receive()
+        return self.receive(use_lock=use_lock)
