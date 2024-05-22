@@ -39,6 +39,7 @@ from movai_core_shared.envvars import (
     MOVAI_FLEET_LOGS_VERBOSITY_LEVEL,
     MOVAI_STDOUT_VERBOSITY_LEVEL,
     MOVAI_GENERAL_VERBOSITY_LEVEL,
+    MOVAI_CALLBACK_VERBOSITY_LEVEL,
     LOCAL_MESSAGE_SERVER,
     MASTER_MESSAGE_SERVER,
     SERVICE_NAME,
@@ -66,7 +67,7 @@ SEVERETY_CODES_MAPPING = {
 }
 
 VERSION = get_package_version("movai-core-shared")
-
+logging.getLogger('rosout').setLevel(MOVAI_CALLBACK_VERBOSITY_LEVEL)
 
 class StdOutHandler(logging.StreamHandler):
     _COLORS = {
@@ -364,6 +365,7 @@ class Log:
         """
         tags[USER_LOG_TAG] = True
         user_logger = LogAdapter(cls.get_logger(logger_name), **tags)
+
         return user_logger
 
     @classmethod
@@ -382,7 +384,9 @@ class Log:
         tags[USER_LOG_TAG] = True
         tags["node"] = node_name
         tags["callback"] = callback_name
-        logger = LogAdapter(cls.get_logger(logger_name, CALLBACK_LOGGER), **tags)
+        _logger=cls.get_logger(logger_name, CALLBACK_LOGGER)
+        _logger.setLevel(MOVAI_CALLBACK_VERBOSITY_LEVEL)
+        logger = LogAdapter(_logger, **tags)
         return logger
 
 
