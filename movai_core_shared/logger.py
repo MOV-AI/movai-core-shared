@@ -31,6 +31,8 @@ from movai_core_shared.consts import (
     PID,
     USER_LOG_TAG,
     CALLBACK_LOGGER,
+    CALLBACK_STDOUT_COLORS,
+    SPAWNER_STDOUT_COLORS
 )
 from movai_core_shared.envvars import (
     DEVICE_NAME,
@@ -70,17 +72,12 @@ VERSION = get_package_version("movai-core-shared")
 logging.getLogger('rosout').setLevel(MOVAI_CALLBACK_VERBOSITY_LEVEL)
 
 class StdOutHandler(logging.StreamHandler):
-    _COLORS = {
-        logging.DEBUG: "\x1b[30;1m",  # light black (gray)
-        logging.INFO: "",  # default (white)
-        logging.WARNING: "\x1b[33;1m",  # yellow
-        logging.ERROR: "\x1b[31;1m",  # red
-        logging.CRITICAL: "\x1b[41;1m",  # bright red
-    }
+    _COLORS = SPAWNER_STDOUT_COLORS
     _COLOR_RESET = "\u001b[0m"
 
-    def __init__(self, stream=None):
+    def __init__(self, color=SPAWNER_STDOUT_COLORS, stream=None):
         super().__init__(stream)
+        self._COLORS = color
 
     def emit(self, record):
         try:
@@ -119,7 +116,8 @@ class StdOutHandler(logging.StreamHandler):
             self.flush()
         except Exception:
             self.handleError(record)
-
+logging.getLogger('rosout').addHandler(StdOutHandler(color=CALLBACK_STDOUT_COLORS, stream=sys.stdout))
+logging.getLogger('rosout').propagate = False
 
 class RemoteHandler(logging.StreamHandler):
     """

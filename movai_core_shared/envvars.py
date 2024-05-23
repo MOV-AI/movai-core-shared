@@ -1,6 +1,6 @@
 """ Compilation of necessary environment variables to push to the database """
 import os
-from logging import NOTSET, INFO, DEBUG, WARNING, FATAL, CRITICAL, ERROR, getLevelName
+from logging import DEBUG, getLevelName
 import socket
 from .consts import (
     MESSAGE_SERVER_HOST,
