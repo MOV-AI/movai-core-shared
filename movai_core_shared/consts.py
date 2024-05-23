@@ -7,6 +7,7 @@
    - Dor Marcous (Dor@mov.ai) - 2022
 """
 from os import getpid
+import logging
 
 # system
 PID = getpid()
@@ -148,3 +149,20 @@ METRICS_HANDLER_MSG_TYPE = "metrics"
 METRICS_QUERY_HANDLER_MSG_TYPE = "metrics_query"
 NOTIFICATIONS_HANDLER_MSG_TYPE = "notifications"
 ALERTS_HANDLER_METRIC_TYPE = "alerts"
+
+CALLBACK_STDOUT_COLORS =  {
+        logging.DEBUG: "\033[36m",
+        logging.INFO: "\u001b[0m",
+        logging.WARNING: "\x1b[33m",
+        logging.ERROR: "\x1b[31;20m",
+        logging.CRITICAL: "\x1b[41;1m",
+        logging.WARN: "\x1b[33m",
+}
+
+SPAWNER_STDOUT_COLORS = {
+        logging.DEBUG: "\x1b[1;34m",
+        logging.INFO: "\x1b[1;37m",
+        logging.WARNING: "\x1b[1;33m",
+        logging.ERROR: "\x1b[31;1m",
+        logging.CRITICAL: "\x1b[41;1m",
+}
