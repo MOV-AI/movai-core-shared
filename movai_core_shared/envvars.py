@@ -1,6 +1,6 @@
 """ Compilation of necessary environment variables to push to the database """
 import os
-from logging import NOTSET, INFO, DEBUG, WARNING, FATAL, CRITICAL, ERROR
+from logging import NOTSET, INFO, DEBUG, WARNING, FATAL, CRITICAL, ERROR, getLevelName
 import socket
 from .consts import (
     MESSAGE_SERVER_HOST,
@@ -10,27 +10,15 @@ from .consts import (
     STRESS_INFLUX_DB,
 )
 
-LOG_LEVELS = {
-    
-    "NOTSET": NOTSET,
-    "INFO": INFO,
-    "DEBUG": DEBUG,
-    "WARNING": WARNING,
-    "ERROR": ERROR,
-    "CRITICAL": CRITICAL,
-    "FATAL": FATAL,
-}
-
-
 # Setting for logging verbosity levels
 # Will be set only once at startup
 MOVAI_STDOUT_VERBOSITY_LEVEL = DEBUG # Minimum log supported by handlers
-MOVAI_FLEET_LOGS_VERBOSITY_LEVEL = int( LOG_LEVELS.get(os.getenv("MOVAI_FLEET_LOGS_VERBOSITY_LEVEL", "DEBUG").upper().strip(), DEBUG)) # Verbosity level for influxdb logs
+MOVAI_FLEET_LOGS_VERBOSITY_LEVEL = getLevelName(os.getenv("MOVAI_FLEET_LOGS_VERBOSITY_LEVEL", "DEBUG").upper()) # Verbosity level for influxdb logs
 MOVAI_LOG_FILE = os.getenv("MOVAI_LOG_FILE", "/opt/mov.ai/app/movai.log")
 # default as NOTSET that will turn off the output for the addition log file
-MOVAI_LOGFILE_VERBOSITY_LEVEL = int( LOG_LEVELS.get(os.getenv("MOVAI_LOGFILE_VERBOSITY_LEVEL", "NOTSET").upper().strip(), NOTSET))
-MOVAI_GENERAL_VERBOSITY_LEVEL = int( LOG_LEVELS.get(os.getenv("MOVAI_GENERAL_VERBOSITY_LEVEL", "INFO").upper().strip(), INFO)) # Verbosity level for spawner logs
-MOVAI_CALLBACK_VERBOSITY_LEVEL = int( LOG_LEVELS.get(os.getenv("MOVAI_CALLBACK_VERBOSITY_LEVEL", "DEBUG").upper().strip(), DEBUG)) # Verbosity level for callback logs
+MOVAI_LOGFILE_VERBOSITY_LEVEL = getLevelName(os.getenv("MOVAI_LOGFILE_VERBOSITY_LEVEL", "NOTSET").upper()) # Verbosity level for spawner logs in file
+MOVAI_GENERAL_VERBOSITY_LEVEL = getLevelName(os.getenv("MOVAI_GENERAL_VERBOSITY_LEVEL", "INFO").upper()) # Verbosity level for spawner logs
+MOVAI_CALLBACK_VERBOSITY_LEVEL = getLevelName(os.getenv("MOVAI_CALLBACK_VERBOSITY_LEVEL", "DEBUG").upper()) # Verbosity level for callback logs
 LOG_HTTP_HOST = os.environ.get("LOG_HTTP_HOST", "http://health-node:8081")
 MOVAI_IPC_PATH = os.getenv("MOVAI_IPC_PATH", "/opt/mov.ai/comm")
 
