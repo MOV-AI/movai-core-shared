@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 from typing import Optional
@@ -31,26 +32,35 @@ class TestServer(ZMQServer):
         self.log.info("TestServer initialized")
 
     async def handle(self, buffer: bytes) -> None:
-        index = len(buffer) - 1
-        data = buffer[index]
+        """The main function to handle incoming requests by ZMQServer.
+        Copied from flow_initiator/spawner/spawner_server.py
 
-        if data is None:
-            self.log.error(f"{self._name} No data received")
-            return
+        Args:
+            buffer (bytes): The buffer that the server was able to read.
+        """
+        response_msg = None
+        try:
+            index = len(buffer) - 1
+            msg = buffer[index]
+            if msg is None:
+                self._logger.error("Got an empty msg!")
+                return
+            request = json.loads(msg)
+            request = request.get("request")
+            req_data = request.get("req_data")
 
-        self.log.debug(f"{self._name} received data {data}")
+            asyncio.create_task(self.handle_request(req_data))
+            response_msg = "Got request & successfully proccessed".encode("utf8")
+        except json.JSONDecodeError as exc:
+            self._logger.error(f"can't parse command: {buffer}")
+            self._logger.error(exc)
+            response_msg = "can't parse command: {buffer}".encode("utf8")
+        finally:
+            resp = {"status": response_msg}
+            resp = json.dumps(resp).encode("utf8")
+            await self._socket.send_multipart(resp)
 
-        request = json.loads(data)
-        response = self.handle_request(request)
-        response_required = request.get("response_required", False)
-        if response_required:
-            self.log.debug(f"{self._name} sending response {response}")
-            response = self.handle_response(response)
-            await self._socket.send_multipart([json.dumps(response).encode()])
-        else:
-            self.log.debug(f"{self._name} no response required")
-
-    def handle_request(self, request):
+    async def handle_request(self, request):
         self.log.debug(f"{self._name} handling request {request}")
         request = SimpleRequest(**request)
         if request.req_data.msg == "exit":

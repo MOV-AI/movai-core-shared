@@ -9,9 +9,11 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2023
 """
+
 import asyncio
 import errno
 import threading
+import time
 import zmq
 import zmq.asyncio
 
@@ -49,19 +51,28 @@ class ZMQClient(ZMQBase):
                 # Setting LINGER to 0 means that the socket will not wait at all
                 # and will discard any unsent messages immediately
                 self._socket.setsockopt(zmq.LINGER, 0)
-                self._logger.info(f"ZMQ resetting {self._addr} with force")
+                self._logger.info("ZMQ resetting %s with force", self._addr)
             self._socket.close()
+            time.sleep(0.1)
 
-        self._socket = self._context.socket(self.zmq_socket_type)
+        self._socket: zmq.Socket = self._context.socket(self.zmq_socket_type)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
-        self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_ZMQ_RECV_TIMEOUT_MS))
-        self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
-        if self.zmq_socket_type == zmq.DEALER:
-            self._logger.info(f"ZMQ connecting to: {self._addr}")
+        if self.zmq_socket_type in [zmq.DEALER]:
+            self._logger.info(f"ZMQ connecting DEALER to: {self._addr}")
+            self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_ZMQ_RECV_TIMEOUT_MS))
+            self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
             self._socket.connect(self._addr)
-        else:
+        elif self.zmq_socket_type in [zmq.SUB]:
+            self._logger.info(f"ZMQ connecting SUBSCRIBER to: {self._addr}")
+            self._socket.setsockopt_string(zmq.SUBSCRIBE, "")
+            self._socket.connect(self._addr)
+        elif self.zmq_socket_type in [zmq.ROUTER, zmq.PUB]:
+            self._logger.info(f"ZMQ connecting ROUTER/PUBLISHER to: {self._addr}")
+            self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
             self._socket.bind(self._addr)
             self._logger.info(f"{self.__class__.__name__} is bounded to: {self._addr}")
+        else:
+            self._logger.critical(f"ZMQ {self._addr} has an unsupported socket type.")
 
     def handle_socket_errors(self, exc: zmq.error.ZMQError, reset_socket=False) -> None:
         """Handles the socket errors
@@ -131,8 +142,6 @@ class ZMQClient(ZMQBase):
                 return response
             response = extract_reponse(buffer)
             return response
-        except errno.EAGAIN as exc:
-            self._logger.warning(f"Resourse temporarily unavailable: {exc}. Retrying...")
         except zmq.error.ZMQError as exc:
             self.handle_socket_errors(exc)
         except Exception as exc:
@@ -149,7 +158,7 @@ class AsyncZMQClient(ZMQClient):
 
     _context = zmq.asyncio.Context()
 
-    def _init_lock(self) -> None:
+    def init_lock(self) -> None:
         """Initializes the lock the async way."""
         if self._lock is None:
             try:
