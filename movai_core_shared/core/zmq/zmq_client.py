@@ -74,7 +74,7 @@ class ZMQClient(ZMQBase):
         else:
             self._logger.critical(f"ZMQ {self._addr} has an unsupported socket type.")
 
-    def handle_socket_errors(self, exc: zmq.error.ZMQError, reset_socket=False) -> None:
+    def handle_socket_errors(self, exc: zmq.error.ZMQError, reset_socket=True) -> None:
         """Handles the socket errors
         Args:
             exc (zmq.error.ZMQError): the exception
