@@ -212,7 +212,7 @@ def _get_console_handler(stream_config=None):
     if stream_config is None:
         console_handler = StdOutHandler()
     elif stream_config == CALLBACK_LOGGER:
-        console_handler = StdOutHandler(stream=sys.stdout)
+        console_handler = StdOutHandler(color=CALLBACK_STDOUT_COLORS, stream=sys.stdout)
     else:
         raise ValueError("Unknown stream config for the console logger!")
     console_handler.setFormatter(LOG_FORMATTER)
