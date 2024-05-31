@@ -212,7 +212,9 @@ class AsyncMessageClient(MessageClient):
 
         response_required = request["request"].get("response_required")
         if response_required is None:
-            raise MessageFormatError(f"The field response_required is missing from request message {request}.")
+            raise MessageFormatError(
+                f"The field response_required is missing from request message {request}."
+            )
 
         if response_required:
             response = await self._zmq_client.receive()

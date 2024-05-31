@@ -8,7 +8,8 @@ from movai_core_shared.core.zmq.zmq_server import ZMQServer
 from movai_core_shared.messages.general_data import Request
 
 TEST_SERVER_ADDR = "ipc:///tmp/test_zmq_server"
-#TEST_SERVER_ADDR = "tcp://localhost:5555"
+# TEST_SERVER_ADDR = "tcp://localhost:5555"
+
 
 class SimpleData(BaseModel):
     msg: str

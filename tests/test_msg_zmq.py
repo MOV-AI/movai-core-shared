@@ -8,6 +8,7 @@ from movai_core_shared.core.message_client import MessageClient, AsyncMessageCli
 from movai_core_shared.envvars import FLEET_NAME, DEVICE_NAME, SERVICE_NAME
 from movai_core_shared.exceptions import ArgumentError, MessageFormatError
 
+
 @pytest.mark.test_zmq
 @pytest.mark.test_zmq_message_client
 class TestZMQMessageClient:
@@ -17,7 +18,9 @@ class TestZMQMessageClient:
             MessageClient(server_addr=123)
         with pytest.raises(ArgumentError):
             MessageClient(server_addr="")
-        with patch("movai_core_shared.core.message_client.ZMQManager.get_client") as mock_get_client:
+        with patch(
+            "movai_core_shared.core.message_client.ZMQManager.get_client"
+        ) as mock_get_client:
             MessageClient(server_addr=server_addr)
             mock_get_client.assert_called_once_with(server_addr, ZMQType.CLIENT)
 
@@ -60,7 +63,9 @@ class TestZMQMessageClient:
         data = {"key": "value"}
 
         message_client = MessageClient(server_addr=server_addr)
-        request = message_client._build_request(msg_type=msg_type, data=data, response_required=True)["request"]
+        request = message_client._build_request(
+            msg_type=msg_type, data=data, response_required=True
+        )["request"]
         assert request["req_type"] == msg_type
         assert request["req_data"] == data
         assert request["response_required"] == True
@@ -105,7 +110,9 @@ class TestZMQMessageClient:
         msg_type = "logs"
         data = {"key": "value"}
         message_client = MessageClient(server_addr=server_addr)
-        message_client.forward_request(request_msg={"request": {"req_type": msg_type, "req_data": data}})
+        message_client.forward_request(
+            request_msg={"request": {"req_type": msg_type, "req_data": data}}
+        )
 
     def test_message_client_forward_request_msg_without_request(self):
         server_addr = "tcp://localhost:5555"
@@ -119,7 +126,11 @@ class TestZMQMessageClient:
         msg_type = "logs"
         data = {"key": "value"}
         message_client = MessageClient(server_addr=server_addr)
-        message_client.forward_request(request_msg={"request": {"req_type": msg_type, "req_data": data, "response_required": True}})
+        message_client.forward_request(
+            request_msg={
+                "request": {"req_type": msg_type, "req_data": data, "response_required": True}
+            }
+        )
 
     def test_message_client_send_msg(self):
         server_addr = "tcp://localhost:5555"
@@ -134,6 +145,7 @@ class TestZMQMessageClient:
         message_client = MessageClient(server_addr=server_addr)
         message_client.send_msg(msg, extra_data=extra_data)
 
+
 @pytest.mark.test_zmq
 @pytest.mark.test_zmq_message_client
 class TestZMQAsyncMessageClient:
@@ -143,7 +155,9 @@ class TestZMQAsyncMessageClient:
             AsyncMessageClient(server_addr=123)
         with pytest.raises(ArgumentError):
             AsyncMessageClient(server_addr="")
-        with patch("movai_core_shared.core.message_client.ZMQManager.get_client") as mock_get_client:
+        with patch(
+            "movai_core_shared.core.message_client.ZMQManager.get_client"
+        ) as mock_get_client:
             AsyncMessageClient(server_addr=server_addr)
             mock_get_client.assert_called_once_with(server_addr, ZMQType.ASYNC_CLIENT)
 
@@ -185,7 +199,11 @@ class TestZMQAsyncMessageClient:
         msg_type = "logs"
         data = {"key": "value"}
         message_client = AsyncMessageClient(server_addr=server_addr)
-        await message_client.forward_request(request_msg={"request": {"req_type": msg_type, "req_data": data, "response_required": False}})
+        await message_client.forward_request(
+            request_msg={
+                "request": {"req_type": msg_type, "req_data": data, "response_required": False}
+            }
+        )
 
     @pytest.mark.asyncio
     async def test_async_message_client_forward_request_msg_without_request(self):
@@ -193,7 +211,9 @@ class TestZMQAsyncMessageClient:
         msg_type = "logs"
         data = {"key": "value"}
         message_client = AsyncMessageClient(server_addr=server_addr)
-        await message_client.forward_request(request_msg={"req_type": msg_type, "req_data": data, "response_required": False})
+        await message_client.forward_request(
+            request_msg={"req_type": msg_type, "req_data": data, "response_required": False}
+        )
 
     @pytest.mark.asyncio
     async def test_async_message_client_forward_request_msg_with_response_required(self):
@@ -201,7 +221,11 @@ class TestZMQAsyncMessageClient:
         msg_type = "logs"
         data = {"key": "value"}
         message_client = AsyncMessageClient(server_addr=server_addr)
-        await message_client.forward_request(request_msg={"request": {"req_type": msg_type, "req_data": data, "response_required": True}})
+        await message_client.forward_request(
+            request_msg={
+                "request": {"req_type": msg_type, "req_data": data, "response_required": True}
+            }
+        )
 
     @pytest.mark.asyncio
     async def test_async_message_client_send_msg(self):
@@ -217,4 +241,3 @@ class TestZMQAsyncMessageClient:
         extra_data = {"data": "extra_data"}
         message_client = AsyncMessageClient(server_addr=server_addr)
         await message_client.send_msg(msg, extra_data=extra_data)
-

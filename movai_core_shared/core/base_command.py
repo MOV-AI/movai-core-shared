@@ -21,8 +21,7 @@ class BaseCommand(ABC):
         self.kwargs = kwargs
 
     def safe_execute(self, **kwargs) -> None:
-        """Executes the command in try except block.
-        """
+        """Executes the command in try except block."""
         try:
             self.execute(**kwargs)
             sys.exit(0)

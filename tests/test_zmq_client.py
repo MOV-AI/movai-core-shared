@@ -69,7 +69,7 @@ class TestZMQClients:
                 os.remove(os.path.join(PERF_TEST_RESULTS_DIR, file))
         yield
 
-    def list_unix_sockets(type="STREAMING", path=TEST_SERVER_ADDR.split("://")[-1]):
+    def list_unix_sockets(self, type="STREAMING", path=TEST_SERVER_ADDR.split("://")[-1]):
         """List all the UNIX sockets for the given type and path
         Args:
             type (str): The type of the socket to check
@@ -293,7 +293,7 @@ class TestZMQClients:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("use_lock", [True])
     async def test_perf_async_client(self, use_lock, nb_requests=PERF_TEST_REQUESTS):
-        """ Test the performance of the AsyncZMQClient by sending multiple requests
+        """Test the performance of the AsyncZMQClient by sending multiple requests
         Will send multiple requests to the server and check the performance of the client
         by measuring the time taken to send the requests.
 
@@ -328,15 +328,18 @@ class TestZMQClients:
         # print performance to file
         with open(os.path.join(PERF_TEST_RESULTS_DIR, "async_client_perf.txt"), "a") as f:
             f.write(f"addr,nb_requests,test_time,average\n")
-            f.write(f"{TEST_SERVER_ADDR},{nb_requests},{end_time - start_time},{(end_time - start_time) / nb_requests}\n")
-
+            f.write(
+                f"{TEST_SERVER_ADDR},{nb_requests},{end_time - start_time},{(end_time - start_time) / nb_requests}\n"
+            )
 
         del async_client
 
     @pytest.mark.test_zmq_perf
     @pytest.mark.parametrize("use_lock", [True])
-    def test_multithread_perf_sync_client(self, use_lock, nb_requests=PERF_TEST_REQUESTS, nb_threads=10):
-        """ Test the performance of the ZMQClient by sending multiple requests in multiple threads
+    def test_multithread_perf_sync_client(
+        self, use_lock, nb_requests=PERF_TEST_REQUESTS, nb_threads=10
+    ):
+        """Test the performance of the ZMQClient by sending multiple requests in multiple threads
         Will send multiple requests to the server and check the performance of the client
         by measuring the time taken to send the requests in multiple threads.
 
@@ -377,24 +380,32 @@ class TestZMQClients:
             valid_request.update({"req_id": f"req_{_}"})
             sync_client.send(valid_request, use_lock=use_lock)
         end_time = time.time()
-        LOGGER.debug(f"Thread {thread_id} sent {nb_requests} requests in {end_time - start_time} seconds")
+        LOGGER.debug(
+            f"Thread {thread_id} sent {nb_requests} requests in {end_time - start_time} seconds"
+        )
 
         assert end_time - start_time < 10, "Sending requests took too long"
         # test average time to send a request
         assert (end_time - start_time) / nb_requests < 0.001, "Sending requests took too long"
 
         # print performance to file with thread id
-        with open(os.path.join(PERF_TEST_RESULTS_DIR, f"multithread_{thread_id}_client_perf.txt"), "a") as f:
+        with open(
+            os.path.join(PERF_TEST_RESULTS_DIR, f"multithread_{thread_id}_client_perf.txt"), "a"
+        ) as f:
             f.write(f"addr,nb_requests,test_time,average,thread_id\n")
-            f.write(f"{TEST_SERVER_ADDR},{nb_requests},{end_time - start_time},{(end_time - start_time) / nb_requests},{thread_id}\n")
+            f.write(
+                f"{TEST_SERVER_ADDR},{nb_requests},{end_time - start_time},{(end_time - start_time) / nb_requests},{thread_id}\n"
+            )
 
         del sync_client
 
     @pytest.mark.test_zmq_perf
     @pytest.mark.asyncio
     @pytest.mark.parametrize("use_lock", [True])
-    async def test_multithread_perf_async_client(self, use_lock, nb_requests=PERF_TEST_REQUESTS, nb_threads=10):
-        """ Test the performance of the AsyncZMQClient by sending multiple requests in multiple threads
+    async def test_multithread_perf_async_client(
+        self, use_lock, nb_requests=PERF_TEST_REQUESTS, nb_threads=10
+    ):
+        """Test the performance of the AsyncZMQClient by sending multiple requests in multiple threads
         Will send multiple requests to the server and check the performance of the client
         by measuring the time taken to send the requests in multiple threads.
 
@@ -408,7 +419,9 @@ class TestZMQClients:
 
         # launch multiple async clients in multiple threads
         for i in range(nb_threads):
-            thread = threading.Thread(target=self._send_requests_async, args=(i, nb_requests, use_lock))
+            thread = threading.Thread(
+                target=self._send_requests_async, args=(i, nb_requests, use_lock)
+            )
             threads.append(thread)
             thread.start()
 
@@ -435,15 +448,22 @@ class TestZMQClients:
             valid_request.update({"req_id": f"req_{_}"})
             asyncio.run(async_client.send(valid_request, use_lock=use_lock))
         end_time = time.time()
-        LOGGER.debug(f"Thread {thread_id} sent {nb_requests} requests in {end_time - start_time} seconds")
+        LOGGER.debug(
+            f"Thread {thread_id} sent {nb_requests} requests in {end_time - start_time} seconds"
+        )
 
         assert end_time - start_time < 10, "Sending requests took too long"
         # test average time to send a request
         assert (end_time - start_time) / nb_requests < 0.001, "Sending requests took too long"
 
         # print performance to file with thread id
-        with open(os.path.join(PERF_TEST_RESULTS_DIR, f"multithread_{thread_id}_async_client_perf.txt"), "a") as f:
+        with open(
+            os.path.join(PERF_TEST_RESULTS_DIR, f"multithread_{thread_id}_async_client_perf.txt"),
+            "a",
+        ) as f:
             f.write(f"addr,nb_requests,test_time,average,thread_id\n")
-            f.write(f"{TEST_SERVER_ADDR},{nb_requests},{end_time - start_time},{(end_time - start_time) / nb_requests},{thread_id}\n")
+            f.write(
+                f"{TEST_SERVER_ADDR},{nb_requests},{end_time - start_time},{(end_time - start_time) / nb_requests},{thread_id}\n"
+            )
 
         del async_client
