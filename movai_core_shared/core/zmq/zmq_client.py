@@ -188,18 +188,6 @@ class AsyncZMQClient(ZMQClient):
             # This is a normal exception that is raised when the task is cancelled
             self._socket.close()
             raise exc
-        except TypeError as exc:
-            self._logger.error(
-                f"{self.__class__.__name__} failed to send message. "
-                + f"{self._addr} got type exception: {exc} "
-            )
-            raise exc
-        except ValueError as exc:
-            self._logger.error(
-                f"{self.__class__.__name__} failed to send message. "
-                + f"{self._addr} got value exception: {exc} "
-            )
-            raise exc
         except zmq.error.ZMQError as exc:
             self.handle_socket_errors(exc)
         except Exception as exc:

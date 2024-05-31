@@ -89,12 +89,12 @@ class TestMessagesData:
 
 
     def test_stress_data(self):
-        stress_data = StressData(stress="test", stress_type="test")
+        stress_data = StressData(current=123, total=123, insert=True, query=True, measurement="test")
         assert stress_data is not None
 
     def test_stress_request(self):
         stress_request = StressRequest(
             req_type="test", created=123456, response_required=True,
             robot_info={"fleet": "test", "robot": "test", "service": "test", "id": "test"},
-            req_data=StressData(stress="test", stress_type="test"))
+            req_data=StressData(current=123, total=123, insert=True, query=True, measurement="test"))
         assert stress_request is not None
