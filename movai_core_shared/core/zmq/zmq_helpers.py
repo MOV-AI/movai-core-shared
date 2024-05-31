@@ -61,7 +61,7 @@ def extract_reponse(buffer: bytes):
         return response
     except (json.JSONDecodeError, TypeError) as error:
         LOGGER.error(
-            f"Got error of type {error.__class__.__name__} while trying to recieve the message."
+            f"Got error of type {error.__class__.__name__} while trying to receive the message."
         )
         return {}
 
