@@ -8,7 +8,7 @@ from movai_core_shared.core.zmq.zmq_server import ZMQServer
 from movai_core_shared.messages.general_data import Request
 
 TEST_SERVER_ADDR = "ipc:///tmp/test_zmq_server"
-
+#TEST_SERVER_ADDR = "tcp://localhost:5555"
 
 class SimpleData(BaseModel):
     msg: str
@@ -45,6 +45,7 @@ class TestServer(ZMQServer):
             if msg is None:
                 self._logger.error("Got an empty msg!")
                 return
+            self._logger.debug(f"Got msg: {msg}")
             request = json.loads(msg)
             request = request.get("request")
             req_data = request.get("req_data")
@@ -77,6 +78,11 @@ class TestServer(ZMQServer):
     def handle_response(self, response):
         response["extra_data"] = "Hello from server"
         return response
+
+    def stop(self):
+        self.log.info("Stopping server")
+        self._running = False
+        self._socket.close()
 
 
 def create_test_server():

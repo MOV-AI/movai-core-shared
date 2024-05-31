@@ -1,8 +1,10 @@
+import asyncio
 import logging
 import pytest
 import os
 import psutil
 import socket
+import time
 import threading
 import zmq
 
@@ -14,6 +16,9 @@ from movai_core_shared.core.zmq.zmq_client import ZMQClient, AsyncZMQClient
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
 LOGGER.addHandler(logging.StreamHandler())
+
+PERF_TEST_REQUESTS = 100
+PERF_TEST_RESULTS_DIR = "perf_results"
 
 
 @pytest.mark.test_zmq
@@ -43,6 +48,25 @@ class TestZMQClients:
         self.server_thread = threading.Thread(target=self.server.start, args=(), daemon=True)
         self.server_thread.start()
         sleep(2)
+        yield
+
+    @pytest.fixture(scope="class")
+    def teardown(self):
+        """Teardown the test server"""
+        LOGGER.info("Stopping test server")
+        self.server.stop()
+        self.server_thread.join()
+        yield
+
+    @pytest.fixture(scope="class", autouse=True)
+    def create_results_dir(self):
+        """Create the results directory"""
+        if not os.path.exists(PERF_TEST_RESULTS_DIR):
+            os.makedirs(PERF_TEST_RESULTS_DIR)
+        else:
+            # remove its contents
+            for file in os.listdir(PERF_TEST_RESULTS_DIR):
+                os.remove(os.path.join(PERF_TEST_RESULTS_DIR, file))
         yield
 
     def list_unix_sockets(type="STREAMING", path=TEST_SERVER_ADDR.split("://")[-1]):
@@ -264,3 +288,162 @@ class TestZMQClients:
             # assert response["status"] == "Got request & successfully proccessed"
 
         del sync_client
+
+    @pytest.mark.test_zmq_perf
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("use_lock", [True])
+    async def test_perf_async_client(self, use_lock, nb_requests=PERF_TEST_REQUESTS):
+        """ Test the performance of the AsyncZMQClient by sending multiple requests
+        Will send multiple requests to the server and check the performance of the client
+        by measuring the time taken to send the requests.
+
+        Args:
+            nb_requests (int): The number of requests to send
+
+        """
+        LOGGER.info("--- Testing performance of AsyncZMQClient ---")
+        async_client = AsyncZMQClient("dealer", TEST_SERVER_ADDR)
+        async_client.init_socket()
+
+        valid_request = SimpleRequest(
+            req_data={"msg": "log"},
+            req_type="async_perf_test",
+            created=0,
+            response_required=True,
+            robot_info={"fleet": "fleet", "robot": "robot", "service": "service", "id": "id"},
+        ).model_dump()
+
+        LOGGER.debug(f"Sending {nb_requests} requests")
+        start_time = time.time()
+        for _ in range(nb_requests):
+            valid_request.update({"req_id": f"req_{_}"})
+            await async_client.send(valid_request, use_lock=use_lock)
+        end_time = time.time()
+        LOGGER.debug(f"Sent {nb_requests} requests in {end_time - start_time} seconds")
+
+        assert end_time - start_time < 10, "Sending requests took too long"
+        # test average time to send a request
+        assert (end_time - start_time) / nb_requests < 0.001, "Sending requests took too long"
+
+        # print performance to file
+        with open(os.path.join(PERF_TEST_RESULTS_DIR, "async_client_perf.txt"), "a") as f:
+            f.write(f"addr,nb_requests,test_time,average\n")
+            f.write(f"{TEST_SERVER_ADDR},{nb_requests},{end_time - start_time},{(end_time - start_time) / nb_requests}\n")
+
+
+        del async_client
+
+    @pytest.mark.test_zmq_perf
+    @pytest.mark.parametrize("use_lock", [True])
+    def test_multithread_perf_sync_client(self, use_lock, nb_requests=PERF_TEST_REQUESTS, nb_threads=10):
+        """ Test the performance of the ZMQClient by sending multiple requests in multiple threads
+        Will send multiple requests to the server and check the performance of the client
+        by measuring the time taken to send the requests in multiple threads.
+
+        Args:
+            nb_requests (int): The number of requests to send
+            nb_threads (int): The number of threads to use
+
+        """
+        LOGGER.info(f"--- Testing performance of ZMQClient in {nb_threads} threads ---")
+        threads = []
+
+        # launch multiple async clients in multiple threads
+        for i in range(nb_threads):
+            thread = threading.Thread(target=self._send_requests, args=(i, nb_requests, use_lock))
+            threads.append(thread)
+            thread.start()
+
+        # wait for all threads to finish
+        for thread in threads:
+            thread.join()
+
+    def _send_requests(self, thread_id, nb_requests, use_lock):
+        """Send multiple requests in a thread"""
+        sync_client = ZMQClient(f"dealer_{thread_id}", TEST_SERVER_ADDR)
+        sync_client.init_socket()
+
+        valid_request = SimpleRequest(
+            req_data={"msg": "log"},
+            req_type="sync_perf_test",
+            created=0,
+            response_required=True,
+            robot_info={"fleet": "fleet", "robot": "robot", "service": "service", "id": "id"},
+        ).model_dump()
+
+        LOGGER.debug(f"Thread {thread_id} sending {nb_requests} requests")
+        start_time = time.time()
+        for _ in range(nb_requests):
+            valid_request.update({"req_id": f"req_{_}"})
+            sync_client.send(valid_request, use_lock=use_lock)
+        end_time = time.time()
+        LOGGER.debug(f"Thread {thread_id} sent {nb_requests} requests in {end_time - start_time} seconds")
+
+        assert end_time - start_time < 10, "Sending requests took too long"
+        # test average time to send a request
+        assert (end_time - start_time) / nb_requests < 0.001, "Sending requests took too long"
+
+        # print performance to file with thread id
+        with open(os.path.join(PERF_TEST_RESULTS_DIR, f"multithread_{thread_id}_client_perf.txt"), "a") as f:
+            f.write(f"addr,nb_requests,test_time,average,thread_id\n")
+            f.write(f"{TEST_SERVER_ADDR},{nb_requests},{end_time - start_time},{(end_time - start_time) / nb_requests},{thread_id}\n")
+
+        del sync_client
+
+    @pytest.mark.test_zmq_perf
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("use_lock", [True])
+    async def test_multithread_perf_async_client(self, use_lock, nb_requests=PERF_TEST_REQUESTS, nb_threads=10):
+        """ Test the performance of the AsyncZMQClient by sending multiple requests in multiple threads
+        Will send multiple requests to the server and check the performance of the client
+        by measuring the time taken to send the requests in multiple threads.
+
+        Args:
+            nb_requests (int): The number of requests to send
+            nb_threads (int): The number of threads to use
+
+        """
+        LOGGER.info(f"--- Testing performance of AsyncZMQClient in {nb_threads} threads ---")
+        threads = []
+
+        # launch multiple async clients in multiple threads
+        for i in range(nb_threads):
+            thread = threading.Thread(target=self._send_requests_async, args=(i, nb_requests, use_lock))
+            threads.append(thread)
+            thread.start()
+
+        # wait for all threads to finish
+        for thread in threads:
+            thread.join()
+
+    async def _send_requests_async(self, thread_id, nb_requests, use_lock):
+        """Send multiple requests in a thread"""
+        async_client = AsyncZMQClient(f"dealer_{thread_id}", TEST_SERVER_ADDR)
+        async_client.init_socket()
+
+        valid_request = SimpleRequest(
+            req_data={"msg": "log"},
+            req_type="async_perf_test",
+            created=0,
+            response_required=True,
+            robot_info={"fleet": "fleet", "robot": "robot", "service": "service", "id": "id"},
+        ).model_dump()
+
+        LOGGER.debug(f"Thread {thread_id} sending {nb_requests} requests")
+        start_time = time.time()
+        for _ in range(nb_requests):
+            valid_request.update({"req_id": f"req_{_}"})
+            asyncio.run(async_client.send(valid_request, use_lock=use_lock))
+        end_time = time.time()
+        LOGGER.debug(f"Thread {thread_id} sent {nb_requests} requests in {end_time - start_time} seconds")
+
+        assert end_time - start_time < 10, "Sending requests took too long"
+        # test average time to send a request
+        assert (end_time - start_time) / nb_requests < 0.001, "Sending requests took too long"
+
+        # print performance to file with thread id
+        with open(os.path.join(PERF_TEST_RESULTS_DIR, f"multithread_{thread_id}_async_client_perf.txt"), "a") as f:
+            f.write(f"addr,nb_requests,test_time,average,thread_id\n")
+            f.write(f"{TEST_SERVER_ADDR},{nb_requests},{end_time - start_time},{(end_time - start_time) / nb_requests},{thread_id}\n")
+
+        del async_client

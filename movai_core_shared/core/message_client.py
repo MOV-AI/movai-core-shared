@@ -139,8 +139,11 @@ class MessageClient:
         """
         if "request" not in request_msg:
             request = {"request": request_msg}
+        else:
+            request = request_msg
+
         self._zmq_client.send(request, use_lock=True)
-        response_required = request_msg.get("response_required")
+        response_required = request["request"].get("response_required")
 
         if response_required:
             response = self._zmq_client.receive(use_lock=True)
@@ -207,9 +210,9 @@ class AsyncMessageClient(MessageClient):
             request = request_msg
         await self._zmq_client.send(request)
 
-        response_required = request_msg.get("response_required")
+        response_required = request["request"].get("response_required")
         if response_required is None:
-            raise MessageFormatError("The field response_required is missing from request message")
+            raise MessageFormatError(f"The field response_required is missing from request message {request}.")
 
         if response_required:
             response = await self._zmq_client.receive()
