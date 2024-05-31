@@ -108,7 +108,7 @@ class MessageClient:
         return response
 
     def send_request(
-        self, msg_type: str, data: dict, creation_time: str = None, respose_required: bool = False
+        self, msg_type: str, data: dict, creation_time: str = None, response_required: bool = False
     ) -> dict:
         """
         Wrap the data into a message request and sent it to the robot message server
@@ -120,17 +120,17 @@ class MessageClient:
             response_required (bool): whether to wait for response, Default False.
         """
         # Add tags to the request data
-        request = self._build_request(msg_type, data, creation_time, respose_required)
+        request = self._build_request(msg_type, data, creation_time, response_required)
 
         self._zmq_client.send(request, use_lock=True)
-        if respose_required:
-            msg = self._zmq_client.recieve(use_lock=True)
+        if response_required:
+            msg = self._zmq_client.receive(use_lock=True)
             response = self._fetch_response(msg)
             return response
 
         return {}
 
-    def foraward_request(self, request_msg: dict) -> dict:
+    def forward_request(self, request_msg: dict) -> dict:
         """forwards a request to different message-server (This function does
         not adds the meta-data info as send_request does).
 
@@ -139,11 +139,14 @@ class MessageClient:
         """
         if "request" not in request_msg:
             request = {"request": request_msg}
+        else:
+            request = request_msg
+
         self._zmq_client.send(request, use_lock=True)
-        response_required = request_msg.get("response_required")
+        response_required = request["request"].get("response_required")
 
         if response_required:
-            response = self._zmq_client.recieve(use_lock=True)
+            response = self._zmq_client.receive(use_lock=True)
             return response
         return {}
 
@@ -171,7 +174,7 @@ class AsyncMessageClient(MessageClient):
         self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.ASYNC_CLIENT)
 
     async def send_request(
-        self, msg_type: str, data: dict, creation_time: str = None, respose_required: bool = False
+        self, msg_type: str, data: dict, creation_time: str = None, response_required: bool = False
     ) -> dict:
         """
         Wrap the data into a message request and sent it asynchonously to the robot message server
@@ -183,17 +186,17 @@ class AsyncMessageClient(MessageClient):
             creation_time (str): The time where the request is created.
             response_required (bool): whether to wait for response, Default False.
         """
-        request = self._build_request(msg_type, data, creation_time, respose_required)
+        request = self._build_request(msg_type, data, creation_time, response_required)
 
         await self._zmq_client.send(request)
-        if respose_required:
-            msg = await self._zmq_client.recieve()
+        if response_required:
+            msg = await self._zmq_client.receive()
             response = self._fetch_response(msg)
             return response
 
         return {}
 
-    async def foraward_request(self, request_msg: dict) -> dict:
+    async def forward_request(self, request_msg: dict) -> dict:
         """
         Send the request asynchronously to different message-server (This function does
         not adds the meta-data info as send_request does).
@@ -207,12 +210,14 @@ class AsyncMessageClient(MessageClient):
             request = request_msg
         await self._zmq_client.send(request)
 
-        response_required = request_msg.get("response_required")
+        response_required = request["request"].get("response_required")
         if response_required is None:
-            raise MessageFormatError("The field response_required is missing from request message")
+            raise MessageFormatError(
+                f"The field response_required is missing from request message {request}."
+            )
 
         if response_required:
-            response = await self._zmq_client.recieve()
+            response = await self._zmq_client.receive()
             return response
         return {}
 
