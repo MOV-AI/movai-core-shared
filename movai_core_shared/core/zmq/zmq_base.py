@@ -47,3 +47,47 @@ class ZMQBase(ABC):
         An abstract medthod which allows every ZMQ component to initiliaze the socket by
         it's own needs.
         """
+
+    @abstractmethod
+    def init_lock(self):
+        """
+        An abstract method which allows every ZMQ component to initiliaze the lock by
+        it's own needs.
+        """
+
+    def release_lock(self) -> None:
+        """
+        An abstract method which allows every ZMQ component to release the lock by
+        it's own needs.
+        """
+        if self._lock and self._lock.locked():
+            self._lock.release()
+
+    @abstractmethod
+    def handle_socket_errors(self, exc):
+        """
+        An abstract method which allows every ZMQ component to handle the error by
+        it's own needs.
+        """
+
+    @abstractmethod
+    def receive(self, use_lock: bool = False):
+        """
+        An abstract method which allows every ZMQ component to receive the message by
+        it's own needs.
+        """
+
+    @abstractmethod
+    def send(self, msg: dict, use_lock: bool = False):
+        """
+        An abstract method which allows every ZMQ component to send the message by
+        it's own needs.
+        """
+
+    def recieve(self, use_lock: bool = False):
+        """
+        Function for retrocompatibility which call recieve() member function
+        """
+        if self.receive is None:
+            raise NotImplementedError("receive() method is not implemented")
+        return self.receive(use_lock=use_lock)

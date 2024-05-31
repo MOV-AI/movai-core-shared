@@ -9,90 +9,19 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2023
 """
-import asyncio
-import threading
 import zmq
 import zmq.asyncio
 
-from movai_core_shared.core.zmq.zmq_base import ZMQBase
-from movai_core_shared.core.zmq.zmq_helpers import extract_reponse
+from movai_core_shared.core.zmq.zmq_client import ZMQClient, AsyncZMQClient
 
 
-class ZMQSubscriber(ZMQBase):
+class ZMQSubscriber(ZMQClient):
     """A very basic implementation of ZMQ Subscriber"""
 
-    def _init_lock(self) -> None:
-        """Initializes the lock."""
-        self._lock = threading.Lock()
-
-    def init_socket(self) -> None:
-        """Initializes the socket and set options."""
-        self._init_lock()
-        self._socket: zmq.Socket = self._context.socket(zmq.SUB)
-        self._socket.setsockopt(zmq.IDENTITY, self._identity)
-        self._socket.setsockopt_string(zmq.SUBSCRIBE, "")
-        self._socket.connect(self._addr)
-
-    def recieve(self, use_lock: bool = False) -> dict:
-        """
-        Synchronously recieves data from the server.
-
-        Returns:
-            (dict): raw data from the server.
-        """
-        try:
-            if use_lock and self._lock:
-                with self._lock:
-                    buffer = self._socket.recv_multipart()
-            else:
-                buffer = self._socket.recv_multipart()
-
-            msg = extract_reponse(buffer)
-            return msg
-        except Exception as exc:
-            if self._lock and self._lock.locked():
-                self._lock.release()
-            self._logger.error(
-                f"{self.__class__.__name__} failed to recieve msg, got error of type: {exc}"
-            )
-            return {}
+    zmq_socket_type = zmq.SUB
 
 
-class AsyncZMQSubscriber(ZMQSubscriber):
+class AsyncZMQSubscriber(AsyncZMQClient):
     """An Async implementation of ZMQ subscriber"""
 
-    _context = zmq.asyncio.Context()
-
-    def _init_lock(self) -> None:
-        """Initializes the lock."""
-        if self._lock is None:
-            try:
-                asyncio.get_running_loop()
-                self._lock = asyncio.Lock()
-            except RuntimeError:
-                self._logger.warning("The loop is not running, unable to initialize the lock!")
-
-    async def recieve(self, use_lock: bool = False) -> dict:
-        """
-        Asynchrounsly recieves data from the server.
-
-        Returns:
-            (dict): raw data from the server.
-        """
-        if use_lock:
-            self._init_lock()
-        try:
-            if use_lock and self._lock:
-                async with self._lock:
-                    buffer = await self._socket.recv_multipart()
-            else:
-                buffer = await self._socket.recv_multipart()
-            msg = extract_reponse(buffer)
-            return msg
-        except Exception as exc:
-            if self._lock and self._lock.locked():
-                self._lock.release()
-            self._logger.error(
-                f"{self.__class__.__name__} failed to recieve msg, got error of type: {exc}"
-            )
-            return {}
+    zmq_socket_type = zmq.SUB
