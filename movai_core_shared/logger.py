@@ -32,7 +32,7 @@ from movai_core_shared.consts import (
     USER_LOG_TAG,
     CALLBACK_LOGGER,
     CALLBACK_STDOUT_COLORS,
-    SPAWNER_STDOUT_COLORS
+    SPAWNER_STDOUT_COLORS,
 )
 from movai_core_shared.envvars import (
     DEVICE_NAME,
@@ -69,7 +69,8 @@ SEVERETY_CODES_MAPPING = {
 }
 
 VERSION = get_package_version("movai-core-shared")
-logging.getLogger('rosout').setLevel(MOVAI_CALLBACK_VERBOSITY_LEVEL)
+logging.getLogger("rosout").setLevel(MOVAI_CALLBACK_VERBOSITY_LEVEL)
+
 
 class StdOutHandler(logging.StreamHandler):
     _COLORS = SPAWNER_STDOUT_COLORS
@@ -111,13 +112,20 @@ class StdOutHandler(logging.StreamHandler):
                     stream = open("/dev/stderr", "w")
                 else:
                     stream = open("/dev/stdout", "w")
-            stream.write(self._COLORS.get(record.levelno, "") + msg + self._COLOR_RESET + self.terminator)
-            #stream.write()
+            stream.write(
+                self._COLORS.get(record.levelno, "") + msg + self._COLOR_RESET + self.terminator
+            )
+            # stream.write()
             self.flush()
         except Exception:
             self.handleError(record)
-logging.getLogger('rosout').addHandler(StdOutHandler(color=CALLBACK_STDOUT_COLORS, stream=sys.stdout))
-logging.getLogger('rosout').propagate = False
+
+
+logging.getLogger("rosout").addHandler(
+    StdOutHandler(color=CALLBACK_STDOUT_COLORS, stream=sys.stdout)
+)
+logging.getLogger("rosout").propagate = False
+
 
 class RemoteHandler(logging.StreamHandler):
     """
@@ -382,7 +390,7 @@ class Log:
         tags[USER_LOG_TAG] = True
         tags["node"] = node_name
         tags["callback"] = callback_name
-        _logger=cls.get_logger(logger_name, CALLBACK_LOGGER)
+        _logger = cls.get_logger(logger_name, CALLBACK_LOGGER)
         _logger.setLevel(MOVAI_CALLBACK_VERBOSITY_LEVEL)
         logger = LogAdapter(_logger, **tags)
         return logger
