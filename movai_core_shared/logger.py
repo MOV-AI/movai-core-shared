@@ -9,7 +9,6 @@
 import asyncio
 import sys
 from datetime import datetime
-from inspect import getframeinfo, stack
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import syslog
@@ -482,6 +481,8 @@ class LogsQuery:
         message=None,
         fromDate=None,
         toDate=None,
+        order_by=None,
+        order_dir=None,
         pagination=False,
         **kwrargs,
     ):
@@ -516,6 +517,12 @@ class LogsQuery:
 
         if services is not None:
             params["service"] = services
+
+        if order_by is not None:
+            params["order_by"] = order_by
+
+        if order_dir is not None:
+            params["order_dir"] = order_dir
 
         if kwrargs:
             if "tags" in kwrargs:
