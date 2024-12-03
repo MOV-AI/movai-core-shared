@@ -1,0 +1,93 @@
+movai\_core\_shared.messages package
+====================================
+
+Submodules
+----------
+
+movai\_core\_shared.messages.alert\_data module
+-----------------------------------------------
+
+.. automodule:: movai_core_shared.messages.alert_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.messages.command\_data module
+-------------------------------------------------
+
+.. automodule:: movai_core_shared.messages.command_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.messages.email\_data module
+-----------------------------------------------
+
+.. automodule:: movai_core_shared.messages.email_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.messages.general\_data module
+-------------------------------------------------
+
+.. automodule:: movai_core_shared.messages.general_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.messages.log\_data module
+---------------------------------------------
+
+.. automodule:: movai_core_shared.messages.log_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.messages.metric\_data module
+------------------------------------------------
+
+.. automodule:: movai_core_shared.messages.metric_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.messages.notification\_data module
+------------------------------------------------------
+
+.. automodule:: movai_core_shared.messages.notification_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.messages.sms\_data module
+---------------------------------------------
+
+.. automodule:: movai_core_shared.messages.sms_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.messages.stress\_data module
+------------------------------------------------
+
+.. automodule:: movai_core_shared.messages.stress_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.messages.user\_data module
+----------------------------------------------
+
+.. automodule:: movai_core_shared.messages.user_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: movai_core_shared.messages
+   :members:
+   :undoc-members:
+   :show-inheritance:

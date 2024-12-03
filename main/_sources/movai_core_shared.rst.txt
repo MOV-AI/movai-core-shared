@@ -1,0 +1,63 @@
+movai\_core\_shared package
+===========================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   movai_core_shared.common
+   movai_core_shared.core
+   movai_core_shared.messages
+
+Submodules
+----------
+
+movai\_core\_shared.consts module
+---------------------------------
+
+.. automodule:: movai_core_shared.consts
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.envvars module
+----------------------------------
+
+.. automodule:: movai_core_shared.envvars
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.exceptions module
+-------------------------------------
+
+.. automodule:: movai_core_shared.exceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.logger module
+---------------------------------
+
+.. automodule:: movai_core_shared.logger
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.recovery module
+-----------------------------------
+
+.. automodule:: movai_core_shared.recovery
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: movai_core_shared
+   :members:
+   :undoc-members:
+   :show-inheritance:
