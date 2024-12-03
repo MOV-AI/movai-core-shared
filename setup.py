@@ -8,7 +8,7 @@ requirements = [
     "cryptography==2.8",
     "requests==2.31.0",
     "pyzmq==26.0.0",
-    "pydantic[email]==2.5.2"
+    "pydantic[email]==2.6.4"
 ]
 
 
