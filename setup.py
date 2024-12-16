@@ -8,13 +8,13 @@ requirements = [
     "cryptography==2.8",
     "requests==2.31.0",
     "pyzmq==26.0.0",
-    "pydantic[email]==2.5.2"
+    "pydantic[email]==2.5.2",
 ]
 
 
 setuptools.setup(
     name="movai-core-shared",
-    version="2.5.0-20",
+    version="3.0.0-0",
     author="Backend team",
     author_email="backend@mov.ai",
     description="Shared objects for various Mov.AI projects",
