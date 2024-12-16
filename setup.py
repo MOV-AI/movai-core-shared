@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 requirements = [
     "beartype==0.14.1",
-    "cryptography==2.8",
+    "cryptography==44.0.0",
     "requests==2.31.0",
     "pyzmq==26.0.0",
     "pydantic[email]==2.5.2",
