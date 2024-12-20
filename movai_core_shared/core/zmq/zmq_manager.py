@@ -11,10 +11,10 @@
 """
 from enum import Enum
 from logging import getLogger
+from typing import Dict, Type, TypedDict
 
 from beartype import beartype
 
-from movai_core_shared.core.zmq.zmq_base import ZMQBase
 from movai_core_shared.core.zmq.zmq_client import ZMQClient, AsyncZMQClient
 from movai_core_shared.core.zmq.zmq_subscriber import ZMQSubscriber, AsyncZMQSubscriber
 from movai_core_shared.core.zmq.zmq_publisher import ZMQPublisher, AsyncZMQPublisher
@@ -31,7 +31,12 @@ class ZMQType(Enum):
     ASYNC_SUBSCRIBER = 6
 
 
-ZMQ_TYPES = {
+class ZMQTypeValue(TypedDict):
+    type: Type[ZMQClient]
+    identity: str
+
+
+ZMQ_TYPES: Dict[ZMQType, ZMQTypeValue] = {
     ZMQType.CLIENT: {"type": ZMQClient, "identity": "dealer"},
     ZMQType.ASYNC_CLIENT: {"type": AsyncZMQClient, "identity": "dealer"},
     ZMQType.PUBLISHER: {"type": ZMQPublisher, "identity": "pub"},
@@ -45,7 +50,7 @@ class ZMQManager:
     """This class will host ZMQ objects by their type and address."""
 
     _logger = getLogger("ZMQManager")
-    _clients = {
+    _clients: Dict[ZMQType, Dict[str, ZMQClient]] = {
         ZMQType.CLIENT: {},
         ZMQType.ASYNC_CLIENT: {},
         ZMQType.PUBLISHER: {},
@@ -63,7 +68,7 @@ class ZMQManager:
 
     @classmethod
     @beartype
-    def _get_or_create_zmq_object(cls, server_addr: str, zmq_type: ZMQType) -> ZMQBase:
+    def _get_or_create_zmq_object(cls, server_addr: str, zmq_type: ZMQType) -> ZMQClient:
         if zmq_type not in cls._clients:
             raise TypeError(f"{zmq_type} does not exist!")
 

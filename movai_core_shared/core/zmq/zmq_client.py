@@ -87,12 +87,12 @@ class ZMQClient(ZMQBase):
         if exc.errno == errno.ENOTSOCK:
             self._logger.warning(f"ZMQ socket error: {self._addr} got exception: {exc}.")
             if reset_socket:
-                self._logger.warning("Resetting ZMQ {self._addr} with potential data loss.")
+                self._logger.warning(f"Resetting ZMQ {self._addr} with potential data loss.")
                 self.reset(force=True)
         elif exc.errno == errno.EAGAIN:
             self._logger.warning(f"ZMQ socket error: {self._addr} got exception: {exc}.")
             if reset_socket:
-                self._logger.warning("Resetting ZMQ {self._addr}.")
+                self._logger.warning(f"Resetting ZMQ {self._addr}.")
                 self.reset()
         else:
             self._logger.error(
@@ -156,6 +156,7 @@ class ZMQClient(ZMQBase):
 class AsyncZMQClient(ZMQClient):
     """An Async implementation of ZMQ Client"""
 
+    _socket: zmq.asyncio.Socket
     _context = zmq.asyncio.Context()
 
     def init_lock(self) -> None:
