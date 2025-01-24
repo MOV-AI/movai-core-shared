@@ -46,7 +46,7 @@ def extract_reponse(buffer: List[bytes]) -> dict:
     """Extracts the response from the buffer.
 
     Args:
-        buffer (bytes): The memory buffer which contains the response msg.
+        buffer: List of memory buffers containing the message.
 
     Returns:
         (dict): A response from server.

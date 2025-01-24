@@ -47,7 +47,7 @@ def delta_time_float(delta: timedelta) -> float:
     """returns a future time in timestamp format.
 
     Args:
-        expiration_delta (int): the time delta from now.
+        expiration_delta (timedelta): the time delta from now.
 
     Returns:
         float: an float representing the time delta.
