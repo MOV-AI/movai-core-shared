@@ -1,5 +1,5 @@
 # movai-core-shared
-The movai core shared provides all the basic functionality such as logging and API 
+The movai core shared provides all the basic functionality such as logging and API
 for getting environment variables which all of the MOV.AI platform components require
 
 ## Usage
@@ -26,4 +26,3 @@ The complete build process:
     --index-url="https://artifacts.cloud.mov.ai/repository/pypi-experimental/simple" \
     --extra-index-url https://pypi.org/simple \
     ./dist/*.whl
-
