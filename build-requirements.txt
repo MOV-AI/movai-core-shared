@@ -7,7 +7,7 @@ psutil
 black
 pytest-cov
 pytest-asyncio
-tox==4*
+tox==4.*
 sphinx==5.3.0
 sphinx-rtd-theme==1.1.1
 sphinx-mdinclude==0.5.3
