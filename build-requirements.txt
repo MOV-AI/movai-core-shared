@@ -1,14 +1,13 @@
 # requirements for the execution of tests and packaging. Not runtime requirements.
 pytest
 mock
-bump2version
 flake8
 pylint
 psutil
 black
 pytest-cov
 pytest-asyncio
-tox
+tox==4.*
 sphinx==5.3.0
 sphinx-rtd-theme==1.1.1
 sphinx-mdinclude==0.6.2
