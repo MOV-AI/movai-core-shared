@@ -1,4 +1,4 @@
-# vTBD
+# v3.0.1
 - [BP-1340](https://movai.atlassian.net/browse/BP-1340): Migrate movai-core-shared to py-workflow@v2
 
 # v3.0.0 (same as v2.5.0.20)
