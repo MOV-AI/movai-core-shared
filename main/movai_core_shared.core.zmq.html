@@ -337,11 +337,11 @@ Proprietary and confidential</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="movai_core_shared.core.zmq.zmq_helpers.extract_reponse">
-<span class="sig-prename descclassname"><span class="pre">movai_core_shared.core.zmq.zmq_helpers.</span></span><span class="sig-name descname"><span class="pre">extract_reponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_helpers.extract_reponse" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">movai_core_shared.core.zmq.zmq_helpers.</span></span><span class="sig-name descname"><span class="pre">extract_reponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_helpers.extract_reponse" title="Permalink to this definition"></a></dt>
 <dd><p>Extracts the response from the buffer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>buffer</strong> (<em>bytes</em>) – The memory buffer which contains the response msg.</p>
+<dd class="field-odd"><p><strong>buffer</strong> – List of memory buffers containing the message.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A response from server.</p>
@@ -435,6 +435,22 @@ Proprietary and confidential</p>
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="movai_core_shared.core.zmq.zmq_manager.ZMQTypeValue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.core.zmq.zmq_manager.</span></span><span class="sig-name descname"><span class="pre">ZMQTypeValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_manager.ZMQTypeValue" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.core.zmq.zmq_manager.ZMQTypeValue.identity">
+<span class="sig-name descname"><span class="pre">identity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_manager.ZMQTypeValue.identity" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.core.zmq.zmq_manager.ZMQTypeValue.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#movai_core_shared.core.zmq.zmq_client.ZMQClient" title="movai_core_shared.core.zmq.zmq_client.ZMQClient"><span class="pre">ZMQClient</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_manager.ZMQTypeValue.type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-movai_core_shared.core.zmq.zmq_publisher">
 <span id="movai-core-shared-core-zmq-zmq-publisher-module"></span><h2>movai_core_shared.core.zmq.zmq_publisher module<a class="headerlink" href="#module-movai_core_shared.core.zmq.zmq_publisher" title="Permalink to this heading"></a></h2>
@@ -510,7 +526,7 @@ other tasks.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="movai_core_shared.core.zmq.zmq_server.ZMQServer.handle">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">handle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_server.ZMQServer.handle" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">handle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_server.ZMQServer.handle" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
