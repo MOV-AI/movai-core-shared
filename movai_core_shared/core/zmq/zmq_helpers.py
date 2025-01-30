@@ -12,6 +12,7 @@
 import json
 from logging import getLogger
 import random
+from typing import List
 
 from movai_core_shared.envvars import DEVICE_NAME, SERVICE_NAME
 from movai_core_shared.exceptions import MessageError
@@ -41,11 +42,11 @@ def create_msg(msg: dict):
         return None
 
 
-def extract_reponse(buffer: bytes):
+def extract_reponse(buffer: List[bytes]) -> dict:
     """Extracts the response from the buffer.
 
     Args:
-        buffer (bytes): The memory buffer which contains the response msg.
+        buffer: List of memory buffers containing the message.
 
     Returns:
         (dict): A response from server.

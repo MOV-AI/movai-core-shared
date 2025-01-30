@@ -12,6 +12,7 @@
 import asyncio
 import logging
 from abc import ABC, abstractmethod
+from typing import List
 
 import zmq
 import zmq.asyncio
@@ -54,11 +55,12 @@ class ZMQServer(ABC):
         """accepts new connections requests to zmq."""
         try:
             self.init_server()
+            assert self._socket
             if self._running:
                 self._logger.warning("%s is already running", self._name)
             self._running = True
-        except Exception:
-            self._logger.error("Failed to start %s", self._name)
+        except Exception as e:
+            self._logger.error("Failed to start %s: %s", self._name, e)
             return
 
         await self.at_startup()
@@ -120,7 +122,7 @@ class ZMQServer(ABC):
         self._running = False
 
     @abstractmethod
-    async def handle(self, buffer: bytes) -> None:
+    async def handle(self, buffer: List[bytes]) -> None:
         pass
 
     async def at_startup(self):

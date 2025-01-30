@@ -10,11 +10,16 @@
    - Ofer Katz (ofer@mov.ai) - 2022
    - Erez Zomer (erez@mov.ai) - 2022
 """
+from datetime import datetime
 import time
+from typing import TYPE_CHECKING, Optional, cast
 
-from movai_core_shared.core.zmq.zmq_manager import ZMQManager, ZMQType
+from movai_core_shared.core.zmq.zmq_manager import ZMQManager, ZMQType, AsyncZMQClient
 from movai_core_shared.envvars import DEVICE_NAME, FLEET_NAME, SERVICE_NAME
 from movai_core_shared.exceptions import ArgumentError, MessageFormatError
+
+if TYPE_CHECKING:
+    from movai_core_shared.core.zmq.zmq_client import ZMQClient
 
 
 class MessageClient:
@@ -23,6 +28,7 @@ class MessageClient:
     It wraps the data into the message structure and send it to
     the message-server using ZMQClient.
     """
+    _zmq_client: "ZMQClient"
 
     def __init__(self, server_addr: str, robot_id: str = "") -> None:
         """
@@ -48,7 +54,6 @@ class MessageClient:
             "service": SERVICE_NAME,
             "id": robot_id,
         }
-        self._zmq_client = None
         self._init_zmq_client()
 
     def _init_zmq_client(self) -> None:
@@ -58,26 +63,28 @@ class MessageClient:
         self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.CLIENT)
 
     def _build_request(
-        self, msg_type: str, data: dict, creation_time: str = None, response_required: bool = False
+        self, msg_type: str, data: dict, creation_time: Optional[datetime] = None, response_required: bool = False
     ) -> dict:
         """Build a request in the format accepted by the message server.
 
         Args:
             msg_type (str): The type of the message (logs, alerts, metrics....)
             data (dict): The data to include in the request.
-            creation_time (str, optional): The time the request was created.
+            creation_time (str, optional): The time the request was created. Defaults to now.
             response_required (bool, optional): Tells the message-server if the client is wainting for response.
 
         Returns:
             {dict}: The message request to send the message-server
         """
         if creation_time is None:
-            creation_time = time.time_ns()
+            creation_time_ns = time.time_ns()
+        else:
+            creation_time_ns = creation_time.timestamp() * 1000000000 + creation_time.microsecond * 1000
 
         request = {
             "request": {
                 "req_type": msg_type,
-                "created": creation_time,
+                "created": creation_time_ns,
                 "response_required": response_required,
                 "req_data": data,
                 "robot_info": self._robot_info,
@@ -108,7 +115,11 @@ class MessageClient:
         return response
 
     def send_request(
-        self, msg_type: str, data: dict, creation_time: str = None, response_required: bool = False
+        self,
+        msg_type: str,
+        data: dict,
+        creation_time: Optional[datetime] = None,
+        response_required: bool = False,
     ) -> dict:
         """
         Wrap the data into a message request and sent it to the robot message server
@@ -116,7 +127,7 @@ class MessageClient:
         Args:
             msg_type (str): the type of message.
             data (dict): The message data to be sent to the robot message server.
-            creation_time (str): The time where the request is created.
+            creation_time (datetime, optional): The time where the request is created. Defaults to now.
             response_required (bool): whether to wait for response, Default False.
         """
         # Add tags to the request data
@@ -167,14 +178,22 @@ class MessageClient:
 
 
 class AsyncMessageClient(MessageClient):
+    _zmq_client: AsyncZMQClient
+
     def _init_zmq_client(self) -> None:
         """
         Initializes the ZMQ attributute.
         """
-        self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.ASYNC_CLIENT)
+        self._zmq_client = cast(
+            AsyncZMQClient, ZMQManager.get_client(self._server_addr, ZMQType.ASYNC_CLIENT)
+        )
 
     async def send_request(
-        self, msg_type: str, data: dict, creation_time: str = None, response_required: bool = False
+        self,
+        msg_type: str,
+        data: dict,
+        creation_time: Optional[datetime] = None,
+        response_required: bool = False,
     ) -> dict:
         """
         Wrap the data into a message request and sent it asynchonously to the robot message server
