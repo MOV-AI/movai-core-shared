@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from typing import Union
 
 from movai_core_shared.exceptions import TimeError
 
@@ -30,11 +31,11 @@ def current_timestamp_int() -> int:
     return int(datetime.now().timestamp())
 
 
-def delta_time_int(delta: int) -> int:
+def delta_time_int(delta: timedelta) -> int:
     """returns a future time in timestamp format.
 
     Args:
-        expiration_delta (int): the time delta from now.
+        expiration_delta (timedelta): the time delta from now.
 
     Returns:
         int: an int representing the time delta.
@@ -42,11 +43,11 @@ def delta_time_int(delta: int) -> int:
     return int((datetime.now() + delta).timestamp())
 
 
-def delta_time_float(delta: int) -> float:
+def delta_time_float(delta: timedelta) -> float:
     """returns a future time in timestamp format.
 
     Args:
-        expiration_delta (int): the time delta from now.
+        expiration_delta (timedelta): the time delta from now.
 
     Returns:
         float: an float representing the time delta.
@@ -73,11 +74,11 @@ def validate_timestamp(timestamp: int) -> int:
         raise TimeError("The supplied time argument is not in timestamp format!") from exc
 
 
-def validate_time(value: int) -> str:
+def validate_time(value: Union[int, str]) -> int:
     """Validate if value is timestamp or datetime
 
     Args:
-        value (int): The datetime to validate
+        value (int|str): The datetime to validate
 
     Raises:
         ValueError: In case value isn't a time format.

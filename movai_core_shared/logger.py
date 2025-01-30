@@ -536,13 +536,10 @@ class LogsQuery:
             "count_field": "message",
         }
 
-        try:
-            query_response = await message_client.send_request(
-                LOGS_QUERY_HANDLER_MSG_TYPE, query_data, None, True
-            )
-            if "response" in query_response:
-                response = query_response["response"]
-        except Exception as error:
-            raise error
+        query_response = await message_client.send_request(
+            LOGS_QUERY_HANDLER_MSG_TYPE, query_data, None, True
+        )
+        if "response" in query_response:
+            response = query_response["response"]
 
         return response if pagination else response.get("data", [])
