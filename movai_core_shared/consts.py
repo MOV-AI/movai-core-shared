@@ -106,6 +106,7 @@ CONFIG_REGEX = r"\$\((param|config|var|flow)[^$)]+\)"
 
 TIMEOUT_PROCESS_SIGINT = 3  # seconds
 TIMEOUT_PROCESS_SIGTERM = 2  # seconds
+TIMEOUT_SEND_CMD_RESPONSE = 10  # seconds
 
 # Domains
 INTERNAL_DOMAIN = "internal"
