@@ -308,11 +308,11 @@ class LogAdapter(logging.LoggerAdapter):
 
     def error(self, *args, **kwargs):
         new_msg, kwargs = self.get_message(*args, **kwargs)
-        self.logger.error(new_msg, stacklevel=2, **kwargs)
+        self.logger.error(new_msg, stacklevel=3, **kwargs)
 
     def critical(self, *args, **kwargs):
         new_msg, kwargs = self.get_message(*args, **kwargs)
-        self.logger.critical(new_msg, stacklevel=2, **kwargs)
+        self.logger.critical(new_msg, stacklevel=3, **kwargs)
 
     def process(self, msg, kwargs):
         """
