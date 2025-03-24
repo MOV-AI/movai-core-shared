@@ -22,8 +22,10 @@ class CommandData(BaseModel):
     # validate using Pydantic's methods to ensure either "flow" or "node" is provided
     @pydantic.model_validator(mode="after")
     def validate_flow_or_node(self):
-        if not self.flow and not self.node:
-            raise ValueError("Either 'flow' or 'node' must be provided")
+        if self.command in ("START", "STOP") and not self.flow:
+            raise ValueError("Flow must be provided for START and STOP commands")
+        elif self.command in ("RUN", "KILL", "TRANS") and not self.node:
+            raise ValueError("Node must be provided for RUN, KILL, and TRANS commands")
 
     def __str__(self):
         text = f"Command: {self.command}\n Flow: {self.flow}\n"
