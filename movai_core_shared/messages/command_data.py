@@ -1,3 +1,5 @@
+"""Command data message definition."""
+
 from typing import Optional
 from pydantic import BaseModel
 from movai_core_shared.messages.general_data import Request
@@ -11,7 +13,7 @@ class Destination(BaseModel):
 
 class CommandData(BaseModel):
     command: str
-    flow: str
+    flow: Optional[str] = ""
     node: Optional[str] = ""
     port: Optional[str] = ""
     data: Optional[dict] = {}
