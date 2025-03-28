@@ -1,3 +1,5 @@
+"""Command data message definition."""
+
 from typing import Optional
 
 from pydantic import BaseModel
