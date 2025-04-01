@@ -11,7 +11,7 @@ on:
       - 'releases/**'
 jobs:
   CI:
-    uses: MOV-AI/.github/.github/workflows/py-workflow.yml@fix/containerize-jobs-v2
+    uses: MOV-AI/.github/.github/workflows/py-workflow.yml@v2
     with:
       deploy: false
       with_docs: true
