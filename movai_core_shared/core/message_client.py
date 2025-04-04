@@ -28,6 +28,7 @@ class MessageClient:
     It wraps the data into the message structure and send it to
     the message-server using ZMQClient.
     """
+
     _zmq_client: "ZMQClient"
 
     def __init__(self, server_addr: str, robot_id: str = "") -> None:
@@ -63,7 +64,11 @@ class MessageClient:
         self._zmq_client = ZMQManager.get_client(self._server_addr, ZMQType.CLIENT)
 
     def _build_request(
-        self, msg_type: str, data: dict, creation_time: Optional[datetime] = None, response_required: bool = False
+        self,
+        msg_type: str,
+        data: dict,
+        creation_time: Optional[datetime] = None,
+        response_required: bool = False,
     ) -> dict:
         """Build a request in the format accepted by the message server.
 
@@ -79,7 +84,9 @@ class MessageClient:
         if creation_time is None:
             creation_time_ns = time.time_ns()
         else:
-            creation_time_ns = creation_time.timestamp() * 1000000000 + creation_time.microsecond * 1000
+            creation_time_ns = (
+                creation_time.timestamp() * 1000000000 + creation_time.microsecond * 1000
+            )
 
         request = {
             "request": {
