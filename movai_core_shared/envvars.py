@@ -100,7 +100,7 @@ ENVIRON_ROS1 = {}
 ENVIRON_ROS2 = {}
 ENVIRON_GDNODE = {}
 
-for (key, value) in os.environ.items():
+for key, value in os.environ.items():
     ENVIRON_ROS1[key] = value
     ENVIRON_GDNODE[key] = value
 
@@ -126,7 +126,7 @@ ENVIRON_GDNODE_INJECT = {
     "ROS1_USER_WS": ROS1_USER_WS,
 }
 
-for (key, value) in ENVIRON_GDNODE_INJECT.items():
+for key, value in ENVIRON_GDNODE_INJECT.items():
     ENVIRON_GDNODE[key] = value
 
 REST_SCOPES = (
