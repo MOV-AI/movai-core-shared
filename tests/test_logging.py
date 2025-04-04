@@ -11,7 +11,6 @@ def validate_loglevel(log_level, mock_call):
 class TestLogging(unittest.TestCase):
     @mock.patch("sys.stderr.write")
     def test_validate_logs(self, stdout):
-
         log = Log.get_logger("test_logger")
 
         log.info("im logging info")
