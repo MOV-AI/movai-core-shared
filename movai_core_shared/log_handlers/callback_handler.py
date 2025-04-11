@@ -38,9 +38,10 @@ class CallbackStdOutHandler(logging.StreamHandler):
             # Override the module and funcName with the ones
 
             if (
-                hasattr(record.args, "module")
-                and hasattr(record.args, "funcName")
-                and hasattr(record.args, "lineno")
+                isinstance(record.args, dict)
+                and "module" in record.args
+                and "funcName" in record.args
+                and "lineno" in record.args
             ):
                 record.module = record.args.get("module")
                 record.funcName = record.args.get("funcName")
