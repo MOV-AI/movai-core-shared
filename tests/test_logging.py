@@ -42,7 +42,7 @@ class TestLogging(unittest.TestCase):
         self.assertIn("im logging error", call[1][0])
 
     @mock.patch("sys.stdout.write", side_effect=sys.stderr.write)
-    def test_log_adapter_logs(self, stdout):
+    def test_log_callback_adapter_logs(self, stdout):
         log = Log.get_callback_logger("test_logger", "test_node", "test_callback")
         log.info("im logging info")
 
@@ -50,6 +50,58 @@ class TestLogging(unittest.TestCase):
 
         call = stdout.mock_calls[0]
         self.assertTrue(validate_loglevel("INFO", call))
-        self.assertIn("[test_logging][test_log_adapter_logs]", call[1][0])
+        self.assertIn("[test_node][test_callback]", call[1][0])
         self.assertIn("im logging info", call[1][0])
-        self.assertIn("[user_log:True|node:test_node|callback:test_callback]", call[1][0])
+        self.assertNotIn("[]", call[1][0])
+        
+    @mock.patch("sys.stdout.write", side_effect=sys.stderr.write)
+    def test_log_callback_adapter_logs_tags(self, stdout):
+        log = Log.get_callback_logger("test_logger", "test_node", "test_callback")
+        log.info("im logging info", tag_custom="value")
+
+        stdout.assert_called_once()
+
+        call = stdout.mock_calls[0]
+        self.assertTrue(validate_loglevel("INFO", call))
+        self.assertIn("[test_node][test_callback]", call[1][0])
+        self.assertIn("im logging info", call[1][0])
+        self.assertIn("[tag_custom:value]", call[1][0])
+
+    @mock.patch("sys.stdout.write", side_effect=sys.stderr.write)
+    def test_error_log_callback_adapter_logs_tags(self, stdout):
+        log = Log.get_callback_logger("test_logger", "test_node", "test_callback")
+        log.error("im logging error", tag_custom="value")
+
+        stdout.assert_called_once()
+
+        call = stdout.mock_calls[0]
+        self.assertTrue(validate_loglevel("ERROR", call))
+        self.assertIn("[test_node][test_callback]", call[1][0])
+        self.assertIn("im logging error", call[1][0])
+        self.assertIn("[tag_custom:value]", call[1][0])
+
+    @mock.patch("sys.stdout.write", side_effect=sys.stderr.write)
+    def test_debug_log_callback_adapter_logs_tags(self, stdout):
+        log = Log.get_callback_logger("test_logger", "test_node", "test_callback")
+        log.debug("im logging debug", tag_custom="value")
+
+        stdout.assert_called_once()
+
+        call = stdout.mock_calls[0]
+        self.assertTrue(validate_loglevel("DEBUG", call))
+        self.assertIn("[test_node][test_callback]", call[1][0])
+        self.assertIn("im logging debug", call[1][0])
+        self.assertIn("[tag_custom:value]", call[1][0])
+
+    @mock.patch("sys.stdout.write", side_effect=sys.stderr.write)
+    def test_warning_log_callback_adapter_logs_tags(self, stdout):
+        log = Log.get_callback_logger("test_logger", "test_node", "test_callback")
+        log.warning("im logging warning", tag_custom="value")
+
+        stdout.assert_called_once()
+
+        call = stdout.mock_calls[0]
+        self.assertTrue(validate_loglevel("WARNING", call))
+        self.assertIn("[test_node][test_callback]", call[1][0])
+        self.assertIn("im logging warning", call[1][0])
+        self.assertIn("[tag_custom:value]", call[1][0])
