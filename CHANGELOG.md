@@ -1,4 +1,4 @@
-# vTBD
+# v3.1.0
 # v3.1.0
 - New release line for EE 2.4.4
 # v3.0.4
