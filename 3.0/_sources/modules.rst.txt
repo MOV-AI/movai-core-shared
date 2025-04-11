@@ -1,0 +1,7 @@
+movai-core-shared
+=================
+
+.. toctree::
+   :maxdepth: 4
+
+   movai_core_shared

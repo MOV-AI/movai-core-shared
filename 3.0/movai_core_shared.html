@@ -1,0 +1,1379 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>movai_core_shared package &mdash; movai-core-shared  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="_static/cropped-Mov.ai-favicon2-32x32.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/versions.js?v=6808f9ef"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="movai_core_shared.common package" href="movai_core_shared.common.html" />
+    <link rel="prev" title="movai-core-shared" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            movai-core-shared
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="readme.html">movai-core-shared</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">movai-core-shared</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">movai_core_shared package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.common.html">movai_core_shared.common package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html">movai_core_shared.core package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html">movai_core_shared.messages package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.consts">movai_core_shared.consts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.envvars">movai_core_shared.envvars module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.exceptions">movai_core_shared.exceptions module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.AclObjectAlreadyExist"><code class="docutils literal notranslate"><span class="pre">AclObjectAlreadyExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.AclObjectDoesNotExist"><code class="docutils literal notranslate"><span class="pre">AclObjectDoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.AclObjectError"><code class="docutils literal notranslate"><span class="pre">AclObjectError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.AclObjectIDMismatch"><code class="docutils literal notranslate"><span class="pre">AclObjectIDMismatch</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.AclObjectInvalidAttribute"><code class="docutils literal notranslate"><span class="pre">AclObjectInvalidAttribute</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.ActiveFlowError"><code class="docutils literal notranslate"><span class="pre">ActiveFlowError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.AlreadyExist"><code class="docutils literal notranslate"><span class="pre">AlreadyExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.ArgumentError"><code class="docutils literal notranslate"><span class="pre">ArgumentError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.AuthorizationError"><code class="docutils literal notranslate"><span class="pre">AuthorizationError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.CommandError"><code class="docutils literal notranslate"><span class="pre">CommandError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.ConfigurationDoesNotExist"><code class="docutils literal notranslate"><span class="pre">ConfigurationDoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.ConfigurationError"><code class="docutils literal notranslate"><span class="pre">ConfigurationError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.DBHandlerError"><code class="docutils literal notranslate"><span class="pre">DBHandlerError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.DomainDoesNotExist"><code class="docutils literal notranslate"><span class="pre">DomainDoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.HandlerNotFoundError"><code class="docutils literal notranslate"><span class="pre">HandlerNotFoundError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.InitializationError"><code class="docutils literal notranslate"><span class="pre">InitializationError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.InvalidCredentials"><code class="docutils literal notranslate"><span class="pre">InvalidCredentials</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.InvalidStructure"><code class="docutils literal notranslate"><span class="pre">InvalidStructure</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.InvalidToken"><code class="docutils literal notranslate"><span class="pre">InvalidToken</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.LdapConfigAlreadyExist"><code class="docutils literal notranslate"><span class="pre">LdapConfigAlreadyExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.LdapConfigDoesNotExist"><code class="docutils literal notranslate"><span class="pre">LdapConfigDoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.LdapConfigError"><code class="docutils literal notranslate"><span class="pre">LdapConfigError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.LdapConfigInvalidStructure"><code class="docutils literal notranslate"><span class="pre">LdapConfigInvalidStructure</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.LdapConfigMissingParameter"><code class="docutils literal notranslate"><span class="pre">LdapConfigMissingParameter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.LoginError"><code class="docutils literal notranslate"><span class="pre">LoginError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.MessageError"><code class="docutils literal notranslate"><span class="pre">MessageError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.MessageFormatError"><code class="docutils literal notranslate"><span class="pre">MessageFormatError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.MetricError"><code class="docutils literal notranslate"><span class="pre">MetricError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.MovaiException"><code class="docutils literal notranslate"><span class="pre">MovaiException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.NotSupported"><code class="docutils literal notranslate"><span class="pre">NotSupported</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.PasswordASCIIFormatError"><code class="docutils literal notranslate"><span class="pre">PasswordASCIIFormatError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.PasswordComplexityError"><code class="docutils literal notranslate"><span class="pre">PasswordComplexityError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.PasswordError"><code class="docutils literal notranslate"><span class="pre">PasswordError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.PrimaryKeyError"><code class="docutils literal notranslate"><span class="pre">PrimaryKeyError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.QueryError"><code class="docutils literal notranslate"><span class="pre">QueryError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.ResourceException"><code class="docutils literal notranslate"><span class="pre">ResourceException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RestrictedPathError"><code class="docutils literal notranslate"><span class="pre">RestrictedPathError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RoleAlreadyExist"><code class="docutils literal notranslate"><span class="pre">RoleAlreadyExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RoleDoesNotExist"><code class="docutils literal notranslate"><span class="pre">RoleDoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RoleError"><code class="docutils literal notranslate"><span class="pre">RoleError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RunError"><code class="docutils literal notranslate"><span class="pre">RunError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.SecretKeyAlreadyExist"><code class="docutils literal notranslate"><span class="pre">SecretKeyAlreadyExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.SecretKeyDoesNotExist"><code class="docutils literal notranslate"><span class="pre">SecretKeyDoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.SecretKeyError"><code class="docutils literal notranslate"><span class="pre">SecretKeyError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.TimeError"><code class="docutils literal notranslate"><span class="pre">TimeError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.TokenError"><code class="docutils literal notranslate"><span class="pre">TokenError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.TokenExpired"><code class="docutils literal notranslate"><span class="pre">TokenExpired</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.TokenRevoked"><code class="docutils literal notranslate"><span class="pre">TokenRevoked</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.TransitionException"><code class="docutils literal notranslate"><span class="pre">TransitionException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.UnknownRequestError"><code class="docutils literal notranslate"><span class="pre">UnknownRequestError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.UserAlreadyExist"><code class="docutils literal notranslate"><span class="pre">UserAlreadyExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.UserDoesNotExist"><code class="docutils literal notranslate"><span class="pre">UserDoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.UserError"><code class="docutils literal notranslate"><span class="pre">UserError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.UserPermissionsError"><code class="docutils literal notranslate"><span class="pre">UserPermissionsError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.logger">movai_core_shared.logger module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.Log"><code class="docutils literal notranslate"><span class="pre">Log</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.LogAdapter"><code class="docutils literal notranslate"><span class="pre">LogAdapter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.LogsQuery"><code class="docutils literal notranslate"><span class="pre">LogsQuery</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.RemoteHandler"><code class="docutils literal notranslate"><span class="pre">RemoteHandler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.StdOutHandler"><code class="docutils literal notranslate"><span class="pre">StdOutHandler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.get_remote_handler"><code class="docutils literal notranslate"><span class="pre">get_remote_handler()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.recovery">movai_core_shared.recovery module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.recovery.RecoveryStates"><code class="docutils literal notranslate"><span class="pre">RecoveryStates</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.ActiveFlowError"><code class="docutils literal notranslate"><span class="pre">ActiveFlowError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.AlreadyExist"><code class="docutils literal notranslate"><span class="pre">AlreadyExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.CommandError"><code class="docutils literal notranslate"><span class="pre">CommandError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.InvalidStructure"><code class="docutils literal notranslate"><span class="pre">InvalidStructure</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.Log"><code class="docutils literal notranslate"><span class="pre">Log</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.LogAdapter"><code class="docutils literal notranslate"><span class="pre">LogAdapter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.MovaiException"><code class="docutils literal notranslate"><span class="pre">MovaiException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.RecoveryStates"><code class="docutils literal notranslate"><span class="pre">RecoveryStates</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.ResourceException"><code class="docutils literal notranslate"><span class="pre">ResourceException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.TransitionException"><code class="docutils literal notranslate"><span class="pre">TransitionException</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">movai-core-shared</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">movai-core-shared</a></li>
+      <li class="breadcrumb-item active">movai_core_shared package</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/MOV-AI/flows-test-core/blob/3.0/docs/source/movai_core_shared.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="movai-core-shared-package">
+<h1>movai_core_shared package<a class="headerlink" href="#movai-core-shared-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="movai_core_shared.common.html">movai_core_shared.common package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.common.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.common.html#module-movai_core_shared.common.time">movai_core_shared.common.time module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.time.current_time_string"><code class="docutils literal notranslate"><span class="pre">current_time_string()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.time.current_timestamp_float"><code class="docutils literal notranslate"><span class="pre">current_timestamp_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.time.current_timestamp_int"><code class="docutils literal notranslate"><span class="pre">current_timestamp_int()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.time.delta_time_float"><code class="docutils literal notranslate"><span class="pre">delta_time_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.time.delta_time_int"><code class="docutils literal notranslate"><span class="pre">delta_time_int()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.time.validate_time"><code class="docutils literal notranslate"><span class="pre">validate_time()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.time.validate_timestamp"><code class="docutils literal notranslate"><span class="pre">validate_timestamp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.common.html#module-movai_core_shared.common.utils">movai_core_shared.common.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.create_principal_name"><code class="docutils literal notranslate"><span class="pre">create_principal_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.get_ip_address"><code class="docutils literal notranslate"><span class="pre">get_ip_address()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.get_package_version"><code class="docutils literal notranslate"><span class="pre">get_package_version()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.is_enterprise"><code class="docutils literal notranslate"><span class="pre">is_enterprise()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.is_manager"><code class="docutils literal notranslate"><span class="pre">is_manager()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.run_blocking_code"><code class="docutils literal notranslate"><span class="pre">run_blocking_code()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.common.html#module-movai_core_shared.common">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="movai_core_shared.core.html">movai_core_shared.core package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.core.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.core.zmq.html">movai_core_shared.core.zmq package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.zmq.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.zmq.html#module-movai_core_shared.core.zmq.zmq_base">movai_core_shared.core.zmq.zmq_base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.zmq.html#module-movai_core_shared.core.zmq.zmq_client">movai_core_shared.core.zmq.zmq_client module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.zmq.html#module-movai_core_shared.core.zmq.zmq_helpers">movai_core_shared.core.zmq.zmq_helpers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.zmq.html#module-movai_core_shared.core.zmq.zmq_manager">movai_core_shared.core.zmq.zmq_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.zmq.html#module-movai_core_shared.core.zmq.zmq_publisher">movai_core_shared.core.zmq.zmq_publisher module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.zmq.html#module-movai_core_shared.core.zmq.zmq_server">movai_core_shared.core.zmq.zmq_server module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.zmq.html#module-movai_core_shared.core.zmq.zmq_subscriber">movai_core_shared.core.zmq.zmq_subscriber module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.zmq.html#module-movai_core_shared.core.zmq">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.core.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.core.html#module-movai_core_shared.core.base_command">movai_core_shared.core.base_command module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.base_command.BaseCommand"><code class="docutils literal notranslate"><span class="pre">BaseCommand</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.base_command.BaseCommand.define_arguments"><code class="docutils literal notranslate"><span class="pre">BaseCommand.define_arguments()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.base_command.BaseCommand.execute"><code class="docutils literal notranslate"><span class="pre">BaseCommand.execute()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.base_command.BaseCommand.name"><code class="docutils literal notranslate"><span class="pre">BaseCommand.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.base_command.BaseCommand.safe_execute"><code class="docutils literal notranslate"><span class="pre">BaseCommand.safe_execute()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.core.html#module-movai_core_shared.core.message_client">movai_core_shared.core.message_client module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.message_client.AsyncMessageClient"><code class="docutils literal notranslate"><span class="pre">AsyncMessageClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.message_client.AsyncMessageClient.forward_request"><code class="docutils literal notranslate"><span class="pre">AsyncMessageClient.forward_request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.message_client.AsyncMessageClient.send_msg"><code class="docutils literal notranslate"><span class="pre">AsyncMessageClient.send_msg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.message_client.AsyncMessageClient.send_request"><code class="docutils literal notranslate"><span class="pre">AsyncMessageClient.send_request()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.message_client.MessageClient"><code class="docutils literal notranslate"><span class="pre">MessageClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.message_client.MessageClient.forward_request"><code class="docutils literal notranslate"><span class="pre">MessageClient.forward_request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.message_client.MessageClient.send_msg"><code class="docutils literal notranslate"><span class="pre">MessageClient.send_msg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.message_client.MessageClient.send_request"><code class="docutils literal notranslate"><span class="pre">MessageClient.send_request()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.core.html#module-movai_core_shared.core.secure">movai_core_shared.core.secure module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.secure.generate_secret_bytes"><code class="docutils literal notranslate"><span class="pre">generate_secret_bytes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.secure.generate_secret_string"><code class="docutils literal notranslate"><span class="pre">generate_secret_string()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.core.html#module-movai_core_shared.core.securepassword">movai_core_shared.core.securepassword module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.securepassword.SecurePassword"><code class="docutils literal notranslate"><span class="pre">SecurePassword</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.securepassword.SecurePassword.create_hash"><code class="docutils literal notranslate"><span class="pre">SecurePassword.create_hash()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.securepassword.SecurePassword.create_salt"><code class="docutils literal notranslate"><span class="pre">SecurePassword.create_salt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.securepassword.SecurePassword.create_salted_hash"><code class="docutils literal notranslate"><span class="pre">SecurePassword.create_salted_hash()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.securepassword.SecurePassword.decrypt_password"><code class="docutils literal notranslate"><span class="pre">SecurePassword.decrypt_password()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.securepassword.SecurePassword.encrypt_password"><code class="docutils literal notranslate"><span class="pre">SecurePassword.encrypt_password()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.securepassword.SecurePassword.extract_hash"><code class="docutils literal notranslate"><span class="pre">SecurePassword.extract_hash()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.securepassword.SecurePassword.extract_salt"><code class="docutils literal notranslate"><span class="pre">SecurePassword.extract_salt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.securepassword.SecurePassword.verify_password"><code class="docutils literal notranslate"><span class="pre">SecurePassword.verify_password()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.core.html#movai_core_shared.core.securepassword.password_checker"><code class="docutils literal notranslate"><span class="pre">password_checker()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.core.html#module-movai_core_shared.core">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="movai_core_shared.messages.html">movai_core_shared.messages package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages.alert_data">movai_core_shared.messages.alert_data module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.Alert"><code class="docutils literal notranslate"><span class="pre">Alert</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.Alert.action"><code class="docutils literal notranslate"><span class="pre">Alert.action</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.Alert.callback"><code class="docutils literal notranslate"><span class="pre">Alert.callback</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.Alert.info"><code class="docutils literal notranslate"><span class="pre">Alert.info</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.Alert.model_config"><code class="docutils literal notranslate"><span class="pre">Alert.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.Alert.model_fields"><code class="docutils literal notranslate"><span class="pre">Alert.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.Alert.name"><code class="docutils literal notranslate"><span class="pre">Alert.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.Alert.send_email"><code class="docutils literal notranslate"><span class="pre">Alert.send_email</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.Alert.status"><code class="docutils literal notranslate"><span class="pre">Alert.status</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertData"><code class="docutils literal notranslate"><span class="pre">AlertData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertData.metric_fields"><code class="docutils literal notranslate"><span class="pre">AlertData.metric_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertData.model_config"><code class="docutils literal notranslate"><span class="pre">AlertData.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertData.model_fields"><code class="docutils literal notranslate"><span class="pre">AlertData.model_fields</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertRequest"><code class="docutils literal notranslate"><span class="pre">AlertRequest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertRequest.model_config"><code class="docutils literal notranslate"><span class="pre">AlertRequest.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertRequest.model_fields"><code class="docutils literal notranslate"><span class="pre">AlertRequest.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertRequest.req_data"><code class="docutils literal notranslate"><span class="pre">AlertRequest.req_data</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages.command_data">movai_core_shared.messages.command_data module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.Command"><code class="docutils literal notranslate"><span class="pre">Command</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.Command.command_data"><code class="docutils literal notranslate"><span class="pre">Command.command_data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.Command.dst"><code class="docutils literal notranslate"><span class="pre">Command.dst</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.Command.model_config"><code class="docutils literal notranslate"><span class="pre">Command.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.Command.model_fields"><code class="docutils literal notranslate"><span class="pre">Command.model_fields</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.CommandData"><code class="docutils literal notranslate"><span class="pre">CommandData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.CommandData.command"><code class="docutils literal notranslate"><span class="pre">CommandData.command</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.CommandData.data"><code class="docutils literal notranslate"><span class="pre">CommandData.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.CommandData.flow"><code class="docutils literal notranslate"><span class="pre">CommandData.flow</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.CommandData.model_config"><code class="docutils literal notranslate"><span class="pre">CommandData.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.CommandData.model_fields"><code class="docutils literal notranslate"><span class="pre">CommandData.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.CommandData.node"><code class="docutils literal notranslate"><span class="pre">CommandData.node</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.CommandData.port"><code class="docutils literal notranslate"><span class="pre">CommandData.port</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.CommandReq"><code class="docutils literal notranslate"><span class="pre">CommandReq</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.CommandReq.model_config"><code class="docutils literal notranslate"><span class="pre">CommandReq.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.CommandReq.model_fields"><code class="docutils literal notranslate"><span class="pre">CommandReq.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.CommandReq.req_data"><code class="docutils literal notranslate"><span class="pre">CommandReq.req_data</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.Destination"><code class="docutils literal notranslate"><span class="pre">Destination</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.Destination.host"><code class="docutils literal notranslate"><span class="pre">Destination.host</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.Destination.id"><code class="docutils literal notranslate"><span class="pre">Destination.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.Destination.ip"><code class="docutils literal notranslate"><span class="pre">Destination.ip</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.Destination.model_config"><code class="docutils literal notranslate"><span class="pre">Destination.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.command_data.Destination.model_fields"><code class="docutils literal notranslate"><span class="pre">Destination.model_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages.email_data">movai_core_shared.messages.email_data module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.email_data.EmailData"><code class="docutils literal notranslate"><span class="pre">EmailData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.email_data.EmailData.attachment_data"><code class="docutils literal notranslate"><span class="pre">EmailData.attachment_data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.email_data.EmailData.body"><code class="docutils literal notranslate"><span class="pre">EmailData.body</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.email_data.EmailData.model_config"><code class="docutils literal notranslate"><span class="pre">EmailData.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.email_data.EmailData.model_fields"><code class="docutils literal notranslate"><span class="pre">EmailData.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.email_data.EmailData.notification_type"><code class="docutils literal notranslate"><span class="pre">EmailData.notification_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.email_data.EmailData.notification_type_valid"><code class="docutils literal notranslate"><span class="pre">EmailData.notification_type_valid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.email_data.EmailData.recipients"><code class="docutils literal notranslate"><span class="pre">EmailData.recipients</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.email_data.EmailData.sender"><code class="docutils literal notranslate"><span class="pre">EmailData.sender</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.email_data.EmailData.subject"><code class="docutils literal notranslate"><span class="pre">EmailData.subject</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages.general_data">movai_core_shared.messages.general_data module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.Request"><code class="docutils literal notranslate"><span class="pre">Request</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.Request.created"><code class="docutils literal notranslate"><span class="pre">Request.created</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.Request.model_config"><code class="docutils literal notranslate"><span class="pre">Request.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.Request.model_fields"><code class="docutils literal notranslate"><span class="pre">Request.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.Request.req_id"><code class="docutils literal notranslate"><span class="pre">Request.req_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.Request.req_type"><code class="docutils literal notranslate"><span class="pre">Request.req_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.Request.response_required"><code class="docutils literal notranslate"><span class="pre">Request.response_required</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.Request.robot_info"><code class="docutils literal notranslate"><span class="pre">Request.robot_info</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.RobotInfo"><code class="docutils literal notranslate"><span class="pre">RobotInfo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.RobotInfo.fleet"><code class="docutils literal notranslate"><span class="pre">RobotInfo.fleet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.RobotInfo.id"><code class="docutils literal notranslate"><span class="pre">RobotInfo.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.RobotInfo.model_config"><code class="docutils literal notranslate"><span class="pre">RobotInfo.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.RobotInfo.model_fields"><code class="docutils literal notranslate"><span class="pre">RobotInfo.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.RobotInfo.robot"><code class="docutils literal notranslate"><span class="pre">RobotInfo.robot</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.RobotInfo.service"><code class="docutils literal notranslate"><span class="pre">RobotInfo.service</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.print_dict"><code class="docutils literal notranslate"><span class="pre">print_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#movai-core-shared-messages-log-data-module">movai_core_shared.messages.log_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages.metric_data">movai_core_shared.messages.metric_data module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricData"><code class="docutils literal notranslate"><span class="pre">MetricData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricData.measurement"><code class="docutils literal notranslate"><span class="pre">MetricData.measurement</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricData.metric_fields"><code class="docutils literal notranslate"><span class="pre">MetricData.metric_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricData.metric_tags"><code class="docutils literal notranslate"><span class="pre">MetricData.metric_tags</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricData.metric_type"><code class="docutils literal notranslate"><span class="pre">MetricData.metric_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricData.model_config"><code class="docutils literal notranslate"><span class="pre">MetricData.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricData.model_fields"><code class="docutils literal notranslate"><span class="pre">MetricData.model_fields</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricQueryData"><code class="docutils literal notranslate"><span class="pre">MetricQueryData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricQueryData.measurement"><code class="docutils literal notranslate"><span class="pre">MetricQueryData.measurement</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricQueryData.model_config"><code class="docutils literal notranslate"><span class="pre">MetricQueryData.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricQueryData.model_fields"><code class="docutils literal notranslate"><span class="pre">MetricQueryData.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricQueryData.query_data"><code class="docutils literal notranslate"><span class="pre">MetricQueryData.query_data</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricQueryRequest"><code class="docutils literal notranslate"><span class="pre">MetricQueryRequest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricQueryRequest.model_config"><code class="docutils literal notranslate"><span class="pre">MetricQueryRequest.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricQueryRequest.model_fields"><code class="docutils literal notranslate"><span class="pre">MetricQueryRequest.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricQueryRequest.req_data"><code class="docutils literal notranslate"><span class="pre">MetricQueryRequest.req_data</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricRequest"><code class="docutils literal notranslate"><span class="pre">MetricRequest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricRequest.model_config"><code class="docutils literal notranslate"><span class="pre">MetricRequest.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricRequest.model_fields"><code class="docutils literal notranslate"><span class="pre">MetricRequest.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.MetricRequest.req_data"><code class="docutils literal notranslate"><span class="pre">MetricRequest.req_data</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.QueryData"><code class="docutils literal notranslate"><span class="pre">QueryData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.QueryData.from_"><code class="docutils literal notranslate"><span class="pre">QueryData.from_</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.QueryData.limit"><code class="docutils literal notranslate"><span class="pre">QueryData.limit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.QueryData.model_config"><code class="docutils literal notranslate"><span class="pre">QueryData.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.QueryData.model_fields"><code class="docutils literal notranslate"><span class="pre">QueryData.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.QueryData.offset"><code class="docutils literal notranslate"><span class="pre">QueryData.offset</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.QueryData.robots"><code class="docutils literal notranslate"><span class="pre">QueryData.robots</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.QueryData.tags"><code class="docutils literal notranslate"><span class="pre">QueryData.tags</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.QueryData.to_"><code class="docutils literal notranslate"><span class="pre">QueryData.to_</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages.notification_data">movai_core_shared.messages.notification_data module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.notification_data.NotificationDataFactory"><code class="docutils literal notranslate"><span class="pre">NotificationDataFactory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.notification_data.NotificationDataFactory.create"><code class="docutils literal notranslate"><span class="pre">NotificationDataFactory.create()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages.sms_data">movai_core_shared.messages.sms_data module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.sms_data.SMSData"><code class="docutils literal notranslate"><span class="pre">SMSData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.sms_data.SMSData.model_config"><code class="docutils literal notranslate"><span class="pre">SMSData.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.sms_data.SMSData.model_fields"><code class="docutils literal notranslate"><span class="pre">SMSData.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.sms_data.SMSData.msg"><code class="docutils literal notranslate"><span class="pre">SMSData.msg</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.sms_data.SMSData.notification_type"><code class="docutils literal notranslate"><span class="pre">SMSData.notification_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.sms_data.SMSData.recipients"><code class="docutils literal notranslate"><span class="pre">SMSData.recipients</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#movai-core-shared-messages-stress-data-module">movai_core_shared.messages.stress_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages.user_data">movai_core_shared.messages.user_data module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.user_data.UserData"><code class="docutils literal notranslate"><span class="pre">UserData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.user_data.UserData.model_config"><code class="docutils literal notranslate"><span class="pre">UserData.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.user_data.UserData.model_fields"><code class="docutils literal notranslate"><span class="pre">UserData.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.user_data.UserData.msg"><code class="docutils literal notranslate"><span class="pre">UserData.msg</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.user_data.UserData.notification_type"><code class="docutils literal notranslate"><span class="pre">UserData.notification_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.user_data.UserData.robot_id"><code class="docutils literal notranslate"><span class="pre">UserData.robot_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.user_data.UserData.robot_name"><code class="docutils literal notranslate"><span class="pre">UserData.robot_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.NotificationDataFactory"><code class="docutils literal notranslate"><span class="pre">NotificationDataFactory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.NotificationDataFactory.create"><code class="docutils literal notranslate"><span class="pre">NotificationDataFactory.create()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-movai_core_shared.consts">
+<span id="movai-core-shared-consts-module"></span><h2>movai_core_shared.consts module<a class="headerlink" href="#module-movai_core_shared.consts" title="Permalink to this heading"></a></h2>
+<p>Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential</p>
+<p>Developers:
+- Dor Marcous (<a class="reference external" href="mailto:Dor&#37;&#52;&#48;mov&#46;ai">Dor<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2022</p>
+</section>
+<section id="module-movai_core_shared.envvars">
+<span id="movai-core-shared-envvars-module"></span><h2>movai_core_shared.envvars module<a class="headerlink" href="#module-movai_core_shared.envvars" title="Permalink to this heading"></a></h2>
+<p>Compilation of necessary environment variables to push to the database</p>
+</section>
+<section id="module-movai_core_shared.exceptions">
+<span id="movai-core-shared-exceptions-module"></span><h2>movai_core_shared.exceptions module<a class="headerlink" href="#module-movai_core_shared.exceptions" title="Permalink to this heading"></a></h2>
+<p>Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential</p>
+<p>Developers:
+- Manuel Silva (<a class="reference external" href="mailto:manuel&#46;silva&#37;&#52;&#48;mov&#46;ai">manuel<span>&#46;</span>silva<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2020
+- Tiago Paulino (<a class="reference external" href="mailto:tiago&#37;&#52;&#48;mov&#46;ai">tiago<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2020
+- Dor Marcous (<a class="reference external" href="mailto:Dor&#37;&#52;&#48;mov&#46;ai">Dor<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2022</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.AclObjectAlreadyExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">AclObjectAlreadyExist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.AclObjectAlreadyExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.AclObjectError" title="movai_core_shared.exceptions.AclObjectError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AclObjectError</span></code></a></p>
+<p>the required object is already found on DB.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.AclObjectDoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">AclObjectDoesNotExist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.AclObjectDoesNotExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.AclObjectError" title="movai_core_shared.exceptions.AclObjectError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AclObjectError</span></code></a></p>
+<p>the required object is not found on DB.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.AclObjectError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">AclObjectError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.AclObjectError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>a base class for AclObject model exceptions.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.AclObjectIDMismatch">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">AclObjectIDMismatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.AclObjectIDMismatch" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.AclObjectError" title="movai_core_shared.exceptions.AclObjectError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AclObjectError</span></code></a></p>
+<p>The name and the ID of the required object are mismatched.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.AclObjectInvalidAttribute">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">AclObjectInvalidAttribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.AclObjectInvalidAttribute" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.AclObjectError" title="movai_core_shared.exceptions.AclObjectError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AclObjectError</span></code></a></p>
+<p>The required attribute does id not defined in AclObject scheme.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.ActiveFlowError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">ActiveFlowError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.ActiveFlowError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Raise when the command requires an active flow</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.AlreadyExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">AlreadyExist</span></span><a class="headerlink" href="#movai_core_shared.exceptions.AlreadyExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Raised when something already exists.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.ArgumentError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">ArgumentError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.ArgumentError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>The supplied argument is invalid.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.AuthorizationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">AuthorizationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.AuthorizationError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.LoginError" title="movai_core_shared.exceptions.LoginError"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginError</span></code></a></p>
+<p>Failure to get access to the system.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.CommandError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">CommandError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.CommandError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Raise when the command does not exist</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.ConfigurationDoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">ConfigurationDoesNotExist</span></span><a class="headerlink" href="#movai_core_shared.exceptions.ConfigurationDoesNotExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.DoesNotExist" title="movai_core_shared.exceptions.DoesNotExist"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoesNotExist</span></code></a></p>
+<p>The requested configuration could not be found.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.ConfigurationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">ConfigurationError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.ConfigurationError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>The configuration cannot be parsed.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.DBHandlerError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">DBHandlerError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.DBHandlerError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>General exception in DBHandler.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#movai_core_shared.exceptions.DoesNotExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Raised when something is not found.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.DomainDoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">DomainDoesNotExist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.DomainDoesNotExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.LoginError" title="movai_core_shared.exceptions.LoginError"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginError</span></code></a></p>
+<p>The required domain is not registered in the systm.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.HandlerNotFoundError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">HandlerNotFoundError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.HandlerNotFoundError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>The message has no suitable handler.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.InitializationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">InitializationError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.InitializationError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Failure to initialize an object.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.InvalidCredentials">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidCredentials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.InvalidCredentials" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.LoginError" title="movai_core_shared.exceptions.LoginError"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginError</span></code></a></p>
+<p>Supplied credentials are incorrect.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.InvalidStructure">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidStructure</span></span><a class="headerlink" href="#movai_core_shared.exceptions.InvalidStructure" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Raised when structure to be saved in DB is invalid.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.InvalidToken">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidToken</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.InvalidToken" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.TokenError" title="movai_core_shared.exceptions.TokenError"><code class="xref py py-class docutils literal notranslate"><span class="pre">TokenError</span></code></a></p>
+<p>Failed to get access token.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.LdapConfigAlreadyExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">LdapConfigAlreadyExist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.LdapConfigAlreadyExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.LdapConfigError" title="movai_core_shared.exceptions.LdapConfigError"><code class="xref py py-class docutils literal notranslate"><span class="pre">LdapConfigError</span></code></a></p>
+<p>A configuration with the supplied name is already exist in DB.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.LdapConfigDoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">LdapConfigDoesNotExist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.LdapConfigDoesNotExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.LdapConfigError" title="movai_core_shared.exceptions.LdapConfigError"><code class="xref py py-class docutils literal notranslate"><span class="pre">LdapConfigError</span></code></a></p>
+<p>the required configuration is not found on DB.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.LdapConfigError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">LdapConfigError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.LdapConfigError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>a base class for LdapConfig model exceptions.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.LdapConfigInvalidStructure">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">LdapConfigInvalidStructure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.LdapConfigInvalidStructure" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.LdapConfigError" title="movai_core_shared.exceptions.LdapConfigError"><code class="xref py py-class docutils literal notranslate"><span class="pre">LdapConfigError</span></code></a></p>
+<p>a required parameter is missing in supplied LdapConfig dictionary.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.LdapConfigMissingParameter">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">LdapConfigMissingParameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.LdapConfigMissingParameter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.LdapConfigError" title="movai_core_shared.exceptions.LdapConfigError"><code class="xref py py-class docutils literal notranslate"><span class="pre">LdapConfigError</span></code></a></p>
+<p>a required parameter is missing in supplied LdapConfig dictionary.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.LoginError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">LoginError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.LoginError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>A base class for login errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.MessageError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">MessageError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.MessageError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>There are missing keys in the message.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.MessageFormatError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">MessageFormatError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.MessageFormatError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MessageError" title="movai_core_shared.exceptions.MessageError"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageError</span></code></a></p>
+<p>There are missing keys in the message.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.MetricError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">MetricError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.MetricError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MessageError" title="movai_core_shared.exceptions.MessageError"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageError</span></code></a></p>
+<p>Something is wrong with the metric.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.MovaiException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">MovaiException</span></span><a class="headerlink" href="#movai_core_shared.exceptions.MovaiException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>General MovAI API exception occurred.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.NotSupported">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">NotSupported</span></span><a class="headerlink" href="#movai_core_shared.exceptions.NotSupported" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>The method is not supported for this version</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.PasswordASCIIFormatError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">PasswordASCIIFormatError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.PasswordASCIIFormatError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>The supplied password isn’t comprised of ascii symbols.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.PasswordComplexityError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">PasswordComplexityError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.PasswordComplexityError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.PasswordError" title="movai_core_shared.exceptions.PasswordError"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordError</span></code></a></p>
+<p>The password doesn’t comply with complexity settings.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.PasswordError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">PasswordError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.PasswordError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>a base class for password exceptions.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.PrimaryKeyError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">PrimaryKeyError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.PrimaryKeyError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>The supplied key is in wrong format</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.QueryError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">QueryError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.QueryError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Something is wrong with the metric.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.ResourceException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">ResourceException</span></span><a class="headerlink" href="#movai_core_shared.exceptions.ResourceException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>A resource handling exception</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.RestrictedPathError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">RestrictedPathError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.RestrictedPathError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>The client tries to access restricted path.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.RoleAlreadyExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">RoleAlreadyExist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.RoleAlreadyExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.RoleError" title="movai_core_shared.exceptions.RoleError"><code class="xref py py-class docutils literal notranslate"><span class="pre">RoleError</span></code></a></p>
+<p>the requested role is already found in DB.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.RoleDoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">RoleDoesNotExist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.RoleDoesNotExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.RoleError" title="movai_core_shared.exceptions.RoleError"><code class="xref py py-class docutils literal notranslate"><span class="pre">RoleError</span></code></a></p>
+<p>the requested role is not found on DB.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.RoleError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">RoleError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.RoleError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>a base class for Role model exceptions.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.RunError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">RunError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.RunError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Run error elements exception</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.SecretKeyAlreadyExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">SecretKeyAlreadyExist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.SecretKeyAlreadyExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.SecretKeyError" title="movai_core_shared.exceptions.SecretKeyError"><code class="xref py py-class docutils literal notranslate"><span class="pre">SecretKeyError</span></code></a></p>
+<p>the requested secret key is already found in DB.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.SecretKeyDoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">SecretKeyDoesNotExist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.SecretKeyDoesNotExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.SecretKeyError" title="movai_core_shared.exceptions.SecretKeyError"><code class="xref py py-class docutils literal notranslate"><span class="pre">SecretKeyError</span></code></a></p>
+<p>the requested secret key is not found on DB.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.SecretKeyError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">SecretKeyError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.SecretKeyError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>a base class for Role model exceptions.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.TimeError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">TimeError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.TimeError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>The supplied time is not a timestamp</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.TokenError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">TokenError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.TokenError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.LoginError" title="movai_core_shared.exceptions.LoginError"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginError</span></code></a></p>
+<p>General Token error</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.TokenExpired">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">TokenExpired</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.TokenExpired" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.TokenError" title="movai_core_shared.exceptions.TokenError"><code class="xref py py-class docutils literal notranslate"><span class="pre">TokenError</span></code></a></p>
+<p>Token’s signature has expired.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.TokenRevoked">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">TokenRevoked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.TokenRevoked" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.TokenError" title="movai_core_shared.exceptions.TokenError"><code class="xref py py-class docutils literal notranslate"><span class="pre">TokenError</span></code></a></p>
+<p>Token have been revoked.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.TransitionException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">TransitionException</span></span><a class="headerlink" href="#movai_core_shared.exceptions.TransitionException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Raised a GD_Node transition happens.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.UnknownRequestError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">UnknownRequestError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.UnknownRequestError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>The request format is unknown.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.UserAlreadyExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">UserAlreadyExist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.UserAlreadyExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.UserError" title="movai_core_shared.exceptions.UserError"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserError</span></code></a></p>
+<p>The requested user is already exist in the system.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.UserDoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">UserDoesNotExist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.UserDoesNotExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.UserError" title="movai_core_shared.exceptions.UserError"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserError</span></code></a></p>
+<p>The requested user is not exist in the system.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.UserError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">UserError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.UserError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>A base class for user errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.UserPermissionsError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">UserPermissionsError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.exceptions.UserPermissionsError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.UserError" title="movai_core_shared.exceptions.UserError"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserError</span></code></a></p>
+<p>The user’s permissions can’t be retrieved.</p>
+</dd></dl>
+
+</section>
+<section id="module-movai_core_shared.logger">
+<span id="movai-core-shared-logger-module"></span><h2>movai_core_shared.logger module<a class="headerlink" href="#module-movai_core_shared.logger" title="Permalink to this heading"></a></h2>
+<p>Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential</p>
+<p>Developers:
+- Dor Marcous (<a class="reference external" href="mailto:dor&#37;&#52;&#48;mov&#46;ai">dor<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2022</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="movai_core_shared.logger.Log">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.logger.</span></span><span class="sig-name descname"><span class="pre">Log</span></span><a class="headerlink" href="#movai_core_shared.logger.Log" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A static class to help create logger instances</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.logger.Log.LOG_FILE">
+<span class="sig-name descname"><span class="pre">LOG_FILE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/opt/mov.ai/app/movai.log'</span></em><a class="headerlink" href="#movai_core_shared.logger.Log.LOG_FILE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.logger.Log.get_callback_logger">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_callback_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#movai_core_shared.logger.LogAdapter" title="movai_core_shared.logger.LogAdapter"><span class="pre">LogAdapter</span></a></span></span><a class="headerlink" href="#movai_core_shared.logger.Log.get_callback_logger" title="Permalink to this definition"></a></dt>
+<dd><p>Adds ‘user_log=True’, ‘node’ and ‘callback’ tags to the logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger_name</strong> (<em>str</em>) – The name of the logger.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A logger with tags.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#movai_core_shared.logger.LogAdapter" title="movai_core_shared.logger.LogAdapter">LogAdapter</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.logger.Log.get_logger">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.Log.get_logger" title="Permalink to this definition"></a></dt>
+<dd><p>Get a logger instance</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.logger.Log.get_user_logger">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_user_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#movai_core_shared.logger.LogAdapter" title="movai_core_shared.logger.LogAdapter"><span class="pre">LogAdapter</span></a></span></span><a class="headerlink" href="#movai_core_shared.logger.Log.get_user_logger" title="Permalink to this definition"></a></dt>
+<dd><p>Add ‘user_log=True’ tag to the logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger_name</strong> (<em>str</em>) – The name of the logger.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A logger with tags.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#movai_core_shared.logger.LogAdapter" title="movai_core_shared.logger.LogAdapter">LogAdapter</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.logger.Log.set_log_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_log_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.Log.set_log_file" title="Permalink to this definition"></a></dt>
+<dd><p>Set the name of the file we write the log</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="movai_core_shared.logger.LogAdapter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.logger.</span></span><span class="sig-name descname"><span class="pre">LogAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.LogAdapter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerAdapter</span></code></p>
+<p>A LogAdapter used to expose the logger inside a callback, we should
+not need to use this adapter outside a callback.</p>
+<p>py_logger = Log.get_logger(“logn ame”)
+logger = LogAdapter(py_logger, tag1=”value”, tag2=”value”)</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><p>logger.debug(&lt;message&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;…)
+logger.info(&lt;message&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;…)
+logger.warning(&lt;message&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;…)
+logger.error(&lt;message&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;…)
+logger.critical(&lt;message&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;…)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.logger.LogAdapter.critical">
+<span class="sig-name descname"><span class="pre">critical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.LogAdapter.critical" title="Permalink to this definition"></a></dt>
+<dd><p>Delegate a critical call to the underlying logger.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.logger.LogAdapter.error">
+<span class="sig-name descname"><span class="pre">error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.LogAdapter.error" title="Permalink to this definition"></a></dt>
+<dd><p>Delegate an error call to the underlying logger.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.logger.LogAdapter.get_message">
+<span class="sig-name descname"><span class="pre">get_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.LogAdapter.get_message" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.logger.LogAdapter.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.LogAdapter.process" title="Permalink to this definition"></a></dt>
+<dd><p>Method called to extract the tags from the message</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="movai_core_shared.logger.LogsQuery">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.logger.</span></span><span class="sig-name descname"><span class="pre">LogsQuery</span></span><a class="headerlink" href="#movai_core_shared.logger.LogsQuery" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for querying logs</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.logger.LogsQuery.get_logs">
+<em class="property"><span class="pre">async</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">services</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fromDate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toDate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwrargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.LogsQuery.get_logs" title="Permalink to this definition"></a></dt>
+<dd><p>Get logs from message-server</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.logger.LogsQuery.validate_datetime">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_datetime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#movai_core_shared.logger.LogsQuery.validate_datetime" title="Permalink to this definition"></a></dt>
+<dd><p>Validate if value is timestamp or datetime</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>int</em>) – The datetime to validate</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – In case value isn’t a time format.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a timestamp value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.logger.LogsQuery.validate_message">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#movai_core_shared.logger.LogsQuery.validate_message" title="Permalink to this definition"></a></dt>
+<dd><p>Validates the message</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>str</em>) – A message to validate</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – In case message is not a string.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The message.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.logger.LogsQuery.validate_value">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#movai_core_shared.logger.LogsQuery.validate_value" title="Permalink to this definition"></a></dt>
+<dd><p>Validates the limmit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filter_name</strong> (<em>str</em>) – Which filter called the validation function.</p></li>
+<li><p><strong>value</strong> (<em>int</em>) – The limit to validate.</p></li>
+<li><p><strong>alternate_value</strong> (<em>int</em>) – an alternative value in case of error.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – in case limit can not be casted to int.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The validated limit.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="movai_core_shared.logger.RemoteHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.logger.</span></span><span class="sig-name descname"><span class="pre">RemoteHandler</span></span><a class="headerlink" href="#movai_core_shared.logger.RemoteHandler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StreamHandler</span></code></p>
+<p>This class implemets a log handler which sends
+sends the data to message server for logging in influxdb.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.logger.RemoteHandler.emit">
+<span class="sig-name descname"><span class="pre">emit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.RemoteHandler.emit" title="Permalink to this definition"></a></dt>
+<dd><p>Builds a valid log message request from the python log record
+and send it to the local message server</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>record</strong> – The Python log message data record</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="movai_core_shared.logger.StdOutHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.logger.</span></span><span class="sig-name descname"><span class="pre">StdOutHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{10:</span> <span class="pre">'\x1b[1;34m',</span> <span class="pre">20:</span> <span class="pre">'\x1b[1;37m',</span> <span class="pre">30:</span> <span class="pre">'\x1b[1;33m',</span> <span class="pre">40:</span> <span class="pre">'\x1b[31;1m',</span> <span class="pre">50:</span> <span class="pre">'\x1b[41;1m'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.StdOutHandler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StreamHandler</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.logger.StdOutHandler.emit">
+<span class="sig-name descname"><span class="pre">emit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.StdOutHandler.emit" title="Permalink to this definition"></a></dt>
+<dd><p>Emit a record.</p>
+<p>If a formatter is specified, it is used to format the record.
+The record is then written to the stream with a trailing newline.  If
+exception information is present, it is formatted using
+traceback.print_exception and appended to the stream.  If the stream
+has an ‘encoding’ attribute, it is used to determine how to do the
+output to the stream.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="movai_core_shared.logger.get_remote_handler">
+<span class="sig-prename descclassname"><span class="pre">movai_core_shared.logger.</span></span><span class="sig-name descname"><span class="pre">get_remote_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.get_remote_handler" title="Permalink to this definition"></a></dt>
+<dd><p>Create a RemoteHandler object and return it</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>log_level</strong> – defines the remote logger log level default value is info</p>
+</dd>
+</dl>
+<p>Returns: ReomoteLogger object</p>
+</dd></dl>
+
+</section>
+<section id="module-movai_core_shared.recovery">
+<span id="movai-core-shared-recovery-module"></span><h2>movai_core_shared.recovery module<a class="headerlink" href="#module-movai_core_shared.recovery" title="Permalink to this heading"></a></h2>
+<p>Recovery file holds const and enum used by the recovery module.</p>
+<p>Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential</p>
+<p>Developers:
+- Dor Marcous (<a class="reference external" href="mailto:Dor&#37;&#52;&#48;mov&#46;ai">Dor<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2023</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="movai_core_shared.recovery.RecoveryStates">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.recovery.</span></span><span class="sig-name descname"><span class="pre">RecoveryStates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.recovery.RecoveryStates" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Class for keeping recovery states.
+Values are stored in recovery_state fleet variable.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.recovery.RecoveryStates.IN_RECOVERY">
+<span class="sig-name descname"><span class="pre">IN_RECOVERY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#movai_core_shared.recovery.RecoveryStates.IN_RECOVERY" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.recovery.RecoveryStates.NOT_AVAILABLE">
+<span class="sig-name descname"><span class="pre">NOT_AVAILABLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#movai_core_shared.recovery.RecoveryStates.NOT_AVAILABLE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.recovery.RecoveryStates.PUSHED">
+<span class="sig-name descname"><span class="pre">PUSHED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#movai_core_shared.recovery.RecoveryStates.PUSHED" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.recovery.RecoveryStates.READY">
+<span class="sig-name descname"><span class="pre">READY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#movai_core_shared.recovery.RecoveryStates.READY" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-movai_core_shared">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-movai_core_shared" title="Permalink to this heading"></a></h2>
+<p>Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential</p>
+<p>Developers:
+- Dor Marcous (<a class="reference external" href="mailto:Dor&#37;&#52;&#48;mov&#46;ai">Dor<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2022</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.ActiveFlowError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.</span></span><span class="sig-name descname"><span class="pre">ActiveFlowError</span></span><a class="headerlink" href="#movai_core_shared.ActiveFlowError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Raise when the command requires an active flow</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.AlreadyExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.</span></span><span class="sig-name descname"><span class="pre">AlreadyExist</span></span><a class="headerlink" href="#movai_core_shared.AlreadyExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Raised when something already exists.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.CommandError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.</span></span><span class="sig-name descname"><span class="pre">CommandError</span></span><a class="headerlink" href="#movai_core_shared.CommandError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Raise when the command does not exist</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.</span></span><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#movai_core_shared.DoesNotExist" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Raised when something is not found.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.InvalidStructure">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.</span></span><span class="sig-name descname"><span class="pre">InvalidStructure</span></span><a class="headerlink" href="#movai_core_shared.InvalidStructure" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Raised when structure to be saved in DB is invalid.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="movai_core_shared.Log">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.</span></span><span class="sig-name descname"><span class="pre">Log</span></span><a class="headerlink" href="#movai_core_shared.Log" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A static class to help create logger instances</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.Log.LOG_FILE">
+<span class="sig-name descname"><span class="pre">LOG_FILE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/opt/mov.ai/app/movai.log'</span></em><a class="headerlink" href="#movai_core_shared.Log.LOG_FILE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.Log.get_callback_logger">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_callback_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#movai_core_shared.logger.LogAdapter" title="movai_core_shared.logger.LogAdapter"><span class="pre">LogAdapter</span></a></span></span><a class="headerlink" href="#movai_core_shared.Log.get_callback_logger" title="Permalink to this definition"></a></dt>
+<dd><p>Adds ‘user_log=True’, ‘node’ and ‘callback’ tags to the logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger_name</strong> (<em>str</em>) – The name of the logger.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A logger with tags.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#movai_core_shared.LogAdapter" title="movai_core_shared.LogAdapter">LogAdapter</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.Log.get_logger">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.Log.get_logger" title="Permalink to this definition"></a></dt>
+<dd><p>Get a logger instance</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.Log.get_user_logger">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_user_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#movai_core_shared.logger.LogAdapter" title="movai_core_shared.logger.LogAdapter"><span class="pre">LogAdapter</span></a></span></span><a class="headerlink" href="#movai_core_shared.Log.get_user_logger" title="Permalink to this definition"></a></dt>
+<dd><p>Add ‘user_log=True’ tag to the logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger_name</strong> (<em>str</em>) – The name of the logger.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A logger with tags.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#movai_core_shared.LogAdapter" title="movai_core_shared.LogAdapter">LogAdapter</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.Log.set_log_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_log_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.Log.set_log_file" title="Permalink to this definition"></a></dt>
+<dd><p>Set the name of the file we write the log</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="movai_core_shared.LogAdapter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.</span></span><span class="sig-name descname"><span class="pre">LogAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.LogAdapter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerAdapter</span></code></p>
+<p>A LogAdapter used to expose the logger inside a callback, we should
+not need to use this adapter outside a callback.</p>
+<p>py_logger = Log.get_logger(“logn ame”)
+logger = LogAdapter(py_logger, tag1=”value”, tag2=”value”)</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><p>logger.debug(&lt;message&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;…)
+logger.info(&lt;message&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;…)
+logger.warning(&lt;message&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;…)
+logger.error(&lt;message&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;…)
+logger.critical(&lt;message&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;, &lt;tagKey&gt;=&lt;tagValue&gt;…)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.LogAdapter.critical">
+<span class="sig-name descname"><span class="pre">critical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.LogAdapter.critical" title="Permalink to this definition"></a></dt>
+<dd><p>Delegate a critical call to the underlying logger.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.LogAdapter.error">
+<span class="sig-name descname"><span class="pre">error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.LogAdapter.error" title="Permalink to this definition"></a></dt>
+<dd><p>Delegate an error call to the underlying logger.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.LogAdapter.get_message">
+<span class="sig-name descname"><span class="pre">get_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.LogAdapter.get_message" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.LogAdapter.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.LogAdapter.process" title="Permalink to this definition"></a></dt>
+<dd><p>Method called to extract the tags from the message</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.MovaiException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.</span></span><span class="sig-name descname"><span class="pre">MovaiException</span></span><a class="headerlink" href="#movai_core_shared.MovaiException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>General MovAI API exception occurred.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="movai_core_shared.RecoveryStates">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.</span></span><span class="sig-name descname"><span class="pre">RecoveryStates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.RecoveryStates" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Class for keeping recovery states.
+Values are stored in recovery_state fleet variable.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.RecoveryStates.IN_RECOVERY">
+<span class="sig-name descname"><span class="pre">IN_RECOVERY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#movai_core_shared.RecoveryStates.IN_RECOVERY" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.RecoveryStates.NOT_AVAILABLE">
+<span class="sig-name descname"><span class="pre">NOT_AVAILABLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#movai_core_shared.RecoveryStates.NOT_AVAILABLE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.RecoveryStates.PUSHED">
+<span class="sig-name descname"><span class="pre">PUSHED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#movai_core_shared.RecoveryStates.PUSHED" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.RecoveryStates.READY">
+<span class="sig-name descname"><span class="pre">READY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#movai_core_shared.RecoveryStates.READY" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.ResourceException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.</span></span><span class="sig-name descname"><span class="pre">ResourceException</span></span><a class="headerlink" href="#movai_core_shared.ResourceException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>A resource handling exception</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.TransitionException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.</span></span><span class="sig-name descname"><span class="pre">TransitionException</span></span><a class="headerlink" href="#movai_core_shared.TransitionException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Raised a GD_Node transition happens.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="movai-core-shared" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="movai_core_shared.common.html" class="btn btn-neutral float-right" title="movai_core_shared.common package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Backend.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Read the Docs</span>
+        v: 3.0
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl id="docs-versions">
+            <dt>Versions</dt>
+	</dl>
+        <hr />
+        <a href="https://tech.michaelaltfield.net/2020/07/18/sphinx-rtd-github-pages-1/">Continuous
+            Documentation</a> hosting provided by <a href="https://pages.github.com/">GitHub Pages</a>.
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
