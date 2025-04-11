@@ -53,7 +53,7 @@ class TestLogging(unittest.TestCase):
         self.assertIn("[test_node][test_callback]", call[1][0])
         self.assertIn("im logging info", call[1][0])
         self.assertNotIn("[]", call[1][0])
-        
+
     @mock.patch("sys.stdout.write", side_effect=sys.stderr.write)
     def test_log_callback_adapter_logs_tags(self, stdout):
         log = Log.get_callback_logger("test_logger", "test_node", "test_callback")
