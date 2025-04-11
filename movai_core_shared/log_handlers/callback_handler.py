@@ -18,7 +18,10 @@ from movai_core_shared.consts import (
 )
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
-CALLBACK_LOG_FORMAT = "[%(levelname)s][%(asctime)s][%(node)s][%(callback)s][%(lineno)d]: %(message)s"
+CALLBACK_LOG_FORMAT = (
+    "[%(levelname)s][%(asctime)s][%(node)s][%(callback)s][%(lineno)d]: %(message)s"
+)
+
 
 class CallbackStdOutHandler(logging.StreamHandler):
     _COLORS = CALLBACK_STDOUT_COLORS
@@ -34,7 +37,7 @@ class CallbackStdOutHandler(logging.StreamHandler):
     def emit(self, record):
         try:
             # Override the module and funcName with the ones
-            
+
             if (
                 hasattr(record.args, "module")
                 and hasattr(record.args, "funcName")
@@ -109,7 +112,7 @@ class CallbackLogAdapter(logging.LoggerAdapter):
         message, kwargs = self.process(message, kwargs)
         message += self._exc_tb()
         return message, kwargs
-    
+
     def error(self, *args, **kwargs):
         new_msg, kwargs = self.get_message(*args, **kwargs)
         self.logger.error(new_msg, stacklevel=3, **kwargs)
@@ -125,9 +128,11 @@ class CallbackLogAdapter(logging.LoggerAdapter):
         raw_tags = dict(kwargs)
         raw_tags.update(self._tags)
         if raw_tags:
-            tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])            
+            tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])
 
-        kwargs = {"extra": {"tags": raw_tags, "callback": self.callback_name, "node": self.node_name}}
+        kwargs = {
+            "extra": {"tags": raw_tags, "callback": self.callback_name, "node": self.node_name}
+        }
 
         if raw_tags:
             return f"[{tags}] {msg}", kwargs
