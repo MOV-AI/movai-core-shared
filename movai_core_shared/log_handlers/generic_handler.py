@@ -2,6 +2,7 @@ import logging
 import sys
 import traceback
 
+
 class LogAdapter(logging.LoggerAdapter):
     """
     A LogAdapter used to expose the logger inside a callback, we should
