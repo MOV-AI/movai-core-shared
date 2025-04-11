@@ -4,7 +4,9 @@
    Proprietary and confidential
 
    Developers:
-   - Dor Marcous (dor@mov.ai) - 2022
+   - Duarte Coelho (duarte@mov.ai) - 2025
+   - David Dias (david.dias@mov.ai) - 2025
+   - Andre Pereira (andre.pereira@mov.ai) - 2025
 """
 
 import sys
