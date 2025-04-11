@@ -11,8 +11,7 @@
 
 import sys
 import logging
-import traceback
-
+from movai_core_shared.log_handlers.generic_handler import LogAdapter
 from movai_core_shared.consts import (
     CALLBACK_STDOUT_COLORS,
 )
@@ -69,7 +68,7 @@ class CallbackStdOutHandler(logging.StreamHandler):
             self.handleError(record)
 
 
-class CallbackLogAdapter(logging.LoggerAdapter):
+class CallbackLogAdapter(LogAdapter):
     """
     A LogAdapter used to expose the logger inside a callback.
 
@@ -86,40 +85,10 @@ class CallbackLogAdapter(logging.LoggerAdapter):
     """
 
     def __init__(self, logger, callback_name=None, node_name=None, **kwargs):
-        super().__init__(logger, None)
+        super().__init__(logger, **kwargs)
         self._tags = kwargs
         self.node_name = node_name
         self.callback_name = callback_name
-
-    def _exc_tb(self):
-        """get latest exception (if any) and format it
-        only works "inside" an `except` block"""
-        etype, exc, tb = sys.exc_info()
-        if exc is None:
-            # no exception
-            return ""
-        return "\n" + str.join("", traceback.format_exception(etype, exc, tb)).strip().replace(
-            "%", "%%"
-        )  # final new line
-
-    def get_message(self, *args, **kwargs):
-        if "message" in kwargs:
-            message = kwargs.get("message", "")
-        elif "msg" in kwargs:
-            message = kwargs.get("msg", "")
-        else:
-            message = str(args[0])
-        message, kwargs = self.process(message, kwargs)
-        message += self._exc_tb()
-        return message, kwargs
-
-    def error(self, *args, **kwargs):
-        new_msg, kwargs = self.get_message(*args, **kwargs)
-        self.logger.error(new_msg, stacklevel=3, **kwargs)
-
-    def critical(self, *args, **kwargs):
-        new_msg, kwargs = self.get_message(*args, **kwargs)
-        self.logger.critical(new_msg, stacklevel=3, **kwargs)
 
     def process(self, msg, kwargs):
         """
