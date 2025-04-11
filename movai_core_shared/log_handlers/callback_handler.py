@@ -11,15 +11,12 @@ import sys
 import logging
 import traceback
 
-from movai_core_shared.common.utils import get_package_version
-from movai_core_shared.common.time import current_timestamp_int
-
 from movai_core_shared.consts import (
     CALLBACK_STDOUT_COLORS,
 )
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
-CALLBACK_LOG_FORMAT = "[%(levelname)s][%(asctime)s][%(node)s][%(callback)s][%(funcName)s][%(lineno)d]: %(message)s"
+CALLBACK_LOG_FORMAT = "[%(levelname)s][%(asctime)s][%(node)s][%(callback)s][%(lineno)d]: %(message)s"
 
 class CallbackStdOutHandler(logging.StreamHandler):
     _COLORS = CALLBACK_STDOUT_COLORS
@@ -67,8 +64,6 @@ class CallbackStdOutHandler(logging.StreamHandler):
             self.handleError(record)
 
 
-
-
 class CallbackLogAdapter(logging.LoggerAdapter):
     """
     A LogAdapter used to expose the logger inside a callback.
@@ -113,12 +108,6 @@ class CallbackLogAdapter(logging.LoggerAdapter):
         message += self._exc_tb()
         return message, kwargs
     
-    def info (self, *args, **kwargs):
-        logging.basicConfig(level=logging.INFO)
-        logging.error("i caught you")
-        new_msg, kwargs = self.get_message(*args, **kwargs)
-        self.logger.info(new_msg, stacklevel=3, **kwargs)
-
     def error(self, *args, **kwargs):
         new_msg, kwargs = self.get_message(*args, **kwargs)
         self.logger.error(new_msg, stacklevel=3, **kwargs)
@@ -134,16 +123,10 @@ class CallbackLogAdapter(logging.LoggerAdapter):
         raw_tags = dict(kwargs)
         raw_tags.update(self._tags)
         if raw_tags:
-            tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])
-            self.callback_name = "apanheite"
-            if "name" in raw_tags:
-                self.node_name = raw_tags.get("name")
-            if "function" in raw_tags:
-                self.callback_name = raw_tags.get("function")
-            
-            
+            tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])            
+
         kwargs = {"extra": {"tags": raw_tags, "callback": self.callback_name, "node": self.node_name}}
-        
+
         if raw_tags:
             return f"[{tags}] {msg}", kwargs
 

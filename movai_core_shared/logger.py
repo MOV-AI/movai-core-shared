@@ -49,7 +49,7 @@ from movai_core_shared.envvars import (
 from movai_core_shared.core.message_client import MessageClient, AsyncMessageClient
 from movai_core_shared.common.utils import is_enterprise, is_manager
 from movai_core_shared.common.time import validate_time
-from movai_core_shared.log_handlers.callback_logger import (CallbackStdOutHandler, CallbackLogAdapter)
+from movai_core_shared.log_handlers.callback_handler import (CallbackStdOutHandler, CallbackLogAdapter)
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 S_FORMATTER = (
