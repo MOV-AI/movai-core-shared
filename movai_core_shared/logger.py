@@ -105,7 +105,6 @@ class StdOutHandler(logging.StreamHandler):
             self.setFormatter(fmt=log_format)
 
             msg = self.format(record)
-            
             stream = self.stream
             if stream.closed:
                 if stream == sys.stderr:
@@ -225,7 +224,6 @@ def _get_console_handler(stream_config=None):
         console_handler = CallbackStdOutHandler(stream=sys.stdout)
     else:
         raise ValueError("Unknown stream config for the console logger!")
-    #console_handler.setFormatter(LOG_FORMATTER)
     console_handler.setLevel(MOVAI_STDOUT_VERBOSITY_LEVEL)
     return console_handler
 
@@ -324,8 +322,8 @@ class LogAdapter(logging.LoggerAdapter):
         raw_tags = dict(kwargs)
         raw_tags.update(self._tags)
         tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])
-        kwargs = {"extra": {"tags": raw_tags,}}
-        
+        kwargs = {"extra": {"tags": raw_tags}}
+
         return f"[{tags}] {msg}", kwargs
 
 
@@ -380,7 +378,7 @@ class Log:
     def get_callback_logger(
         cls, logger_name: str, node_name: str, callback_name: str
     ) -> LogAdapter:
-        """Adds 'user_log=True', 'node' and 'callback' tags to the logger.
+        """Gets the callback the logger.
 
         Args:
             logger_name (str): The name of the logger.
