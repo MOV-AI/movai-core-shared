@@ -8,7 +8,7 @@ class LogAdapter(logging.LoggerAdapter):
     A LogAdapter used to expose the logger inside a callback, we should
     not need to use this adapter outside a callback.
 
-    py_logger = Log.get_logger("logn ame")
+    py_logger = Log.get_logger("logger name")
     logger = LogAdapter(py_logger, tag1="value", tag2="value")
 
     Usage:
