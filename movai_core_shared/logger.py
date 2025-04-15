@@ -49,13 +49,21 @@ from movai_core_shared.envvars import (
 from movai_core_shared.core.message_client import MessageClient, AsyncMessageClient
 from movai_core_shared.common.utils import is_enterprise, is_manager
 from movai_core_shared.common.time import validate_time
+from movai_core_shared.log_handlers.callback_handler import (
+    CallbackStdOutHandler,
+    CallbackLogAdapter,
+)
+from movai_core_shared.log_handlers.generic_handler import LogAdapter
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 S_FORMATTER = (
     "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(tags)s][%(lineno)d]: %(message)s"
 )
+LOG_FORMATTER_EXPR = (
+    "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(lineno)d]: %(message)s"
+)
 LOG_FORMATTER = logging.Formatter(
-    "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(lineno)d]: %(message)s",
+    LOG_FORMATTER_EXPR,
     datefmt=LOG_FORMATTER_DATETIME,
 )
 
@@ -93,18 +101,16 @@ class StdOutHandler(logging.StreamHandler):
 
             # Add/Remove Tags from log formatter
             _formatter = S_FORMATTER
+
             if isinstance(record.args, dict) and record.args.get("tags"):
                 tags = record.args.get("tags")
                 record.tags = "|".join([f"{k}:{v}" for k, v in tags.items()])
             else:
-                # if no tags are passed then update formatter
                 _formatter = _formatter.replace("[%(tags)s]", "")
-
             log_format = logging.Formatter(fmt=_formatter, datefmt=LOG_FORMATTER_DATETIME)
             self.setFormatter(fmt=log_format)
 
             msg = self.format(record)
-
             stream = self.stream
             if stream.closed:
                 if stream == sys.stderr:
@@ -117,7 +123,8 @@ class StdOutHandler(logging.StreamHandler):
             # stream.write()
             self.flush()
         except Exception:
-            self.handleError(record)
+            logger = logging.getLogger(__name__)
+            logger.exception("An error occurred while emitting a log record.")
 
 
 logging.getLogger("rosout").addHandler(
@@ -218,11 +225,11 @@ def _get_console_handler(stream_config=None):
     """
     if stream_config is None:
         console_handler = StdOutHandler()
+        console_handler.setFormatter(LOG_FORMATTER)
     elif stream_config == CALLBACK_LOGGER:
-        console_handler = StdOutHandler(color=CALLBACK_STDOUT_COLORS, stream=sys.stdout)
+        console_handler = CallbackStdOutHandler(stream=sys.stdout)
     else:
         raise ValueError("Unknown stream config for the console logger!")
-    console_handler.setFormatter(LOG_FORMATTER)
     console_handler.setLevel(MOVAI_STDOUT_VERBOSITY_LEVEL)
     return console_handler
 
@@ -261,69 +268,6 @@ def get_remote_handler(log_level=logging.NOTSET):
         remote_handler.setLevel(MOVAI_FLEET_LOGS_VERBOSITY_LEVEL)
 
     return remote_handler
-
-
-class LogAdapter(logging.LoggerAdapter):
-    """
-    A LogAdapter used to expose the logger inside a callback, we should
-    not need to use this adapter outside a callback.
-
-    py_logger = Log.get_logger("logn ame")
-    logger = LogAdapter(py_logger, tag1="value", tag2="value")
-
-    Usage:
-        logger.debug(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
-        logger.info(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
-        logger.warning(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
-        logger.error(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
-        logger.critical(<message>, <tagKey>=<tagValue>, <tagKey>=<tagValue>...)
-
-    """
-
-    def __init__(self, logger, **kwargs):
-        super().__init__(logger, None)
-        self._tags = kwargs
-
-    def _exc_tb(self):
-        """get latest exception (if any) and format it
-        only works "inside" an `except` block"""
-        etype, exc, tb = sys.exc_info()
-        if exc is None:
-            # no exception
-            return ""
-        return "\n" + str.join("", traceback.format_exception(etype, exc, tb)).strip().replace(
-            "%", "%%"
-        )  # final new line
-
-    def get_message(self, *args, **kwargs):
-        if "message" in kwargs:
-            message = kwargs.get("message", "")
-        elif "msg" in kwargs:
-            message = kwargs.get("msg", "")
-        else:
-            message = str(args[0])
-        message, kwargs = self.process(message, kwargs)
-        message += self._exc_tb()
-        return message, kwargs
-
-    def error(self, *args, **kwargs):
-        new_msg, kwargs = self.get_message(*args, **kwargs)
-        self.logger.error(new_msg, stacklevel=3, **kwargs)
-
-    def critical(self, *args, **kwargs):
-        new_msg, kwargs = self.get_message(*args, **kwargs)
-        self.logger.critical(new_msg, stacklevel=3, **kwargs)
-
-    def process(self, msg, kwargs):
-        """
-        Method called to extract the tags from the message
-        """
-        raw_tags = dict(kwargs)
-        raw_tags.update(self._tags)
-        tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])
-        kwargs = {"extra": {"tags": raw_tags}}
-
-        return f"[{tags}] {msg}", kwargs
 
 
 class Log:
@@ -377,7 +321,7 @@ class Log:
     def get_callback_logger(
         cls, logger_name: str, node_name: str, callback_name: str
     ) -> LogAdapter:
-        """Adds 'user_log=True', 'node' and 'callback' tags to the logger.
+        """Gets the callback the logger.
 
         Args:
             logger_name (str): The name of the logger.
@@ -386,12 +330,11 @@ class Log:
             LogAdapter: A logger with tags.
         """
         tags = {}
-        tags[USER_LOG_TAG] = True
-        tags["node"] = node_name
-        tags["callback"] = callback_name
         _logger = cls.get_logger(logger_name, CALLBACK_LOGGER)
         _logger.setLevel(MOVAI_CALLBACK_VERBOSITY_LEVEL)
-        logger = LogAdapter(_logger, **tags)
+        logger = CallbackLogAdapter(
+            _logger, **tags, node_name=node_name, callback_name=callback_name
+        )
         return logger
 
 
