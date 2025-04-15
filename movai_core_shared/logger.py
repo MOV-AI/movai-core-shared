@@ -126,6 +126,7 @@ class StdOutHandler(logging.StreamHandler):
             logger = logging.getLogger(__name__)
             logger.exception("An error occurred while emitting a log record.")
 
+
 logging.getLogger("rosout").addHandler(
     StdOutHandler(color=CALLBACK_STDOUT_COLORS, stream=sys.stdout)
 )
