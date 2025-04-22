@@ -1,10 +1,14 @@
-"""
-   Copyright (C) Mov.ai  - All Rights Reserved
-   Unauthorized copying of this file, via any medium is strictly prohibited
-   Proprietary and confidential
+"""Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential
 
-   Developers:
-   - Dor Marcous (dor@mov.ai) - 2022
+Developers:
+- Dor Marcous (dor@mov.ai) - 2022
+
+Attributes:
+    SHARED_LOGS (Path): Shared logs FIFO, expected to be created in
+        service entrypoint.
+
 """
 import asyncio
 import sys
@@ -12,7 +16,7 @@ from datetime import datetime
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import syslog
-import traceback
+from pathlib import Path
 
 from movai_core_shared.common.utils import get_package_version
 from movai_core_shared.common.time import current_timestamp_int
@@ -54,6 +58,8 @@ from movai_core_shared.log_handlers.callback_handler import (
     CallbackLogAdapter,
 )
 from movai_core_shared.log_handlers.generic_handler import LogAdapter
+
+SHARED_LOGS = Path("/tmp/shared-log")
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 S_FORMATTER = (
@@ -270,6 +276,15 @@ def get_remote_handler(log_level=logging.NOTSET):
     return remote_handler
 
 
+def add_shared_handler_to_root():
+    """Add handler to root so logs can be tailed and redirected to e.g. docker logs."""
+    handler = logging.FileHandler(SHARED_LOGS)
+    handler.setFormatter(logging.Formatter(LOG_FORMATTER_EXPR))
+    root = logging.getLogger()
+    root.addHandler(handler)
+    root.setLevel(logging.DEBUG)
+
+
 class Log:
     """
     A static class to help create logger instances
@@ -299,7 +314,6 @@ class Log:
         if is_enterprise() and MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(get_remote_handler())
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
-        logger.propagate = False
         return logger
 
     @classmethod
