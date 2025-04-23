@@ -16,7 +16,6 @@ from datetime import datetime
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import syslog
-from pathlib import Path
 
 from movai_core_shared.common.utils import get_package_version
 from movai_core_shared.common.time import current_timestamp_int
@@ -49,6 +48,7 @@ from movai_core_shared.envvars import (
     MASTER_MESSAGE_SERVER,
     SERVICE_NAME,
     SYSLOG_ENABLED,
+    DETACHED_PROCESS_OUTPUT,
 )
 from movai_core_shared.core.message_client import MessageClient, AsyncMessageClient
 from movai_core_shared.common.utils import is_enterprise, is_manager
@@ -58,8 +58,6 @@ from movai_core_shared.log_handlers.callback_handler import (
     CallbackLogAdapter,
 )
 from movai_core_shared.log_handlers.generic_handler import LogAdapter
-
-SHARED_LOGS = Path("/tmp/shared-log")
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 S_FORMATTER = (
@@ -278,7 +276,7 @@ def get_remote_handler(log_level=logging.NOTSET):
 
 def add_shared_handler_to_root():
     """Add handler to root so logs can be tailed and redirected to e.g. docker logs."""
-    handler = logging.FileHandler(SHARED_LOGS)
+    handler = logging.FileHandler(DETACHED_PROCESS_OUTPUT)
     handler.setFormatter(logging.Formatter(LOG_FORMATTER_EXPR))
     root = logging.getLogger()
     root.addHandler(handler)
