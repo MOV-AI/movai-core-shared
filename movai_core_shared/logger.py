@@ -5,10 +5,6 @@ Proprietary and confidential
 Developers:
 - Dor Marcous (dor@mov.ai) - 2022
 
-Attributes:
-    SHARED_LOGS (Path): Shared logs FIFO, expected to be created in
-        service entrypoint.
-
 """
 import asyncio
 import sys
@@ -17,7 +13,7 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 import syslog
 
-from movai_core_shared.common.utils import get_package_version
+from movai_core_shared import __version__ as VERSION
 from movai_core_shared.common.time import current_timestamp_int
 
 from movai_core_shared.consts import (
@@ -79,7 +75,6 @@ SEVERETY_CODES_MAPPING = {
     "DEBUG": syslog.LOG_DEBUG,
 }
 
-VERSION = get_package_version("movai-core-shared")
 logging.getLogger("rosout").setLevel(MOVAI_CALLBACK_VERBOSITY_LEVEL)
 
 

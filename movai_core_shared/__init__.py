@@ -6,6 +6,8 @@
    Developers:
    - Dor Marcous (Dor@mov.ai) - 2022
 """
+__version__ = "3.1.0.2"
+
 # pylint: skip-file
 from movai_core_shared.consts import (
     ROS1_NODELET,
