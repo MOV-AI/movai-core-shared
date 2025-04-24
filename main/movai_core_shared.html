@@ -58,7 +58,10 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.consts">movai_core_shared.consts module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.envvars">movai_core_shared.envvars module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.envvars">movai_core_shared.envvars module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.envvars.DETACHED_PROCESS_OUTPUT"><code class="docutils literal notranslate"><span class="pre">DETACHED_PROCESS_OUTPUT</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.exceptions">movai_core_shared.exceptions module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.AclObjectAlreadyExist"><code class="docutils literal notranslate"><span class="pre">AclObjectAlreadyExist</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.AclObjectDoesNotExist"><code class="docutils literal notranslate"><span class="pre">AclObjectDoesNotExist</span></code></a></li>
@@ -122,6 +125,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.LogsQuery"><code class="docutils literal notranslate"><span class="pre">LogsQuery</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.RemoteHandler"><code class="docutils literal notranslate"><span class="pre">RemoteHandler</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.StdOutHandler"><code class="docutils literal notranslate"><span class="pre">StdOutHandler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.add_shared_handler_to_root"><code class="docutils literal notranslate"><span class="pre">add_shared_handler_to_root()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.get_remote_handler"><code class="docutils literal notranslate"><span class="pre">get_remote_handler()</span></code></a></li>
 </ul>
 </li>
@@ -147,6 +151,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
 </ul>
 
         </div>
@@ -195,7 +200,6 @@
 <li class="toctree-l2"><a class="reference internal" href="movai_core_shared.common.html#module-movai_core_shared.common.utils">movai_core_shared.common.utils module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.create_principal_name"><code class="docutils literal notranslate"><span class="pre">create_principal_name()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.get_ip_address"><code class="docutils literal notranslate"><span class="pre">get_ip_address()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.get_package_version"><code class="docutils literal notranslate"><span class="pre">get_package_version()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.is_enterprise"><code class="docutils literal notranslate"><span class="pre">is_enterprise()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.is_manager"><code class="docutils literal notranslate"><span class="pre">is_manager()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.run_blocking_code"><code class="docutils literal notranslate"><span class="pre">run_blocking_code()</span></code></a></li>
@@ -468,7 +472,19 @@ Proprietary and confidential</p>
 </section>
 <section id="module-movai_core_shared.envvars">
 <span id="movai-core-shared-envvars-module"></span><h2>movai_core_shared.envvars module<a class="headerlink" href="#module-movai_core_shared.envvars" title="Permalink to this heading"></a></h2>
-<p>Compilation of necessary environment variables to push to the database</p>
+<p>Environment variables.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.envvars.DETACHED_PROCESS_OUTPUT">
+<span class="sig-prename descclassname"><span class="pre">movai_core_shared.envvars.</span></span><span class="sig-name descname"><span class="pre">DETACHED_PROCESS_OUTPUT</span></span><a class="headerlink" href="#movai_core_shared.envvars.DETACHED_PROCESS_OUTPUT" title="Permalink to this definition"></a></dt>
+<dd><p>Where to forward logs from e.g. tools that
+run outside the entrypoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-movai_core_shared.exceptions">
 <span id="movai-core-shared-exceptions-module"></span><h2>movai_core_shared.exceptions module<a class="headerlink" href="#module-movai_core_shared.exceptions" title="Permalink to this heading"></a></h2>
@@ -1043,6 +1059,12 @@ has an ‘encoding’ attribute, it is used to determine how to do the
 output to the stream.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="movai_core_shared.logger.add_shared_handler_to_root">
+<span class="sig-prename descclassname"><span class="pre">movai_core_shared.logger.</span></span><span class="sig-name descname"><span class="pre">add_shared_handler_to_root</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.add_shared_handler_to_root" title="Permalink to this definition"></a></dt>
+<dd><p>Add handler to root so logs can be tailed and redirected to e.g. docker logs.</p>
 </dd></dl>
 
 <dl class="py function">
