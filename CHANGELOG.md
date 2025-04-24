@@ -1,4 +1,4 @@
-# vTBD
+# v3.1.1
 - [BP-1381](https://movai.atlassian.net/browse/BP-1381): User creation logs are not present in backend logs making
 
 # v3.1.0
