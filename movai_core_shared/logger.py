@@ -1,10 +1,10 @@
-"""
-   Copyright (C) Mov.ai  - All Rights Reserved
-   Unauthorized copying of this file, via any medium is strictly prohibited
-   Proprietary and confidential
+"""Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential
 
-   Developers:
-   - Dor Marcous (dor@mov.ai) - 2022
+Developers:
+- Dor Marcous (dor@mov.ai) - 2022
+
 """
 import asyncio
 import sys
@@ -12,9 +12,8 @@ from datetime import datetime
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import syslog
-import traceback
 
-from movai_core_shared.common.utils import get_package_version
+from movai_core_shared import __version__ as VERSION
 from movai_core_shared.common.time import current_timestamp_int
 
 from movai_core_shared.consts import (
@@ -45,6 +44,7 @@ from movai_core_shared.envvars import (
     MASTER_MESSAGE_SERVER,
     SERVICE_NAME,
     SYSLOG_ENABLED,
+    DETACHED_PROCESS_OUTPUT,
 )
 from movai_core_shared.core.message_client import MessageClient, AsyncMessageClient
 from movai_core_shared.common.utils import is_enterprise, is_manager
@@ -75,7 +75,6 @@ SEVERETY_CODES_MAPPING = {
     "DEBUG": syslog.LOG_DEBUG,
 }
 
-VERSION = get_package_version("movai-core-shared")
 logging.getLogger("rosout").setLevel(MOVAI_CALLBACK_VERBOSITY_LEVEL)
 
 
@@ -270,6 +269,15 @@ def get_remote_handler(log_level=logging.NOTSET):
     return remote_handler
 
 
+def add_shared_handler_to_root():
+    """Add handler to root so logs can be tailed and redirected to e.g. docker logs."""
+    handler = logging.FileHandler(DETACHED_PROCESS_OUTPUT)
+    handler.setFormatter(logging.Formatter(LOG_FORMATTER_EXPR))
+    root = logging.getLogger()
+    root.addHandler(handler)
+    root.setLevel(logging.DEBUG)
+
+
 class Log:
     """
     A static class to help create logger instances
@@ -299,7 +307,6 @@ class Log:
         if is_enterprise() and MOVAI_FLEET_LOGS_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(get_remote_handler())
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
-        logger.propagate = False
         return logger
 
     @classmethod

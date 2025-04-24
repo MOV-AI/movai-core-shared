@@ -13,6 +13,7 @@ Welcome to movai-core-shared's documentation!
 
    readme
    modules
+   logging
 
 .. include:: readme.rst
 

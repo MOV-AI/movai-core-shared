@@ -1,4 +1,10 @@
-""" Compilation of necessary environment variables to push to the database """
+"""Environment variables.
+
+Attributes:
+    DETACHED_PROCESS_OUTPUT (str): Where to forward logs from e.g. tools that
+        run outside the entrypoint.
+
+"""
 import os
 from logging import DEBUG, getLevelName
 import socket
@@ -29,6 +35,7 @@ MOVAI_CALLBACK_VERBOSITY_LEVEL = getLevelName(
 )  # Verbosity level for callback logs
 LOG_HTTP_HOST = os.environ.get("LOG_HTTP_HOST", "http://health-node:8081")
 MOVAI_IPC_PATH = os.getenv("MOVAI_IPC_PATH", "/opt/mov.ai/comm")
+DETACHED_PROCESS_OUTPUT = os.getenv("DETACHED_PROCESS_OUTPUT")
 
 # Read variables from current environment
 APP_PATH = os.getenv("APP_PATH")
