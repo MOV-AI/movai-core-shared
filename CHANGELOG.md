@@ -1,6 +1,9 @@
-# v3.1.0
+# vTBD
+- [BP-1381](https://movai.atlassian.net/browse/BP-1381): User creation logs are not present in backend logs making
+
 # v3.1.0
 - New release line for EE 2.4.4
+
 # v3.0.4
 - [BP-1399](https://movai.atlassian.net/browse/BP-1399): Format code
 
