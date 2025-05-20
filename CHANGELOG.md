@@ -1,3 +1,7 @@
+# v3.1.2
+- Revert of [DP-1798](https://movai.atlassian.net/browse/DP-1798): Docker exception when using quickstart
+- [DP-1798](https://movai.atlassian.net/browse/DP-1798): Docker exception when using quickstart
+
 # v3.1.1
 - [BP-1381](https://movai.atlassian.net/browse/BP-1381): User creation logs are not present in backend logs making
 
