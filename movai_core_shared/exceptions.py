@@ -280,3 +280,7 @@ class ConfigurationError(MovaiException):
 
 class PrimaryKeyError(MovaiException):
     """The supplied key is in wrong format"""
+
+
+class RemapValidationError(MovaiException):
+    """Remapping rules violation"""
