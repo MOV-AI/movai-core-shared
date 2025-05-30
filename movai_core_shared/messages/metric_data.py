@@ -6,16 +6,18 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2023
 """
+from typing import Literal
 from typing import Optional
 
-from pydantic import BaseModel
-
+from movai_core_shared.consts import METRICS_INFLUX_DB
+from movai_core_shared.consts import PLATFORM_METRICS_INFLUX_DB
 from movai_core_shared.messages.general_data import Request
+from pydantic import BaseModel
 
 
 class MetricData(BaseModel):
     measurement: str
-    metric_type: str
+    db_name: Literal[Literal[METRICS_INFLUX_DB], Literal[PLATFORM_METRICS_INFLUX_DB]]
     metric_fields: Optional[dict] = None
     metric_tags: Optional[dict] = None
 
