@@ -36,11 +36,12 @@ MOVAI_CALLBACK_VERBOSITY_LEVEL = getLevelName(
 LOG_HTTP_HOST = os.environ.get("LOG_HTTP_HOST", "http://health-node:8081")
 MOVAI_IPC_PATH = os.getenv("MOVAI_IPC_PATH", "/opt/mov.ai/comm")
 DETACHED_PROCESS_OUTPUT = os.getenv("DETACHED_PROCESS_OUTPUT")
+PLATFORM_METRICS: bool = os.getenv("PLATFORM_METRICS", "False").lower() in ("true", "1", "t")
 
 # Read variables from current environment
 APP_PATH = os.getenv("APP_PATH")
 APP_LOGS = os.getenv("APP_LOGS")
-SYSLOG_ENABLED = os.getenv("SYSLOG_ENABLED", "False").lower() in ("true", "1", "t")
+SYSLOG_ENABLED: bool = os.getenv("SYSLOG_ENABLED", "False").lower() in ("true", "1", "t")
 LD_LIBRARY_PATH = os.getenv("LD_LIBRARY_PATH")
 MOVAI_HOME = os.getenv("MOVAI_HOME")
 PATH = os.getenv("PATH")
