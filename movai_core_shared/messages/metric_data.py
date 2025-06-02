@@ -1,10 +1,10 @@
-"""
-   Copyright (C) Mov.ai  - All Rights Reserved
-   Unauthorized copying of this file, via any medium is strictly prohibited
-   Proprietary and confidential
+"""Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential
 
-   Developers:
-   - Erez Zomer (erez@mov.ai) - 2023
+Developers:
+- Erez Zomer (erez@mov.ai) - 2023
+
 """
 from typing import Literal
 from typing import Optional
@@ -16,6 +16,16 @@ from pydantic import BaseModel
 
 
 class MetricData(BaseModel):
+    """Metrics data.
+
+    Attributes:
+        measurement (str): The name of the measurement.
+        db_name (Literal[METRICS_INFLUX_DB, PLATFORM_METRICS_INFLUX_DB]): The database name.
+        metric_fields (Optional[dict]): Measurement fields.
+        metric_tags (Optional[dict]): Measurement tags.
+
+    """
+
     measurement: str
     db_name: Literal[Literal[METRICS_INFLUX_DB], Literal[PLATFORM_METRICS_INFLUX_DB]]
     metric_fields: Optional[dict] = None

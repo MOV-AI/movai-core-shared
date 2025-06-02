@@ -1,3 +1,6 @@
+# vTBD
+- [BP-1354](https://movai.atlassian.net/browse/BP-1354): Transitions metrics to influxdb
+
 # v3.1.2
 - Revert of [DP-1798](https://movai.atlassian.net/browse/DP-1798): Docker exception when using quickstart
 - [DP-1798](https://movai.atlassian.net/browse/DP-1798): Docker exception when using quickstart
