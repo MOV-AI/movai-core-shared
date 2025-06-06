@@ -11,11 +11,6 @@ from typing import List, Optional
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 
 from movai_core_shared.envvars import FLEET_NAME, DEVICE_NAME
-from movai_core_shared.consts import NOTIFICATIONS_HANDLER_MSG_TYPE
-from movai_core_shared.logger import Log
-
-
-logger = Log.get_logger(NOTIFICATIONS_HANDLER_MSG_TYPE)
 
 
 class EmailData(BaseModel):
