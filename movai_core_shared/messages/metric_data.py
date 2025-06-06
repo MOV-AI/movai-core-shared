@@ -27,7 +27,9 @@ class MetricData(BaseModel):
     """
 
     measurement: str
-    db_name: Literal[Literal[METRICS_INFLUX_DB], Literal[PLATFORM_METRICS_INFLUX_DB]]
+    db_name: Literal[
+        Literal[METRICS_INFLUX_DB], Literal[PLATFORM_METRICS_INFLUX_DB]
+    ] = METRICS_INFLUX_DB
     metric_fields: Optional[dict] = None
     metric_tags: Optional[dict] = None
 
