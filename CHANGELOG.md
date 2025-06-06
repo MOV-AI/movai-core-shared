@@ -1,4 +1,4 @@
-# vTBD
+# v3.2.0
 - [BP-1354](https://movai.atlassian.net/browse/BP-1354): Transitions metrics to influxdb
 
 # v3.1.2
