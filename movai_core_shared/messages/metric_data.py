@@ -59,3 +59,20 @@ class MetricQueryData(BaseModel):
 
 class MetricQueryRequest(Request):
     req_data: MetricQueryData
+
+
+class MetricQueryResponse(BaseModel):
+    """Respone for MetricQueryRequest.
+
+    Attributes:
+        success (bool): Indicates if the query was successful.
+        results (dict): The results of the query.
+        error (Optional[str]): Error message if the query failed.
+        reason (Optional[str]): Reason for failure, if applicable.
+
+    """
+
+    success: bool
+    results: dict
+    error: Optional[str] = None
+    reason: Optional[str] = None
