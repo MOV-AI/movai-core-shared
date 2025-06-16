@@ -6,6 +6,7 @@ Developers:
 - Erez Zomer (erez@mov.ai) - 2023
 
 """
+from typing import List
 from typing import Literal
 from typing import Optional
 
@@ -40,12 +41,20 @@ class MetricRequest(Request):
 
 
 class QueryData(BaseModel):
+    fromDate: Optional[int] = None
+    toDate: Optional[int] = None
+    robot: Optional[str] = None
+    level: Optional[str] = None
+    service: Optional[str] = None
+    tag: Optional[str] = None
+    message: Optional[str] = None
+    name: Optional[List[str]] = None
+
     limit: int
     offset: int
-    tags: Optional[dict] = None
-    robots: Optional[list] = None
-    from_: Optional[int] = None
-    to_: Optional[int] = None
+
+    order_by: str = "time"
+    order_dir: str = "DESC"
 
 
 class MetricQueryData(BaseModel):
