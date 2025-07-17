@@ -1,4 +1,4 @@
-# vTBD
+# v3.3.1
 - [BP-1461](https://movai.atlassian.net/browse/BP-1461): Missing logs fleetboard in a fleet system - 2.4
   - Add `UI_LOG_TAG` const
 
