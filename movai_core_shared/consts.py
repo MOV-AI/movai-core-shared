@@ -14,6 +14,7 @@ PID = getpid()
 
 # Constants
 USER_LOG_TAG = "user_log"
+UI_LOG_TAG = "ui"
 CALLBACK_LOGGER = "CALLBACK_LOGGER"
 MAX_LOG_QUERY = 1000000
 MIN_LOG_QUERY = 0
