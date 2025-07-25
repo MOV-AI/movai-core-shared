@@ -29,6 +29,8 @@ MOVAI_SERVER = "MovAI/Server"
 DEFAULT_CALLBACK = "place_holder"
 ROS2_NODE = "ROS2/Node"
 ROS2_LIFECYCLENODE = "ROS2/LifecycleNode"
+# See ISO 639-1
+VALID_LANGUAGES = ["en", "pt"]
 
 NODE_TYPE = [
     ROS1_NODELET,
