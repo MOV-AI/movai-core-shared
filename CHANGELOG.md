@@ -1,5 +1,5 @@
 # vTBD
-- [BP-1463](https://movai.atlassian.net/browse/BP-1463): Create translation scope
+- [BP-1463](https://movai.atlassian.net/browse/BP-1463): Move scope constants to dal
 
 # v3.3.1
 - [BP-1461](https://movai.atlassian.net/browse/BP-1461): Missing logs fleetboard in a fleet system - 2.4
