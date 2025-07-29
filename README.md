@@ -1,11 +1,20 @@
 # movai-core-shared
-The movai core shared provides all the basic functionality such as logging and API
-for getting environment variables which all of the MOV.AI platform components require
+movai-core-shared provides basic functionality that all platform requires, such as:
+- constants
+- exceptions
+- logging
+- environment variables
+- structures for messaging
 
 ## Usage
-A package encapsulating all of the platform basic functionality
 
-> Prerequisites : None
+### Versioning
+
+| EE     | movai-core-shared branch | Backend version |
+|--------|--------------------------|-----------------|
+| 2.4.1  | releases/3.0             | 3.0.x.y         |
+| 2.4.4  | releases/3.3             | 3.3.x.y         |
+| 2.5.0  | main                     | -               |
 
 ## Build
 

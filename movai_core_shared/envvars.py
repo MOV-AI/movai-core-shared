@@ -137,21 +137,6 @@ ENVIRON_GDNODE_INJECT = {
 for key, value in ENVIRON_GDNODE_INJECT.items():
     ENVIRON_GDNODE[key] = value
 
-REST_SCOPES = (
-    "(Callback|Form|Flow|Node|GraphicScene|Package|StateMachine|Layout|Annotation|Application|"
-    "Configuration|SharedDataTemplate|SharedDataEntry|TaskTemplate|TaskEntry)"
-)
-SCOPES_TO_TRACK = [
-    "Node",
-    "Callback",
-    "Flow",
-    "StateMachine",
-    "Configuration",
-    "Annotation",
-    "Layout",
-    "GraphicScene",
-]
-
 # LDAP vars
 LDAP_SEARCH_TIME_LIMIT = int(os.getenv("LDAP_SEARCH_TIME_LIMIT", "10"))
 LDAP_POOLING_LOOP_TIMEOUT = int(os.getenv("LDAP_POOLING_LOOP_TIMEOUT", "5"))

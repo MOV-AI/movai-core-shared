@@ -1,3 +1,6 @@
+# vTBD
+- [BP-1463](https://movai.atlassian.net/browse/BP-1463): Move scope constants to dal
+
 # v3.3.2
 - [BP-1412](https://movai.atlassian.net/browse/BP-1412): Connect to Master if Slave is not defined
   - Updated `REDIS_SLAVE_HOST` and `REDIS_SLAVE_PORT` to default to `REDIS_MASTER_HOST` and `REDIS_MASTER_PORT` respectively, reproducing the behavior from the DAL.

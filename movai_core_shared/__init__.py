@@ -90,8 +90,6 @@ from movai_core_shared.envvars import (
     ENVIRON_ROS2,
     ENVIRON_GDNODE,
     ENVIRON_GDNODE_INJECT,
-    REST_SCOPES,
-    SCOPES_TO_TRACK,
 )
 
 from movai_core_shared.exceptions import (
@@ -159,8 +157,6 @@ __all__ = [
     "ENVIRON_ROS2",
     "ENVIRON_GDNODE",
     "ENVIRON_GDNODE_INJECT",
-    "REST_SCOPES",
-    "SCOPES_TO_TRACK",
     "ROS1_NODELET",
     "ROS1_NODE",
     "ROS1_PLUGIN",
