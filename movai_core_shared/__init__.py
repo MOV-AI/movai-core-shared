@@ -6,7 +6,7 @@
    Developers:
    - Dor Marcous (Dor@mov.ai) - 2022
 """
-__version__ = "3.3.1.1"
+__version__ = "3.4.0.1"
 
 # pylint: skip-file
 from movai_core_shared.consts import (

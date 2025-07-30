@@ -1,4 +1,4 @@
-# vTBD
+# v3.4.0
 - [BP-1463](https://movai.atlassian.net/browse/BP-1463): Move scope constants to dal
 
 # v3.3.2
