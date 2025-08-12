@@ -10,11 +10,13 @@ from typing import List
 from typing import Literal
 from typing import Optional
 
+from pydantic import BaseModel
+
 from movai_core_shared.consts import LOGS_INFLUX_DB
 from movai_core_shared.consts import METRICS_INFLUX_DB
 from movai_core_shared.consts import PLATFORM_METRICS_INFLUX_DB
 from movai_core_shared.messages.general_data import Request
-from pydantic import BaseModel
+from movai_core_shared.messages.log_data import LogFields
 
 
 class MetricData(BaseModel):
@@ -70,7 +72,7 @@ class MetricQueryRequest(Request):
     req_data: MetricQueryData
 
 
-class MetricQueryResponse(BaseModel):
+class GenericQueryResponse(BaseModel):
     """Respone for MetricQueryRequest.
 
     Attributes:
@@ -82,6 +84,24 @@ class MetricQueryResponse(BaseModel):
     """
 
     success: bool
-    results: dict
     error: Optional[str] = None
     reason: Optional[str] = None
+
+
+class LogQueryContent(LogFields):
+    time: int
+
+
+class LogQueryData(BaseModel):
+    limit: int
+    offset: int
+    count: int
+    data: List[LogQueryContent]
+
+
+class MetricQueryResponse(GenericQueryResponse):
+    results: dict
+
+
+class LogQueryResponse(GenericQueryResponse):
+    results: LogQueryData

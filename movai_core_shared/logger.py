@@ -47,7 +47,7 @@ from movai_core_shared.envvars import (
     SYSLOG_ENABLED,
     DETACHED_PROCESS_OUTPUT,
 )
-from movai_core_shared.messages.metric_data import MetricQueryResponse
+from movai_core_shared.messages.metric_data import LogQueryResponse
 from movai_core_shared.core.message_client import MessageClient, AsyncMessageClient
 from movai_core_shared.common.utils import is_enterprise, is_manager
 from movai_core_shared.common.time import validate_time
@@ -438,7 +438,7 @@ class LogsQuery:
         order_by=None,
         order_dir=None,
         **kwrargs,
-    ) -> MetricQueryResponse:
+    ) -> LogQueryResponse:
         """Get logs from message-server"""
         server_addr = MASTER_MESSAGE_SERVER
         if is_manager():
@@ -493,4 +493,4 @@ class LogsQuery:
             LOGS_QUERY_HANDLER_MSG_TYPE, query_data, None, True
         )
 
-        return MetricQueryResponse(**(query_response["response"]))
+        return LogQueryResponse(**(query_response["response"]))
