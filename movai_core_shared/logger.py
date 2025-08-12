@@ -12,6 +12,7 @@ from datetime import datetime
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import syslog
+import json
 
 from movai_core_shared import __version__ as VERSION
 from movai_core_shared.common.time import current_timestamp_int
@@ -179,6 +180,8 @@ class RemoteHandler(logging.StreamHandler):
             "lineno": record.lineno,
             "message": record.msg,
         }
+        if record.args:
+            log_fields["args"] = json.dumps(record.args)
 
         syslog_fields = {
             "module": record.module,

@@ -1,11 +1,12 @@
-"""
-   Copyright (C) Mov.ai  - All Rights Reserved
-   Unauthorized copying of this file, via any medium is strictly prohibited
-   Proprietary and confidential
+"""Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential
 
-   Developers:
-   - Erez Zomer (erez@mov.ai) - 2023
+Developers:
+- Erez Zomer (erez@mov.ai) - 2023
 """
+from typing import Optional
+
 from pydantic import BaseModel
 from movai_core_shared.messages.general_data import Request
 
@@ -22,6 +23,7 @@ class LogFields(BaseModel):
     funcName: str
     lineno: int
     message: str
+    args: Optional[str] = None
 
 
 class LogData(BaseModel):
