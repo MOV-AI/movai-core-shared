@@ -6,8 +6,9 @@
    Developers:
    - Moawiya Mograbi (moawiya@mov.ai) - 2023
 """
-import pydantic
 from typing import List
+
+import pydantic
 
 
 class SMSData(pydantic.BaseModel):

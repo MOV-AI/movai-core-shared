@@ -13,6 +13,8 @@ import asyncio
 import socket
 from movai_core_shared.envvars import REDIS_MASTER_HOST
 
+# pylint: disable=import-outside-toplevel,unused-import
+
 
 def is_manager() -> bool:
     """Identify if this robot is the manager host machine.

@@ -112,10 +112,10 @@ class SecurePassword:
         Returns:
             bytes: a secure hash (message digest) of the password.
         """
-        hash = binascii.hexlify(
+        pw_hash = binascii.hexlify(
             hashlib.pbkdf2_hmac("sha256", password.encode("ascii"), salt, 100000)
         )
-        return hash
+        return pw_hash
 
     @staticmethod
     @password_checker
@@ -134,8 +134,8 @@ class SecurePassword:
 
     @staticmethod
     def extract_hash(combined_hash: bytes):
-        hash = combined_hash[64:].encode("utf-8")
-        return hash
+        ehash = combined_hash[64:].encode("utf-8")
+        return ehash
 
     @staticmethod
     @password_checker

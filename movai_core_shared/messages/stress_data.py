@@ -6,8 +6,9 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2023
 """
-from pydantic import BaseModel
 from typing import Optional
+
+from pydantic import BaseModel
 
 from movai_core_shared.messages.general_data import Request
 

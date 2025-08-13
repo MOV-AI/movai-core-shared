@@ -27,11 +27,11 @@ class LogAdapter(logging.LoggerAdapter):
     def _exc_tb(self):
         """get latest exception (if any) and format it
         only works "inside" an `except` block"""
-        etype, exc, tb = sys.exc_info()
+        etype, exc, traceb = sys.exc_info()
         if exc is None:
             # no exception
             return ""
-        return "\n" + str.join("", traceback.format_exception(etype, exc, tb)).strip().replace(
+        return "\n" + str.join("", traceback.format_exception(etype, exc, traceb)).strip().replace(
             "%", "%%"
         )  # final new line
 

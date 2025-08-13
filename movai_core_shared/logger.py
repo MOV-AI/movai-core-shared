@@ -57,6 +57,8 @@ from movai_core_shared.log_handlers.callback_handler import (
 )
 from movai_core_shared.log_handlers.generic_handler import LogAdapter
 
+# pylint: disable=invalid-name,dangerous-default-value,protected-access,no-member,no-else-raise,too-many-arguments,too-many-locals,too-many-branches
+
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 S_FORMATTER = (
     "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(tags)s][%(lineno)d]: %(message)s"

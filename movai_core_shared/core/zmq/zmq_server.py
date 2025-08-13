@@ -20,6 +20,7 @@ from beartype import beartype
 from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS
 
 
+# pylint: disable=too-many-instance-attributes
 class ZMQServer(ABC):
     """
     This class is a base class for any ZMQ server.
@@ -46,9 +47,9 @@ class ZMQServer(ABC):
             self._socket.setsockopt(zmq.IDENTITY, self._name.encode("ascii"))
             self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
             self._socket.bind(self._addr)
-            self._logger.info(f"{self._name} is listening on {self._addr}")
+            self._logger.info("%s is listening on %s", self._name, self._addr)
         except OSError:
-            self._logger.error(f"failed to bind socket on address {self._addr}")
+            self._logger.error("failed to bind socket on address %s", self._addr)
             raise
 
     async def spin(self) -> None:
@@ -59,8 +60,8 @@ class ZMQServer(ABC):
             if self._running:
                 self._logger.warning("%s is already running", self._name)
             self._running = True
-        except Exception as e:
-            self._logger.error("Failed to start %s: %s", self._name, e)
+        except Exception as exc:
+            self._logger.error("Failed to start %s: %s", self._name, exc)
             return
 
         await self.at_startup()
@@ -72,7 +73,7 @@ class ZMQServer(ABC):
                 asyncio.create_task(self.handle(buffer))
                 await asyncio.sleep(0)
             except Exception as error:
-                self._logger.error(f"ZMQServer Error: {str(error)}")
+                self._logger.error("ZMQServer Error: %s", str(error))
                 continue
         await self.at_shutdown()
         self.close()
@@ -93,7 +94,7 @@ class ZMQServer(ABC):
     def init_server(self):
         """Initializes the server to listen on the specified address."""
         if self._initialized:
-            self._logger.error(f"{self._name} is already initialized.")
+            self._logger.error("%s is already initialized.", self._name)
             return
 
         self._init_socket()
@@ -129,10 +130,8 @@ class ZMQServer(ABC):
         """A funtion which is called once at server startup and can be used for initializing
         other tasks.
         """
-        pass
 
     async def at_shutdown(self):
         """A funtion which is called once at server shutdown and can be used for initializing
         other tasks.
         """
-        pass

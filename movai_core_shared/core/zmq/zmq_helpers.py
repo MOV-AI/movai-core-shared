@@ -36,8 +36,8 @@ def create_msg(msg: dict):
         return data
     except (json.JSONDecodeError, TypeError) as error:
         LOGGER.error(
-            f"Got error of type {error.__class__.__name__} while trying to convert \
-                dictionary to json."
+            "Got error of type %s while trying to convert dictionary to json.",
+            error.__class__.__name__,
         )
         return None
 
@@ -62,7 +62,7 @@ def extract_reponse(buffer: List[bytes]) -> dict:
         return response
     except (json.JSONDecodeError, TypeError) as error:
         LOGGER.error(
-            f"Got error of type {error.__class__.__name__} while trying to receive the message."
+            "Got error of type %s while trying to receive the message.", error.__class__.__name__
         )
         return {}
 

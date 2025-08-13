@@ -58,21 +58,21 @@ class ZMQClient(ZMQBase):
         self._socket: zmq.Socket = self._context.socket(self.zmq_socket_type)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         if self.zmq_socket_type in [zmq.DEALER]:
-            self._logger.info(f"ZMQ connecting DEALER to: {self._addr}")
+            self._logger.info("ZMQ connecting DEALER to: %s", self._addr)
             self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_ZMQ_RECV_TIMEOUT_MS))
             self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
             self._socket.connect(self._addr)
         elif self.zmq_socket_type in [zmq.SUB]:
-            self._logger.info(f"ZMQ connecting SUBSCRIBER to: {self._addr}")
+            self._logger.info("ZMQ connecting SUBSCRIBER to: %s", self._addr)
             self._socket.setsockopt_string(zmq.SUBSCRIBE, "")
             self._socket.connect(self._addr)
         elif self.zmq_socket_type in [zmq.ROUTER, zmq.PUB]:
-            self._logger.info(f"ZMQ connecting ROUTER/PUBLISHER to: {self._addr}")
+            self._logger.info("ZMQ connecting ROUTER/PUBLISHER to: %s", self._addr)
             self._socket.setsockopt(zmq.SNDTIMEO, int(MOVAI_ZMQ_SEND_TIMEOUT_MS))
             self._socket.bind(self._addr)
-            self._logger.info(f"{self.__class__.__name__} is bounded to: {self._addr}")
+            self._logger.info("%s is bounded to: %s", self.__class__.__name__, self._addr)
         else:
-            self._logger.critical(f"ZMQ {self._addr} has an unsupported socket type.")
+            self._logger.critical("ZMQ %s has an unsupported socket type.", self._addr)
 
     def handle_socket_errors(self, exc: zmq.error.ZMQError, reset_socket=True) -> None:
         """Handles the socket errors
@@ -116,7 +116,7 @@ class ZMQClient(ZMQBase):
             else:
                 self._socket.send(data)
         except Exception as exc:
-            self._logger.error(f"ZMQ failed to send message, got exception of type {exc}")
+            self._logger.error("ZMQ failed to send message, got exception of type %s", exc)
             raise exc
         finally:
             if use_lock and self._lock.locked():
@@ -138,14 +138,14 @@ class ZMQClient(ZMQBase):
             else:
                 buffer = self._socket.recv_multipart()
             if not buffer:
-                self._logger.debug(f"ZMQ received empty buffer from {self._addr}")
+                self._logger.debug("ZMQ received empty buffer from %s", self._addr)
                 return response
             response = extract_reponse(buffer)
             return response
         except zmq.error.ZMQError as exc:
             self.handle_socket_errors(exc)
         except Exception as exc:
-            self._logger.error(f"ZMQ failed to receive data, got error of type: {exc}")
+            self._logger.error("ZMQ failed to receive data, got error of type: %s", exc)
             raise exc
         finally:
             if use_lock and self._lock.locked():
@@ -229,7 +229,7 @@ class AsyncZMQClient(ZMQClient):
         except zmq.error.ZMQError as exc:
             self.handle_socket_errors(exc)
         except Exception as exc:
-            self._logger.error(f"ZMQ failed to receive data, got error of type: {exc}")
+            self._logger.error("ZMQ failed to receive data, got error of type: %s", exc)
             raise exc
         finally:
             if use_lock:

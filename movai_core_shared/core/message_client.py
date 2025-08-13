@@ -76,7 +76,8 @@ class MessageClient:
             msg_type (str): The type of the message (logs, alerts, metrics....)
             data (dict): The data to include in the request.
             creation_time (str, optional): The time the request was created. Defaults to now.
-            response_required (bool, optional): Tells the message-server if the client is wainting for response.
+            response_required (bool, optional): Tells the message-server if the client
+                is waiting for response.
 
         Returns:
             {dict}: The message request to send the message-server
@@ -134,7 +135,8 @@ class MessageClient:
         Args:
             msg_type (str): the type of message.
             data (dict): The message data to be sent to the robot message server.
-            creation_time (datetime, optional): The time where the request is created. Defaults to now.
+            creation_time (datetime, optional): The time where the request is created.
+                Defaults to now.
             response_required (bool): whether to wait for response, Default False.
         """
         # Add tags to the request data
