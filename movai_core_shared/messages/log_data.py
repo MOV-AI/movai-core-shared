@@ -34,8 +34,14 @@ class LogFields(BaseModel):
 
         """
         if self.args:
-            self.message = self.message % (tuple(json.loads(self.args)))
-            self.args = None  # clear args after formatting
+            try:
+                self.message = self.message % (tuple(json.loads(self.args)))
+                self.args = None  # clear args after formatting
+            except TypeError as e:
+                self.message = (
+                    f"Failed to format log message '{self.message}' with args {self.args}"
+                )
+                self.args = None  # clear args after formatting
 
 
 class LogData(BaseModel):
