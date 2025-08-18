@@ -35,27 +35,6 @@ class LogAdapter(logging.LoggerAdapter):
             "%", "%%"
         )  # final new line
 
-    def get_message(self, *args, **kwargs):
-        if "message" in kwargs:
-            message = kwargs.get("message", "")
-        elif "msg" in kwargs:
-            message = kwargs.get("msg", "")
-        else:
-            message = str(args[0])
-        message, kwargs = self.process(message, kwargs)
-        message += self._exc_tb()
-
-        # the first element of args is the message it self
-        return message, args[1:], kwargs
-
-    def error(self, *args, **kwargs):
-        new_msg, args, kwargs = self.get_message(*args, **kwargs)
-        self.logger.error(new_msg, *args, stacklevel=3, **kwargs)
-
-    def critical(self, *args, **kwargs):
-        new_msg, args, kwargs = self.get_message(*args, **kwargs)
-        self.logger.critical(new_msg, *args, stacklevel=3, **kwargs)
-
     def process(self, msg, kwargs):
         """Method called to extract the tags from the message."""
         raw_tags = dict(kwargs)
@@ -64,3 +43,10 @@ class LogAdapter(logging.LoggerAdapter):
         kwargs = {"extra": {"tags": raw_tags}}
 
         return f"[{tags}] {msg}", kwargs
+
+    def log(self, level, msg, *args, **kwargs):
+        """Custom log func, adding traceback and stacklevel."""
+        if self.isEnabledFor(level):
+            msg, kwargs = self.process(msg, kwargs)
+            msg += self._exc_tb()
+            self.logger.log(level, msg, *args, stacklevel=3, **kwargs)
