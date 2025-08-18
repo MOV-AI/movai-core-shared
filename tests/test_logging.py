@@ -1,7 +1,9 @@
-from movai_core_shared.logger import Log
 import unittest
 import mock
 import sys
+from pathlib import Path
+
+from movai_core_shared.logger import Log
 
 
 def validate_loglevel(log_level, mock_call):
@@ -106,9 +108,21 @@ class TestLogging(unittest.TestCase):
         self.assertIn("im logging warning", call[1][0])
         self.assertIn("[tag_custom:value]", call[1][0])
 
-    def test_place_holders(self):
+    @mock.patch("sys.stdout.write", side_effect=sys.stderr.write)
+    def test_placeholders(self, stdout):
         """Test placeholders in log messages."""
         logger = Log.get_callback_logger("test_logger", "test_node", "test_callback")
-        logger.error("Log with %s", "placeholder", ui=True)
+        logger.error("Log with %s %s", "multiple", "placeholders", ui=True)
+        logger.error("Log with non-serializable %s", Path("/place/holder"), ui=True)
 
-        assert "[ERROR][2025-08-14 17:20:46][test_node][test_callback][54]: [ui:True] Log with placeholder"
+        call = stdout.mock_calls[0]
+        self.assertIn("[ui:True] Log with multiple placeholders", call[1][0])
+
+    @mock.patch("sys.stdout.write", side_effect=sys.stderr.write)
+    def test_placeholder_non_serializable(self, stdout):
+        """Test non-serializable placeholder in log messages."""
+        logger = Log.get_callback_logger("test_logger", "test_node", "test_callback")
+        logger.error("Log with non-serializable %s", Path("/place/holder"), ui=True)
+
+        call = stdout.mock_calls[0]
+        self.assertIn("[ui:True] Log with non-serializable /place/holder", call[1][0])
