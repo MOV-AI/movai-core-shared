@@ -183,6 +183,7 @@ class RemoteHandler(logging.StreamHandler):
             "message": record.msg,
         }
         if record.args:
+            # if not serializable, convert to string
             log_fields["args"] = json.dumps(record.args, default=str)
 
         syslog_fields = {
