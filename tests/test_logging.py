@@ -105,3 +105,10 @@ class TestLogging(unittest.TestCase):
         self.assertIn("[test_node][test_callback]", call[1][0])
         self.assertIn("im logging warning", call[1][0])
         self.assertIn("[tag_custom:value]", call[1][0])
+
+    def test_place_holders(self):
+        """Test placeholders in log messages."""
+        logger = Log.get_callback_logger("test_logger", "test_node", "test_callback")
+        logger.error("Log with %s", "placeholder", ui=True)
+
+        assert "[ERROR][2025-08-14 17:20:46][test_node][test_callback][54]: [ui:True] Log with placeholder"

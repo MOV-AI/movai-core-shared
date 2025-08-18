@@ -20,7 +20,7 @@ class LogAdapter(logging.LoggerAdapter):
 
     """
 
-    def __init__(self, logger, **kwargs):
+    def __init__(self, logger: logging.Logger, **kwargs):
         super().__init__(logger, None)
         self._tags = kwargs
 
@@ -44,20 +44,20 @@ class LogAdapter(logging.LoggerAdapter):
             message = str(args[0])
         message, kwargs = self.process(message, kwargs)
         message += self._exc_tb()
-        return message, kwargs
+
+        # the first element of args is the message it self
+        return message, args[1:], kwargs
 
     def error(self, *args, **kwargs):
-        new_msg, kwargs = self.get_message(*args, **kwargs)
-        self.logger.error(new_msg, stacklevel=3, **kwargs)
+        new_msg, args, kwargs = self.get_message(*args, **kwargs)
+        self.logger.error(new_msg, *args, stacklevel=3, **kwargs)
 
     def critical(self, *args, **kwargs):
-        new_msg, kwargs = self.get_message(*args, **kwargs)
-        self.logger.critical(new_msg, stacklevel=3, **kwargs)
+        new_msg, args, kwargs = self.get_message(*args, **kwargs)
+        self.logger.critical(new_msg, *args, stacklevel=3, **kwargs)
 
     def process(self, msg, kwargs):
-        """
-        Method called to extract the tags from the message
-        """
+        """Method called to extract the tags from the message."""
         raw_tags = dict(kwargs)
         raw_tags.update(self._tags)
         tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])
