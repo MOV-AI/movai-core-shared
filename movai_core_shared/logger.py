@@ -183,7 +183,7 @@ class RemoteHandler(logging.StreamHandler):
             "message": record.msg,
         }
         if record.args:
-            log_fields["args"] = json.dumps(record.args)
+            log_fields["args"] = json.dumps(record.args, default=str)
 
         syslog_fields = {
             "module": record.module,
