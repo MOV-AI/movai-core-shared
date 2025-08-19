@@ -8,10 +8,10 @@
 """
 from typing import List
 
-import pydantic
+from pydantic import BaseModel
 
 
-class SMSData(pydantic.BaseModel):
+class SMSData(BaseModel):
     recipients: List[str]
     msg: str
     notification_type: str
