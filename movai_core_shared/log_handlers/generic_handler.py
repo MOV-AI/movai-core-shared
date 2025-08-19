@@ -20,47 +20,33 @@ class LogAdapter(logging.LoggerAdapter):
 
     """
 
-    def __init__(self, logger, **kwargs):
+    def __init__(self, logger: logging.Logger, **kwargs):
         super().__init__(logger, None)
         self._tags = kwargs
 
     def _exc_tb(self):
         """get latest exception (if any) and format it
         only works "inside" an `except` block"""
-        etype, exc, tb = sys.exc_info()
+        etype, exc, traceb = sys.exc_info()
         if exc is None:
             # no exception
             return ""
-        return "\n" + str.join("", traceback.format_exception(etype, exc, tb)).strip().replace(
+        return "\n" + str.join("", traceback.format_exception(etype, exc, traceb)).strip().replace(
             "%", "%%"
         )  # final new line
 
-    def get_message(self, *args, **kwargs):
-        if "message" in kwargs:
-            message = kwargs.get("message", "")
-        elif "msg" in kwargs:
-            message = kwargs.get("msg", "")
-        else:
-            message = str(args[0])
-        message, kwargs = self.process(message, kwargs)
-        message += self._exc_tb()
-        return message, kwargs
-
-    def error(self, *args, **kwargs):
-        new_msg, kwargs = self.get_message(*args, **kwargs)
-        self.logger.error(new_msg, stacklevel=3, **kwargs)
-
-    def critical(self, *args, **kwargs):
-        new_msg, kwargs = self.get_message(*args, **kwargs)
-        self.logger.critical(new_msg, stacklevel=3, **kwargs)
-
     def process(self, msg, kwargs):
-        """
-        Method called to extract the tags from the message
-        """
+        """Method called to extract the tags from the message."""
         raw_tags = dict(kwargs)
         raw_tags.update(self._tags)
         tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])
         kwargs = {"extra": {"tags": raw_tags}}
 
         return f"[{tags}] {msg}", kwargs
+
+    def log(self, level, msg, *args, **kwargs):
+        """Custom log func, adding traceback and stacklevel."""
+        if self.isEnabledFor(level):
+            msg, kwargs = self.process(msg, kwargs)
+            msg += self._exc_tb()
+            self.logger.log(level, msg, *args, stacklevel=3, **kwargs)

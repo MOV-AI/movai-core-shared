@@ -6,11 +6,12 @@
    Developers:
    - Moawiya Mograbi (moawiya@mov.ai) - 2023
 """
-import pydantic
 from typing import List
 
+from pydantic import BaseModel
 
-class SMSData(pydantic.BaseModel):
+
+class SMSData(BaseModel):
     recipients: List[str]
     msg: str
     notification_type: str

@@ -16,6 +16,8 @@ from movai_core_shared.consts import (
     CALLBACK_STDOUT_COLORS,
 )
 
+# pylint: disable=invalid-name,dangerous-default-value
+
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 CALLBACK_LOG_FORMAT = (
     "[%(levelname)s][%(asctime)s][%(node)s][%(callback)s][%(lineno)d]: %(message)s"

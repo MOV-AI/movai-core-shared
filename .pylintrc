@@ -1,6 +1,14 @@
-[MESSAGES CONTROL]
-disable=missing-class-docstring
-ignore-patterns=.*_test.*?py,.*test_.*?py,.*test.*?py,.*pb2.*,.*yml, .*toml, .*txt, .*md
-
-[FORMAT]
-max-line-length=120
+[MAIN]
+max-line-length=100
+ignore-paths=tests/.*
+disable=missing-module-docstring,
+    broad-exception-caught,
+    missing-class-docstring,
+    invalid-overridden-method,
+    import-error,
+    missing-function-docstring,
+    unspecified-encoding,
+    consider-using-with,
+    too-few-public-methods,
+    raise-missing-from,
+    R0801

@@ -12,6 +12,7 @@ from datetime import datetime
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import syslog
+import json
 
 from movai_core_shared import __version__ as VERSION
 from movai_core_shared.common.time import current_timestamp_int
@@ -46,7 +47,7 @@ from movai_core_shared.envvars import (
     SYSLOG_ENABLED,
     DETACHED_PROCESS_OUTPUT,
 )
-from movai_core_shared.messages.metric_data import MetricQueryResponse
+from movai_core_shared.messages.metric_data import LogQueryResponse
 from movai_core_shared.core.message_client import MessageClient, AsyncMessageClient
 from movai_core_shared.common.utils import is_enterprise, is_manager
 from movai_core_shared.common.time import validate_time
@@ -55,6 +56,8 @@ from movai_core_shared.log_handlers.callback_handler import (
     CallbackLogAdapter,
 )
 from movai_core_shared.log_handlers.generic_handler import LogAdapter
+
+# pylint: disable=invalid-name,dangerous-default-value,protected-access,no-member,no-else-raise,too-many-arguments,too-many-locals,too-many-branches
 
 LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 S_FORMATTER = (
@@ -179,6 +182,9 @@ class RemoteHandler(logging.StreamHandler):
             "lineno": record.lineno,
             "message": record.msg,
         }
+        if record.args:
+            # if not serializable, convert to string
+            log_fields["args"] = json.dumps(record.args, default=str)
 
         syslog_fields = {
             "module": record.module,
@@ -435,7 +441,7 @@ class LogsQuery:
         order_by=None,
         order_dir=None,
         **kwrargs,
-    ) -> MetricQueryResponse:
+    ) -> LogQueryResponse:
         """Get logs from message-server"""
         server_addr = MASTER_MESSAGE_SERVER
         if is_manager():
@@ -490,4 +496,4 @@ class LogsQuery:
             LOGS_QUERY_HANDLER_MSG_TYPE, query_data, None, True
         )
 
-        return MetricQueryResponse(**(query_response["response"]))
+        return LogQueryResponse(**(query_response["response"]))

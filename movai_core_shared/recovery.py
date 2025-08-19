@@ -1,12 +1,12 @@
 """
-   Recovery file holds const and enum used by the recovery module.
+Recovery file holds const and enum used by the recovery module.
 
-   Copyright (C) Mov.ai  - All Rights Reserved
-   Unauthorized copying of this file, via any medium is strictly prohibited
-   Proprietary and confidential
+Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential
 
-   Developers:
-   - Dor Marcous (Dor@mov.ai) - 2023
+Developers:
+- Dor Marcous (Dor@mov.ai) - 2023
 """
 from enum import Enum, auto
 

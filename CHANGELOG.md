@@ -1,3 +1,8 @@
+# vTBD
+- [BP-1462](https://movai.atlassian.net/browse/BP-1462): Translation implementation
+  - Support log arguments
+- Add pylint
+
 # v3.4.0
 - [BP-1463](https://movai.atlassian.net/browse/BP-1463): Move scope constants to dal
 

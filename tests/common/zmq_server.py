@@ -46,7 +46,7 @@ class TestServer(ZMQServer):
             if msg is None:
                 self._logger.error("Got an empty msg!")
                 return
-            self._logger.debug(f"Got msg: {msg}")
+            self._logger.debug("Got msg: %s", msg)
             request = json.loads(msg)
             request = request.get("request")
             req_data = request.get("req_data")
@@ -54,9 +54,9 @@ class TestServer(ZMQServer):
             asyncio.create_task(self.handle_request(req_data))
             response_msg = "Got request & successfully proccessed".encode("utf8")
         except json.JSONDecodeError as exc:
-            self._logger.error(f"can't parse command: {buffer}")
+            self._logger.error("can't parse command: %s", buffer)
             self._logger.error(exc)
-            response_msg = "can't parse command: {buffer}".encode("utf8")
+            response_msg = f"can't parse command: {buffer}".encode("utf8")
         finally:
             resp = {"status": response_msg}
             resp = json.dumps(resp).encode("utf8")
