@@ -8,11 +8,14 @@ Developers:
 from typing import Optional
 import json
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from movai_core_shared.messages.general_data import Request
 
 
 class LogTags(BaseModel):
+    # actual tags are part of this structure so we must allow extra
+    model_config = ConfigDict(extra="allow")
+
     robot: str
     level: str
     service: str
