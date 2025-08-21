@@ -16,7 +16,7 @@ from movai_core_shared.consts import LOGS_INFLUX_DB
 from movai_core_shared.consts import METRICS_INFLUX_DB
 from movai_core_shared.consts import PLATFORM_METRICS_INFLUX_DB
 from movai_core_shared.messages.general_data import Request
-from movai_core_shared.messages.log_data import LogFields
+from movai_core_shared.messages.log_data import LogFields, LogTags
 
 
 class MetricData(BaseModel):
@@ -88,7 +88,7 @@ class GenericQueryResponse(BaseModel):
     reason: Optional[str] = None
 
 
-class LogQueryContent(LogFields):
+class LogQueryContent(LogFields, LogTags):
     time: int
 
 
