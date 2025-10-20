@@ -170,3 +170,8 @@ SPAWNER_STDOUT_COLORS = {
     logging.ERROR: "\x1b[31;1m",
     logging.CRITICAL: "\x1b[41;1m",
 }
+
+
+class DeactivationType:
+    REQUESTED = "requested"
+    AUTO_CLEARED = "auto_cleared"
