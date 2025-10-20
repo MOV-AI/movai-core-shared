@@ -12,7 +12,12 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from movai_core_shared.consts import LOGS_INFLUX_DB ,METRICS_INFLUX_DB, PLATFORM_ALERTS_INFLUX_DB, PLATFORM_METRICS_INFLUX_DB
+from movai_core_shared.consts import (
+    LOGS_INFLUX_DB,
+    METRICS_INFLUX_DB,
+    PLATFORM_ALERTS_INFLUX_DB,
+    PLATFORM_METRICS_INFLUX_DB,
+)
 from movai_core_shared.messages.general_data import Request
 from movai_core_shared.messages.log_data import LogFields, LogTags
 
@@ -30,7 +35,9 @@ class MetricData(BaseModel):
 
     measurement: str
     db_name: Literal[
-        Literal[METRICS_INFLUX_DB], Literal[PLATFORM_METRICS_INFLUX_DB], Literal[PLATFORM_ALERTS_INFLUX_DB]
+        Literal[METRICS_INFLUX_DB],
+        Literal[PLATFORM_METRICS_INFLUX_DB],
+        Literal[PLATFORM_ALERTS_INFLUX_DB],
     ] = METRICS_INFLUX_DB
     metric_fields: Optional[dict] = None
     metric_tags: Optional[dict] = None
@@ -62,7 +69,10 @@ class MetricQueryData(BaseModel):
     query_data: QueryData
     count_field: Optional[str] = None
     db_name: Literal[
-        Literal[LOGS_INFLUX_DB], Literal[METRICS_INFLUX_DB], Literal[PLATFORM_METRICS_INFLUX_DB], Literal[PLATFORM_ALERTS_INFLUX_DB]
+        Literal[LOGS_INFLUX_DB],
+        Literal[METRICS_INFLUX_DB],
+        Literal[PLATFORM_METRICS_INFLUX_DB],
+        Literal[PLATFORM_ALERTS_INFLUX_DB],
     ] = None
 
 
