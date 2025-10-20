@@ -134,6 +134,7 @@ MESSAGE_SERVER_HOST = "message-server"
 LOGS_INFLUX_DB = "logs"
 METRICS_INFLUX_DB = "metrics"
 PLATFORM_METRICS_INFLUX_DB = "platform_metrics"
+PLATFORM_ALERTS_INFLUX_DB = "platform_alerts"
 STRESS_INFLUX_DB = "stress"
 INFLUXDB_DB_NAMES = [LOGS_INFLUX_DB, METRICS_INFLUX_DB, STRESS_INFLUX_DB]
 
@@ -169,3 +170,8 @@ SPAWNER_STDOUT_COLORS = {
     logging.ERROR: "\x1b[31;1m",
     logging.CRITICAL: "\x1b[41;1m",
 }
+
+
+class DeactivationType:
+    REQUESTED = "requested"
+    AUTO_CLEARED = "auto_cleared"
