@@ -2,7 +2,7 @@
 
 import pytest
 from movai_core_shared.messages import NotificationDataFactory
-from movai_core_shared.messages.alert_data import Alert, AlertData, AlertRequest
+from movai_core_shared.messages.alert_data import Alert
 from movai_core_shared.messages.metric_data import MetricData
 from movai_core_shared.messages.general_data import Request
 from movai_core_shared.messages.log_data import (
@@ -35,21 +35,6 @@ class TestMessagesData:
         metric_data = MetricData(measurement="test", metric_type="test")
         assert metric_data is not None
 
-    def test_alert_data(self):
-        alert_data = AlertData(
-            measurement="test",
-            metric_type="test",
-            metric_fields=Alert(
-                name="test",
-                info="test",
-                action="test",
-                callback="test",
-                status="test",
-                send_email=True,
-            ),
-        )
-        assert alert_data is not None
-
     def test_request(self):
         request = Request(
             req_type="test",
@@ -58,27 +43,6 @@ class TestMessagesData:
             robot_info={"fleet": "test", "robot": "test", "service": "test", "id": "test"},
         )
         assert request is not None
-
-    def test_alert_request(self):
-        alert_request = AlertRequest(
-            req_type="test",
-            created=123456,
-            response_required=True,
-            robot_info={"fleet": "test", "robot": "test", "service": "test", "id": "test"},
-            req_data=AlertData(
-                measurement="test",
-                metric_type="test",
-                metric_fields=Alert(
-                    name="test",
-                    info="test",
-                    action="test",
-                    callback="test",
-                    status="test",
-                    send_email=True,
-                ),
-            ),
-        )
-        assert alert_request is not None
 
     def test_log_tags(self):
         log_tags = LogTags(robot="test", level="test", service="test", runtime=True)

@@ -21,9 +21,23 @@ class Alert(BaseModel):
     send_email: bool = False
 
 
-class AlertData(MetricData):
+class OldAlertData(MetricData):
     metric_fields: Alert
 
 
 class AlertRequest(Request):
-    req_data: AlertData
+    req_data: OldAlertData
+
+
+class AlertActivationData(BaseModel):
+    args: str
+    activation_date: str
+
+
+class AlertDeactivationData(BaseModel):
+    deactivation_date: str
+    deactivation_type: str
+
+
+class AlertData(AlertActivationData, AlertDeactivationData):
+    alert_id: str
