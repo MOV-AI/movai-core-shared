@@ -113,3 +113,7 @@ class MetricQueryResponse(GenericQueryResponse):
 
 class LogQueryResponse(GenericQueryResponse):
     results: LogQueryData
+
+
+class AlertQueryResponse(GenericQueryResponse):
+    results: LogQueryData
