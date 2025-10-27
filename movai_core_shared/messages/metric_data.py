@@ -115,5 +115,25 @@ class LogQueryResponse(GenericQueryResponse):
     results: LogQueryData
 
 
+class AlertQueryContent(BaseModel):
+    time: int
+    activation_date: str
+    alert_id: str
+    args: str
+    deactivation_date: str
+    deactivation_type: str
+    fleet: str
+    id: str
+    robot: str
+    service: str
+
+
+class AlertQueryData(BaseModel):
+    limit: int
+    offset: int
+    count: int
+    data: List[AlertQueryContent]
+
+
 class AlertQueryResponse(GenericQueryResponse):
-    results: LogQueryData
+    results: AlertQueryData

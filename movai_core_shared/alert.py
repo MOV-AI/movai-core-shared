@@ -4,7 +4,7 @@ from movai_core_shared.consts import (
     ALERT_QUERY_HANDLER_MSG_TYPE,
     DEFAULT_LOG_LIMIT,
     DEFAULT_LOG_OFFSET,
-    LOGS_MEASUREMENT,
+    ALERT_MEASUREMENT,
 )
 from movai_core_shared.envvars import (
     LOCAL_MESSAGE_SERVER,
@@ -24,7 +24,7 @@ class AlertQuery(BaseQuery):
     """Queryies alerts."""
 
     @classmethod
-    async def get_alerts(
+    async def get(
         cls,
         limit: int = DEFAULT_LOG_LIMIT,
         offset: int = DEFAULT_LOG_OFFSET,
@@ -78,7 +78,7 @@ class AlertQuery(BaseQuery):
             params["order_dir"] = order_dir
 
         query_data = {
-            "measurement": LOGS_MEASUREMENT,
+            "measurement": ALERT_MEASUREMENT,
             "query_data": params,
             "count_field": "alert_id",
         }
