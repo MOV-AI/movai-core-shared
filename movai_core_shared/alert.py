@@ -1,11 +1,10 @@
 """Alert query."""
+from typing import List, Union
 from movai_core_shared.consts import (
     ALERT_QUERY_HANDLER_MSG_TYPE,
     DEFAULT_LOG_LIMIT,
     DEFAULT_LOG_OFFSET,
     LOGS_MEASUREMENT,
-    MIN_LOG_QUERY,
-    MAX_LOG_QUERY,
 )
 from movai_core_shared.envvars import (
     LOCAL_MESSAGE_SERVER,
@@ -16,27 +15,40 @@ from movai_core_shared.core.message_client import AsyncMessageClient
 from movai_core_shared.common.utils import is_manager
 from movai_core_shared.common.time import validate_time
 
+from .base_query import BaseQuery
+
 # pylint: disable=too-many-arguments
 
 
-class AlertQuery:
-    """A class for querying alert."""
-
-    _min_val = MIN_LOG_QUERY
-    _max_val = MAX_LOG_QUERY
+class AlertQuery(BaseQuery):
+    """Queryies alerts."""
 
     @classmethod
-    async def get_logs(
+    async def get_alerts(
         cls,
-        limit=DEFAULT_LOG_LIMIT,
-        offset=DEFAULT_LOG_OFFSET,
-        robots=None,
-        from_date=None,
-        to_date=None,
-        order_by=None,
-        order_dir=None,
+        limit: int = DEFAULT_LOG_LIMIT,
+        offset: int = DEFAULT_LOG_OFFSET,
+        robots: List[str] = None,
+        from_date: Union[int, str] = None,
+        to_date: Union[int, str] = None,
+        order_by: str = None,
+        order_dir: str = None,
     ) -> AlertQueryResponse:
-        """Get logs from message-server"""
+        """Get alerts from message-server.
+
+        Args:
+            limit: Maximum number of measurements to return.
+            offset: Query offset.
+            robots: List of robot names to filter.
+            from_date: Start date to filter.
+            to_date: End date to filter.
+            order_by: Field to order the measurements by.
+            order_dir: Direction of ordering.
+
+        Returns:
+            AlertQueryResponse: The response containing the queried alerts.
+
+        """
         server_addr = MASTER_MESSAGE_SERVER
         if is_manager():
             server_addr = LOCAL_MESSAGE_SERVER
@@ -45,10 +57,10 @@ class AlertQuery:
         params = {}
 
         if limit is not None:
-            params["limit"] = limit
+            params["limit"] = cls.validate_value("limit", limit)
 
         if offset is not None:
-            params["offset"] = offset
+            params["offset"] = cls.validate_value("offset", offset)
 
         if robots is not None:
             params["robot"] = robots
