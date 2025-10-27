@@ -8,7 +8,7 @@ from movai_core_shared.consts import (
 
 
 class BaseQuery:
-    """A class for querying alert."""
+    """A class for querying metrics."""
 
     _min_val: int = MIN_LOG_QUERY
     _max_val: int = MAX_LOG_QUERY
