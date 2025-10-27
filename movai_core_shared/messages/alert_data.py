@@ -33,3 +33,12 @@ class AlertData(AlertActivationData, AlertDeactivationData):
 
 class AlertRequest(Request):
     req_data: MetricQueryData
+
+
+class Alert(BaseModel):
+    name: str
+    info: str
+    action: str
+    callback: str
+    status: str
+    send_email: bool = False
