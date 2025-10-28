@@ -57,6 +57,14 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.alert">movai_core_shared.alert module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.alert.AlertQuery"><code class="docutils literal notranslate"><span class="pre">AlertQuery</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.base_query">movai_core_shared.base_query module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.base_query.BaseQuery"><code class="docutils literal notranslate"><span class="pre">BaseQuery</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.consts">movai_core_shared.consts module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.consts.DeactivationType"><code class="docutils literal notranslate"><span class="pre">DeactivationType</span></code></a></li>
 </ul>
@@ -291,10 +299,24 @@
 <li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.Alert.status"><code class="docutils literal notranslate"><span class="pre">Alert.status</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertActivationData"><code class="docutils literal notranslate"><span class="pre">AlertActivationData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertActivationData.activation_date"><code class="docutils literal notranslate"><span class="pre">AlertActivationData.activation_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertActivationData.args"><code class="docutils literal notranslate"><span class="pre">AlertActivationData.args</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertActivationData.model_config"><code class="docutils literal notranslate"><span class="pre">AlertActivationData.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertActivationData.model_fields"><code class="docutils literal notranslate"><span class="pre">AlertActivationData.model_fields</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertData"><code class="docutils literal notranslate"><span class="pre">AlertData</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertData.metric_fields"><code class="docutils literal notranslate"><span class="pre">AlertData.metric_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertData.alert_id"><code class="docutils literal notranslate"><span class="pre">AlertData.alert_id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertData.model_config"><code class="docutils literal notranslate"><span class="pre">AlertData.model_config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertData.model_fields"><code class="docutils literal notranslate"><span class="pre">AlertData.model_fields</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertDeactivationData"><code class="docutils literal notranslate"><span class="pre">AlertDeactivationData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertDeactivationData.deactivation_date"><code class="docutils literal notranslate"><span class="pre">AlertDeactivationData.deactivation_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertDeactivationData.deactivation_type"><code class="docutils literal notranslate"><span class="pre">AlertDeactivationData.deactivation_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertDeactivationData.model_config"><code class="docutils literal notranslate"><span class="pre">AlertDeactivationData.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertDeactivationData.model_fields"><code class="docutils literal notranslate"><span class="pre">AlertDeactivationData.model_fields</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.alert_data.AlertRequest"><code class="docutils literal notranslate"><span class="pre">AlertRequest</span></code></a><ul>
@@ -454,6 +476,36 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages.metric_data">movai_core_shared.messages.metric_data module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryContent"><code class="docutils literal notranslate"><span class="pre">AlertQueryContent</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryContent.activation_date"><code class="docutils literal notranslate"><span class="pre">AlertQueryContent.activation_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryContent.alert_id"><code class="docutils literal notranslate"><span class="pre">AlertQueryContent.alert_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryContent.args"><code class="docutils literal notranslate"><span class="pre">AlertQueryContent.args</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryContent.deactivation_date"><code class="docutils literal notranslate"><span class="pre">AlertQueryContent.deactivation_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryContent.deactivation_type"><code class="docutils literal notranslate"><span class="pre">AlertQueryContent.deactivation_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryContent.fleet"><code class="docutils literal notranslate"><span class="pre">AlertQueryContent.fleet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryContent.id"><code class="docutils literal notranslate"><span class="pre">AlertQueryContent.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryContent.model_config"><code class="docutils literal notranslate"><span class="pre">AlertQueryContent.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryContent.model_fields"><code class="docutils literal notranslate"><span class="pre">AlertQueryContent.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryContent.robot"><code class="docutils literal notranslate"><span class="pre">AlertQueryContent.robot</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryContent.service"><code class="docutils literal notranslate"><span class="pre">AlertQueryContent.service</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryContent.time"><code class="docutils literal notranslate"><span class="pre">AlertQueryContent.time</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryData"><code class="docutils literal notranslate"><span class="pre">AlertQueryData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryData.count"><code class="docutils literal notranslate"><span class="pre">AlertQueryData.count</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryData.data"><code class="docutils literal notranslate"><span class="pre">AlertQueryData.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryData.limit"><code class="docutils literal notranslate"><span class="pre">AlertQueryData.limit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryData.model_config"><code class="docutils literal notranslate"><span class="pre">AlertQueryData.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryData.model_fields"><code class="docutils literal notranslate"><span class="pre">AlertQueryData.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryData.offset"><code class="docutils literal notranslate"><span class="pre">AlertQueryData.offset</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryResponse"><code class="docutils literal notranslate"><span class="pre">AlertQueryResponse</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryResponse.model_config"><code class="docutils literal notranslate"><span class="pre">AlertQueryResponse.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryResponse.model_fields"><code class="docutils literal notranslate"><span class="pre">AlertQueryResponse.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryResponse.results"><code class="docutils literal notranslate"><span class="pre">AlertQueryResponse.results</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.GenericQueryResponse"><code class="docutils literal notranslate"><span class="pre">GenericQueryResponse</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.GenericQueryResponse.success"><code class="docutils literal notranslate"><span class="pre">GenericQueryResponse.success</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.GenericQueryResponse.results"><code class="docutils literal notranslate"><span class="pre">GenericQueryResponse.results</span></code></a></li>
@@ -591,6 +643,117 @@
 </section>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-movai_core_shared.alert">
+<span id="movai-core-shared-alert-module"></span><h2>movai_core_shared.alert module<a class="headerlink" href="#module-movai_core_shared.alert" title="Permalink to this heading"></a></h2>
+<p>Alert query.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="movai_core_shared.alert.AlertQuery">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.alert.</span></span><span class="sig-name descname"><span class="pre">AlertQuery</span></span><a class="headerlink" href="#movai_core_shared.alert.AlertQuery" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.base_query.BaseQuery" title="movai_core_shared.base_query.BaseQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseQuery</span></code></a></p>
+<p>Queryies alerts.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.alert.AlertQuery.get">
+<em class="property"><span class="pre">async</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robots</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryResponse" title="movai_core_shared.messages.metric_data.AlertQueryResponse"><span class="pre">AlertQueryResponse</span></a></span></span><a class="headerlink" href="#movai_core_shared.alert.AlertQuery.get" title="Permalink to this definition"></a></dt>
+<dd><p>Get alerts from message-server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>limit</strong> – Maximum number of measurements to return.</p></li>
+<li><p><strong>offset</strong> – Query offset.</p></li>
+<li><p><strong>robots</strong> – List of robot names to filter.</p></li>
+<li><p><strong>from_date</strong> – Start date to filter.</p></li>
+<li><p><strong>to_date</strong> – End date to filter.</p></li>
+<li><p><strong>order_by</strong> – Field to order the measurements by.</p></li>
+<li><p><strong>order_dir</strong> – Direction of ordering.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The response containing the queried alerts.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.AlertQueryResponse" title="movai_core_shared.messages.metric_data.AlertQueryResponse">AlertQueryResponse</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-movai_core_shared.base_query">
+<span id="movai-core-shared-base-query-module"></span><h2>movai_core_shared.base_query module<a class="headerlink" href="#module-movai_core_shared.base_query" title="Permalink to this heading"></a></h2>
+<p>Base query.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="movai_core_shared.base_query.BaseQuery">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.base_query.</span></span><span class="sig-name descname"><span class="pre">BaseQuery</span></span><a class="headerlink" href="#movai_core_shared.base_query.BaseQuery" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for querying metrics.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.base_query.BaseQuery.validate_datetime">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_datetime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#movai_core_shared.base_query.BaseQuery.validate_datetime" title="Permalink to this definition"></a></dt>
+<dd><p>Validate if value is timestamp or datetime</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>int</em>) – The datetime to validate</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – In case value isn’t a time format.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a timestamp value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.base_query.BaseQuery.validate_message">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#movai_core_shared.base_query.BaseQuery.validate_message" title="Permalink to this definition"></a></dt>
+<dd><p>Validates the message</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>str</em>) – A message to validate</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – In case message is not a string.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The message.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.base_query.BaseQuery.validate_value">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#movai_core_shared.base_query.BaseQuery.validate_value" title="Permalink to this definition"></a></dt>
+<dd><p>Validates the limmit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filter_name</strong> (<em>str</em>) – Which filter called the validation function.</p></li>
+<li><p><strong>value</strong> (<em>int</em>) – The limit to validate.</p></li>
+<li><p><strong>alternate_value</strong> (<em>int</em>) – an alternative value in case of error.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – in case limit can not be casted to int.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The validated limit.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-movai_core_shared.consts">
 <span id="movai-core-shared-consts-module"></span><h2>movai_core_shared.consts module<a class="headerlink" href="#module-movai_core_shared.consts" title="Permalink to this heading"></a></h2>
@@ -1102,76 +1265,12 @@ Proprietary and confidential</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="movai_core_shared.logger.LogsQuery">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.logger.</span></span><span class="sig-name descname"><span class="pre">LogsQuery</span></span><a class="headerlink" href="#movai_core_shared.logger.LogsQuery" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.base_query.BaseQuery" title="movai_core_shared.base_query.BaseQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseQuery</span></code></a></p>
 <p>A class for querying logs</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="movai_core_shared.logger.LogsQuery.get_logs">
 <em class="property"><span class="pre">async</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">services</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fromDate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toDate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwrargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.LogQueryResponse" title="movai_core_shared.messages.metric_data.LogQueryResponse"><span class="pre">LogQueryResponse</span></a></span></span><a class="headerlink" href="#movai_core_shared.logger.LogsQuery.get_logs" title="Permalink to this definition"></a></dt>
 <dd><p>Get logs from message-server</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="movai_core_shared.logger.LogsQuery.validate_datetime">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_datetime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#movai_core_shared.logger.LogsQuery.validate_datetime" title="Permalink to this definition"></a></dt>
-<dd><p>Validate if value is timestamp or datetime</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>value</strong> (<em>int</em>) – The datetime to validate</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – In case value isn’t a time format.</p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>a timestamp value.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="movai_core_shared.logger.LogsQuery.validate_message">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#movai_core_shared.logger.LogsQuery.validate_message" title="Permalink to this definition"></a></dt>
-<dd><p>Validates the message</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>value</strong> (<em>str</em>) – A message to validate</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – In case message is not a string.</p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The message.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="movai_core_shared.logger.LogsQuery.validate_value">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#movai_core_shared.logger.LogsQuery.validate_value" title="Permalink to this definition"></a></dt>
-<dd><p>Validates the limmit.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>filter_name</strong> (<em>str</em>) – Which filter called the validation function.</p></li>
-<li><p><strong>value</strong> (<em>int</em>) – The limit to validate.</p></li>
-<li><p><strong>alternate_value</strong> (<em>int</em>) – an alternative value in case of error.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – in case limit can not be casted to int.</p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The validated limit.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>int</p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>

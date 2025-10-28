@@ -14,6 +14,22 @@ Subpackages
 Submodules
 ----------
 
+movai\_core\_shared.alert module
+--------------------------------
+
+.. automodule:: movai_core_shared.alert
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.base\_query module
+--------------------------------------
+
+.. automodule:: movai_core_shared.base_query
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 movai\_core\_shared.consts module
 ---------------------------------
 
