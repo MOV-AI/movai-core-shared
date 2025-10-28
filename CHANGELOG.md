@@ -1,4 +1,4 @@
-# vTBD
+# v3.7.0
 - [BP-1518](https://movai.atlassian.net/browse/BP-1518): Create alerts history API
   - Introduce BaseQuery and AlertQuery
 
