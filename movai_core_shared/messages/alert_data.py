@@ -6,10 +6,33 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2023
 """
+from typing import Union, Literal, Optional
+
 from pydantic import BaseModel
 
+from movai_core_shared.consts import DeactivationType
 from movai_core_shared.messages.general_data import Request
-from movai_core_shared.messages.metric_data import MetricData
+from movai_core_shared.messages.metric_data import MetricQueryData
+
+
+class AlertActivationData(BaseModel):
+    args: Optional[str]
+    activation_date: str
+
+
+class AlertDeactivationData(BaseModel):
+    deactivation_date: str
+    deactivation_type: Union[
+        Literal[DeactivationType.REQUESTED], Literal[DeactivationType.AUTO_CLEARED]
+    ]
+
+
+class AlertData(AlertActivationData, AlertDeactivationData):
+    alert_id: str
+
+
+class AlertRequest(Request):
+    req_data: MetricQueryData
 
 
 class Alert(BaseModel):
@@ -19,11 +42,3 @@ class Alert(BaseModel):
     callback: str
     status: str
     send_email: bool = False
-
-
-class AlertData(MetricData):
-    metric_fields: Alert
-
-
-class AlertRequest(Request):
-    req_data: AlertData

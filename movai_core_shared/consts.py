@@ -143,6 +143,7 @@ SYSLOG_MEASUREMENT = "syslog"
 LOGS_MEASUREMENT = "app_logs"
 METRICS_MEASUREMENT = "metric_logs"
 STRESS_MEASUREMENT = "stress_logs"
+ALERT_MEASUREMENT = "alert_events"
 
 # Message-Server msgs types:
 LOGS_HANDLER_MSG_TYPE = "logs"
@@ -153,6 +154,7 @@ METRICS_HANDLER_MSG_TYPE = "metrics"
 METRICS_QUERY_HANDLER_MSG_TYPE = "metrics_query"
 NOTIFICATIONS_HANDLER_MSG_TYPE = "notifications"
 ALERTS_HANDLER_METRIC_TYPE = "alerts"
+ALERT_QUERY_HANDLER_MSG_TYPE = "alerts_query"
 
 CALLBACK_STDOUT_COLORS = {
     logging.DEBUG: "\033[36m",
