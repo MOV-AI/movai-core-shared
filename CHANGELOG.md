@@ -1,3 +1,6 @@
+# vTBD
+- [BP-1545](https://movai.atlassian.net/browse/BP-1545): Remove old Alerts implementation
+
 # v3.7.0
 - [BP-1518](https://movai.atlassian.net/browse/BP-1518): Create alerts history API
   - Introduce BaseQuery and AlertQuery
