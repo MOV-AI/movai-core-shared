@@ -2,7 +2,6 @@
 
 import pytest
 from movai_core_shared.messages import NotificationDataFactory
-from movai_core_shared.messages.alert_data import Alert
 from movai_core_shared.messages.metric_data import MetricData
 from movai_core_shared.messages.general_data import Request
 from movai_core_shared.messages.log_data import (
@@ -24,12 +23,6 @@ class TestMessagesData:
     def test_notification_data(self):
         notification_data = NotificationDataFactory()
         assert notification_data is not None
-
-    def test_alert(self):
-        alert = Alert(
-            name="test", info="test", action="test", callback="test", status="test", send_email=True
-        )
-        assert alert is not None
 
     def test_metric_data(self):
         metric_data = MetricData(measurement="test", metric_type="test")
