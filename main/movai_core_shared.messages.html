@@ -111,56 +111,6 @@ Proprietary and confidential</p>
 <p>Developers:
 - Erez Zomer (<a class="reference external" href="mailto:erez&#37;&#52;&#48;mov&#46;ai">erez<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2023</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="movai_core_shared.messages.alert_data.Alert">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.messages.alert_data.</span></span><span class="sig-name descname"><span class="pre">Alert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">send_email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.messages.alert_data.Alert" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="movai_core_shared.messages.alert_data.Alert.action">
-<span class="sig-name descname"><span class="pre">action</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#movai_core_shared.messages.alert_data.Alert.action" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="movai_core_shared.messages.alert_data.Alert.callback">
-<span class="sig-name descname"><span class="pre">callback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#movai_core_shared.messages.alert_data.Alert.callback" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="movai_core_shared.messages.alert_data.Alert.info">
-<span class="sig-name descname"><span class="pre">info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#movai_core_shared.messages.alert_data.Alert.info" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="movai_core_shared.messages.alert_data.Alert.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#movai_core_shared.messages.alert_data.Alert.model_config" title="Permalink to this definition"></a></dt>
-<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="movai_core_shared.messages.alert_data.Alert.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'action':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'callback':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'info':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'send_email':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=False,</span> <span class="pre">default=False),</span> <span class="pre">'status':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#movai_core_shared.messages.alert_data.Alert.model_fields" title="Permalink to this definition"></a></dt>
-<dd><p>Metadata about the fields defined on the model,
-mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
-<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="movai_core_shared.messages.alert_data.Alert.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#movai_core_shared.messages.alert_data.Alert.name" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="movai_core_shared.messages.alert_data.Alert.send_email">
-<span class="sig-name descname"><span class="pre">send_email</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#movai_core_shared.messages.alert_data.Alert.send_email" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="movai_core_shared.messages.alert_data.Alert.status">
-<span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#movai_core_shared.messages.alert_data.Alert.status" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="movai_core_shared.messages.alert_data.AlertActivationData">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.messages.alert_data.</span></span><span class="sig-name descname"><span class="pre">AlertActivationData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.messages.alert_data.AlertActivationData" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
@@ -242,31 +192,6 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
 </dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="movai_core_shared.messages.alert_data.AlertRequest">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.messages.alert_data.</span></span><span class="sig-name descname"><span class="pre">AlertRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">req_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">req_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_required</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#movai_core_shared.messages.general_data.RobotInfo" title="movai_core_shared.messages.general_data.RobotInfo"><span class="pre">RobotInfo</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">req_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#movai_core_shared.messages.metric_data.MetricQueryData" title="movai_core_shared.messages.metric_data.MetricQueryData"><span class="pre">MetricQueryData</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.messages.alert_data.AlertRequest" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.messages.general_data.Request" title="movai_core_shared.messages.general_data.Request"><code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code></a></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="movai_core_shared.messages.alert_data.AlertRequest.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#movai_core_shared.messages.alert_data.AlertRequest.model_config" title="Permalink to this definition"></a></dt>
-<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="movai_core_shared.messages.alert_data.AlertRequest.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'created':</span> <span class="pre">FieldInfo(annotation=int,</span> <span class="pre">required=True),</span> <span class="pre">'req_data':</span> <span class="pre">FieldInfo(annotation=MetricQueryData,</span> <span class="pre">required=True),</span> <span class="pre">'req_id':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'req_type':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'response_required':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=True),</span> <span class="pre">'robot_info':</span> <span class="pre">FieldInfo(annotation=RobotInfo,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#movai_core_shared.messages.alert_data.AlertRequest.model_fields" title="Permalink to this definition"></a></dt>
-<dd><p>Metadata about the fields defined on the model,
-mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
-<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="movai_core_shared.messages.alert_data.AlertRequest.req_data">
-<span class="sig-name descname"><span class="pre">req_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#movai_core_shared.messages.metric_data.MetricQueryData" title="movai_core_shared.messages.metric_data.MetricQueryData"><span class="pre">MetricQueryData</span></a></em><a class="headerlink" href="#movai_core_shared.messages.alert_data.AlertRequest.req_data" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
