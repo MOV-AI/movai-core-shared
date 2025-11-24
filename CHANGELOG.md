@@ -1,4 +1,4 @@
-# vTBD
+# v3.8.0
 - [BP-1545](https://movai.atlassian.net/browse/BP-1545): Remove old Alerts implementation
 
 # v3.7.0
