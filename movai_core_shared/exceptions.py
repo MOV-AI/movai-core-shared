@@ -33,7 +33,7 @@ class TransitionException(MovaiException):
 
 
 class RobotRunning(MovaiException):
-    """Raised when trying to remove a robot that is currently running."""
+    """Raised when an action cannot be performed because the robot is running."""
 
 
 class CommandError(MovaiException):
