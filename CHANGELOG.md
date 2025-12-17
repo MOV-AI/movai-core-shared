@@ -1,4 +1,4 @@
-# vTBD
+# v3.9.0
 - [BP-1471](https://movai.atlassian.net/browse/BP-1471): Create API to remove robot (Migrate old remove robot API)
 
 # v3.8.0
