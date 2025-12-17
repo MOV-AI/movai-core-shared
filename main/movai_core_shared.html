@@ -111,8 +111,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.PrimaryKeyError"><code class="docutils literal notranslate"><span class="pre">PrimaryKeyError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.QueryError"><code class="docutils literal notranslate"><span class="pre">QueryError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RemapValidationError"><code class="docutils literal notranslate"><span class="pre">RemapValidationError</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.ResourceException"><code class="docutils literal notranslate"><span class="pre">ResourceException</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RestrictedPathError"><code class="docutils literal notranslate"><span class="pre">RestrictedPathError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RobotRunning"><code class="docutils literal notranslate"><span class="pre">RobotRunning</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RoleAlreadyExist"><code class="docutils literal notranslate"><span class="pre">RoleAlreadyExist</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RoleDoesNotExist"><code class="docutils literal notranslate"><span class="pre">RoleDoesNotExist</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RoleError"><code class="docutils literal notranslate"><span class="pre">RoleError</span></code></a></li>
@@ -155,7 +155,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.LogAdapter"><code class="docutils literal notranslate"><span class="pre">LogAdapter</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.MovaiException"><code class="docutils literal notranslate"><span class="pre">MovaiException</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.RecoveryStates"><code class="docutils literal notranslate"><span class="pre">RecoveryStates</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.ResourceException"><code class="docutils literal notranslate"><span class="pre">ResourceException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.RobotRunning"><code class="docutils literal notranslate"><span class="pre">RobotRunning</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.TransitionException"><code class="docutils literal notranslate"><span class="pre">TransitionException</span></code></a></li>
 </ul>
 </li>
@@ -1047,17 +1047,17 @@ Proprietary and confidential</p>
 </dd></dl>
 
 <dl class="py exception">
-<dt class="sig sig-object py" id="movai_core_shared.exceptions.ResourceException">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">ResourceException</span></span><a class="headerlink" href="#movai_core_shared.exceptions.ResourceException" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
-<p>A resource handling exception</p>
-</dd></dl>
-
-<dl class="py exception">
 <dt class="sig sig-object py" id="movai_core_shared.exceptions.RestrictedPathError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">RestrictedPathError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.RestrictedPathError" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
 <p>The client tries to access restricted path.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.RobotRunning">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">RobotRunning</span></span><a class="headerlink" href="#movai_core_shared.exceptions.RobotRunning" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
+<p>Raised when an action cannot be performed because the robot is running.</p>
 </dd></dl>
 
 <dl class="py exception">
@@ -1518,10 +1518,10 @@ Values are stored in recovery_state fleet variable.</p>
 </dd></dl>
 
 <dl class="py exception">
-<dt class="sig sig-object py" id="movai_core_shared.ResourceException">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.</span></span><span class="sig-name descname"><span class="pre">ResourceException</span></span><a class="headerlink" href="#movai_core_shared.ResourceException" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="movai_core_shared.RobotRunning">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.</span></span><span class="sig-name descname"><span class="pre">RobotRunning</span></span><a class="headerlink" href="#movai_core_shared.RobotRunning" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
-<p>A resource handling exception</p>
+<p>Raised when an action cannot be performed because the robot is running.</p>
 </dd></dl>
 
 <dl class="py exception">
