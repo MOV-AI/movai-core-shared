@@ -98,7 +98,7 @@ from movai_core_shared.exceptions import (
     AlreadyExist,
     InvalidStructure,
     TransitionException,
-    ResourceException,
+    RobotRunning,
     CommandError,
     ActiveFlowError,
 )
@@ -117,7 +117,7 @@ __all__ = [
     "AlreadyExist",
     "InvalidStructure",
     "TransitionException",
-    "ResourceException",
+    "RobotRunning",
     "CommandError",
     "ActiveFlowError",
     "MOVAI_STDOUT_VERBOSITY_LEVEL",

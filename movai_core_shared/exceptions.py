@@ -32,10 +32,8 @@ class TransitionException(MovaiException):
     """Raised a GD_Node transition happens."""
 
 
-class ResourceException(MovaiException):
-    """
-    A resource handling exception
-    """
+class RobotRunning(MovaiException):
+    """Raised when an action cannot be performed because the robot is running."""
 
 
 class CommandError(MovaiException):
