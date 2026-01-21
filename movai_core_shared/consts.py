@@ -12,7 +12,7 @@ import logging
 # system
 PID = getpid()
 
-# Constants
+# logging
 USER_LOG_TAG = "user_log"
 UI_LOG_TAG = "ui"
 CALLBACK_LOGGER = "CALLBACK_LOGGER"
@@ -20,6 +20,14 @@ MAX_LOG_QUERY = 1000000
 MIN_LOG_QUERY = 0
 DEFAULT_LOG_LIMIT = 1000
 DEFAULT_LOG_OFFSET = 0
+LOG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+LOG_TEXT_FORMAT = "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(lineno)d]: %(message)s"
+LOG_FORMATTER = logging.Formatter(
+    LOG_TEXT_FORMAT,
+    datefmt=LOG_DATE_FORMAT,
+)
+
+# node types
 ROS1_NODELET = "ROS1/Nodelet"
 ROS1_NODE = "ROS1/Node"
 ROS1_PLUGIN = "ROS1/Plugin"

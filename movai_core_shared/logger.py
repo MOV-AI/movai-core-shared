@@ -19,6 +19,9 @@ from movai_core_shared.common.time import current_timestamp_int
 from movai_core_shared.consts import (
     DEFAULT_LOG_LIMIT,
     DEFAULT_LOG_OFFSET,
+    LOG_TEXT_FORMAT,
+    LOG_DATE_FORMAT,
+    LOG_FORMATTER,
     LOGS_HANDLER_MSG_TYPE,
     LOGS_QUERY_HANDLER_MSG_TYPE,
     LOGS_MEASUREMENT,
@@ -58,16 +61,8 @@ from .base_query import BaseQuery
 
 # pylint: disable=invalid-name,dangerous-default-value,protected-access,no-member,no-else-raise,too-many-arguments,too-many-locals,too-many-branches
 
-LOG_FORMATTER_DATETIME = "%Y-%m-%d %H:%M:%S"
 S_FORMATTER = (
     "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(tags)s][%(lineno)d]: %(message)s"
-)
-LOG_FORMATTER_EXPR = (
-    "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(lineno)d]: %(message)s"
-)
-LOG_FORMATTER = logging.Formatter(
-    LOG_FORMATTER_EXPR,
-    datefmt=LOG_FORMATTER_DATETIME,
 )
 
 SEVERETY_CODES_MAPPING = {
@@ -109,7 +104,7 @@ class StdOutHandler(logging.StreamHandler):
                 record.tags = "|".join([f"{k}:{v}" for k, v in tags.items()])
             else:
                 _formatter = _formatter.replace("[%(tags)s]", "")
-            log_format = logging.Formatter(fmt=_formatter, datefmt=LOG_FORMATTER_DATETIME)
+            log_format = logging.Formatter(fmt=_formatter, datefmt=LOG_DATE_FORMAT)
             self.setFormatter(fmt=log_format)
 
             msg = self.format(record)
@@ -278,7 +273,7 @@ def get_remote_handler(log_level=logging.NOTSET):
 def add_shared_handler_to_root():
     """Add handler to root so logs can be tailed and redirected to e.g. docker logs."""
     handler = logging.FileHandler(DETACHED_PROCESS_OUTPUT)
-    handler.setFormatter(logging.Formatter(LOG_FORMATTER_EXPR))
+    handler.setFormatter(logging.Formatter(LOG_TEXT_FORMAT))
     root = logging.getLogger()
     root.addHandler(handler)
     root.setLevel(logging.DEBUG)
