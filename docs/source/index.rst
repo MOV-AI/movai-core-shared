@@ -14,6 +14,7 @@ Welcome to movai-core-shared's documentation!
    readme
    modules
    logging
+   changelog
 
 .. include:: readme.rst
 

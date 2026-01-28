@@ -17,6 +17,7 @@ from typing import List
 import zmq
 import zmq.asyncio
 from beartype import beartype
+from movai_core_shared.consts import LOG_FORMATTER
 from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS
 
 
@@ -31,13 +32,17 @@ class ZMQServer(ABC):
         """Constructor"""
         self._name = server_name
         self._addr = bind_addr
-        self._logger = logging.getLogger(server_name)
-        self._debug = debug
         self.loop = None
         self._initialized = False
         self._running = False
         self._ctx = None
         self._socket = None
+
+        self._logger = logging.getLogger(f"ZMQServer-{self._name}")
+        handler = logging.StreamHandler()
+        handler.setFormatter(LOG_FORMATTER)
+        self._logger.addHandler(handler)
+        self._logger.setLevel(logging.DEBUG if debug else logging.INFO)
 
     def _init_socket(self) -> None:
         """Initializes the zmq context."""
@@ -67,9 +72,9 @@ class ZMQServer(ABC):
         await self.at_startup()
         while self._running:
             try:
-                if self._debug:
-                    self._logger.debug("Waiting for new requests.\n")
+                self._logger.debug("Waiting for new requests...")
                 buffer = await self._socket.recv_multipart()
+                self._logger.debug("Received new request: %s", buffer)
                 asyncio.create_task(self.handle(buffer))
                 await asyncio.sleep(0)
             except Exception as error:
@@ -99,6 +104,8 @@ class ZMQServer(ABC):
 
         self._init_socket()
         self._initialized = True
+
+        self._logger.info("ZMQServer %s initialized on %s", self._name, self._addr)
 
     def start(self) -> bool:
         """The main message dispatch loop.
