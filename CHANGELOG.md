@@ -1,5 +1,5 @@
 # Changelog
-## vTBD
+## v3.9.1
 - [BP-1583](https://movai.atlassian.net/browse/BP-1583): Node didn't transition
   - Review logging to assist debug
 
