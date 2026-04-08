@@ -14,7 +14,8 @@ movai-core-shared provides basic functionality that all platform requires, such 
 |--------|--------------------------|-----------------|
 | 2.4.1  | releases/3.0             | 3.0.x.y         |
 | 2.4.4  | releases/3.3             | 3.3.x.y         |
-| 2.5.0  | main                     | -               |
+| 2.5.1  | releases/3.9             | 3.9.x.y         |
+| 3.0.0  | main                     | -               |
 
 ## Build
 
