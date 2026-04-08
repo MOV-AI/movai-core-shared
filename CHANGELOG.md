@@ -1,4 +1,8 @@
 # Changelog
+
+## vTBD
+- [BP-1651](https://movai.atlassian.net/browse/BP-1651): ROS2 - Enable ROS2 Node and Launch template creation
+
 ## v3.9.1
 - [BP-1583](https://movai.atlassian.net/browse/BP-1583): Node didn't transition
   - Review logging to assist debug
