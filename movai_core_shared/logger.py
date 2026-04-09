@@ -13,7 +13,6 @@ from logging.handlers import TimedRotatingFileHandler
 import syslog
 import json
 
-from movai_core_shared import __version__ as VERSION
 from movai_core_shared.common.time import current_timestamp_int
 
 from movai_core_shared.consts import (
@@ -189,7 +188,7 @@ class RemoteHandler(logging.StreamHandler):
             "procid": PID,
             "severity_code": SEVERETY_CODES_MAPPING[record.levelname],
             "timestamp": current_timestamp_int(),
-            "version": VERSION,
+            "version": "",
         }
 
         log_data = {
