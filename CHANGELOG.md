@@ -4,6 +4,9 @@
 - [BP-1673](https://movai.atlassian.net/browse/BP-1673): List mandatory ports based on Node type
   - Review ports nomenclature
 
+## v3.10.1
+- [BP-1693](https://movai.atlassian.net/browse/BP-1693): Add ROS2 ActionServer and ActionClient
+
 ## v3.10.0
 - [BP-1651](https://movai.atlassian.net/browse/BP-1651): ROS2 - Enable ROS2 Node and Launch template creation
 
