@@ -150,6 +150,7 @@ IO_TEMPLATES = (
 
 # Port protocols
 MOVAI_CONTEXTCLIENTIN = "MovAI/ContextClientIn"
+MOVAI_TRANSITION = "MovAI/Transition"
 
 DEFAULT_CALLBACK = "place_holder"
 
