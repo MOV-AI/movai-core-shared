@@ -102,7 +102,6 @@ STRESS_DBWRITER_BIND_ADDR = f"ipc://{DBWRITER_IPC_PATH}/{STRESS_INFLUX_DB}"
 ROS1_LIB = f"/opt/ros/{ROS_DISTRO}/lib"
 ROS2_LIB = f"/opt/ros/{ROS2_DISTRO}/lib"
 ROS2_PATH = f"/opt/ros/{ROS2_DISTRO}/lib/python3/site-packages"
-ROS1_NODELET_CMD = f"/opt/ros/{ROS_DISTRO}/lib/nodelet/nodelet"
 
 ENVIRON_ROS1 = {}
 ENVIRON_ROS2 = {}
