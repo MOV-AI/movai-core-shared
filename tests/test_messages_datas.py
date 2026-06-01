@@ -1,7 +1,7 @@
 """ Test Messages Data classes """
 
 import pytest
-from movai_core_shared.messages import NotificationDataFactory
+from movai_core_shared.messages.notification_data import NotificationDataFactory
 from movai_core_shared.messages.metric_data import MetricData
 from movai_core_shared.messages.general_data import Request
 from movai_core_shared.messages.log_data import (
