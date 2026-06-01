@@ -6,6 +6,4 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2023
 """
-from .notification_data import NotificationDataFactory
-
-__all__ = ["NotificationDataFactory"]
+__all__ = []  # Empty - import specific modules as needed
