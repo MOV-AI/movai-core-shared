@@ -1,4 +1,10 @@
 # Changelog
+
+## vTBD
+- [BP-1704](https://movai.atlassian.net/browse/BP-1704): Optimize imports
+  - Remove messages/__init__.py
+  - Move LogsQuery to a separate file
+
 ## v3.9.1
 - [BP-1583](https://movai.atlassian.net/browse/BP-1583): Node didn't transition
   - Review logging to assist debug
