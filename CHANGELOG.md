@@ -1,5 +1,10 @@
 # Changelog
 
+## vTBD
+- [BP-1704](https://movai.atlassian.net/browse/BP-1704): Optimize imports
+  - Remove messages/__init__.py
+  - Move LogsQuery to a separate file
+
 ## v3.11.0
 - [BP-1673](https://movai.atlassian.net/browse/BP-1673): List mandatory ports based on Node type
   - Review ports nomenclature
