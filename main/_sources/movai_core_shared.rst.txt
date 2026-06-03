@@ -54,6 +54,14 @@ movai\_core\_shared.exceptions module
    :undoc-members:
    :show-inheritance:
 
+movai\_core\_shared.log\_query module
+-------------------------------------
+
+.. automodule:: movai_core_shared.log_query
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 movai\_core\_shared.logger module
 ---------------------------------
 

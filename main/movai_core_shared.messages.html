@@ -62,6 +62,7 @@
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.html#module-movai_core_shared.consts">movai_core_shared.consts module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.html#module-movai_core_shared.envvars">movai_core_shared.envvars module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.html#module-movai_core_shared.exceptions">movai_core_shared.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.html#module-movai_core_shared.log_query">movai_core_shared.log_query module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.html#module-movai_core_shared.logger">movai_core_shared.logger module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.html#module-movai_core_shared.recovery">movai_core_shared.recovery module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.html#module-movai_core_shared">Module contents</a></li>
@@ -1590,37 +1591,6 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 </section>
 <section id="module-movai_core_shared.messages">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-movai_core_shared.messages" title="Permalink to this heading"></a></h2>
-<p>Copyright (C) Mov.ai  - All Rights Reserved
-Unauthorized copying of this file, via any medium is strictly prohibited
-Proprietary and confidential</p>
-<p>Developers:
-- Erez Zomer (<a class="reference external" href="mailto:erez&#37;&#52;&#48;mov&#46;ai">erez<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2023</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="movai_core_shared.messages.NotificationDataFactory">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.messages.</span></span><span class="sig-name descname"><span class="pre">NotificationDataFactory</span></span><a class="headerlink" href="#movai_core_shared.messages.NotificationDataFactory" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="movai_core_shared.messages.NotificationDataFactory.create">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notification_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notification_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.messages.NotificationDataFactory.create" title="Permalink to this definition"></a></dt>
-<dd><p>create an Object according to the type of the notification</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>notification_type</strong> (<em>str</em>) – the notificaiton type.</p></li>
-<li><p><strong>notification_data</strong> (<em>dict</em>) – the notification data.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>dataclass like obj representing the notification data</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Obj</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 </section>
 

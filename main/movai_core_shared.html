@@ -132,9 +132,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.UserPermissionsError"><code class="docutils literal notranslate"><span class="pre">UserPermissionsError</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.log_query">movai_core_shared.log_query module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.log_query.LogsQuery"><code class="docutils literal notranslate"><span class="pre">LogsQuery</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.logger">movai_core_shared.logger module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.Log"><code class="docutils literal notranslate"><span class="pre">Log</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.LogsQuery"><code class="docutils literal notranslate"><span class="pre">LogsQuery</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.RemoteHandler"><code class="docutils literal notranslate"><span class="pre">RemoteHandler</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.StdOutHandler"><code class="docutils literal notranslate"><span class="pre">StdOutHandler</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.add_shared_handler_to_root"><code class="docutils literal notranslate"><span class="pre">add_shared_handler_to_root()</span></code></a></li>
@@ -613,13 +616,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.NotificationDataFactory"><code class="docutils literal notranslate"><span class="pre">NotificationDataFactory</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.NotificationDataFactory.create"><code class="docutils literal notranslate"><span class="pre">NotificationDataFactory.create()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -1181,6 +1178,22 @@ Proprietary and confidential</p>
 </dd></dl>
 
 </section>
+<section id="module-movai_core_shared.log_query">
+<span id="movai-core-shared-log-query-module"></span><h2>movai_core_shared.log_query module<a class="headerlink" href="#module-movai_core_shared.log_query" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="movai_core_shared.log_query.LogsQuery">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.log_query.</span></span><span class="sig-name descname"><span class="pre">LogsQuery</span></span><a class="headerlink" href="#movai_core_shared.log_query.LogsQuery" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.base_query.BaseQuery" title="movai_core_shared.base_query.BaseQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseQuery</span></code></a></p>
+<p>A class for querying logs</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.log_query.LogsQuery.get_logs">
+<em class="property"><span class="pre">async</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">services</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fromDate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toDate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwrargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.LogQueryResponse" title="movai_core_shared.messages.metric_data.LogQueryResponse"><span class="pre">LogQueryResponse</span></a></span></span><a class="headerlink" href="#movai_core_shared.log_query.LogsQuery.get_logs" title="Permalink to this definition"></a></dt>
+<dd><p>Get logs from message-server</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-movai_core_shared.logger">
 <span id="movai-core-shared-logger-module"></span><h2>movai_core_shared.logger module<a class="headerlink" href="#module-movai_core_shared.logger" title="Permalink to this heading"></a></h2>
 <p>Copyright (C) Mov.ai  - All Rights Reserved
@@ -1242,19 +1255,6 @@ Proprietary and confidential</p>
 <dt class="sig sig-object py" id="movai_core_shared.logger.Log.set_log_file">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_log_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.Log.set_log_file" title="Permalink to this definition"></a></dt>
 <dd><p>Set the name of the file we write the log</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="movai_core_shared.logger.LogsQuery">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.logger.</span></span><span class="sig-name descname"><span class="pre">LogsQuery</span></span><a class="headerlink" href="#movai_core_shared.logger.LogsQuery" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.base_query.BaseQuery" title="movai_core_shared.base_query.BaseQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseQuery</span></code></a></p>
-<p>A class for querying logs</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="movai_core_shared.logger.LogsQuery.get_logs">
-<em class="property"><span class="pre">async</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">services</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fromDate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toDate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwrargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.metric_data.LogQueryResponse" title="movai_core_shared.messages.metric_data.LogQueryResponse"><span class="pre">LogQueryResponse</span></a></span></span><a class="headerlink" href="#movai_core_shared.logger.LogsQuery.get_logs" title="Permalink to this definition"></a></dt>
-<dd><p>Get logs from message-server</p>
 </dd></dl>
 
 </dd></dl>
