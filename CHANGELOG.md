@@ -1,6 +1,6 @@
 # Changelog
 
-## vTBD
+## v3.9.2
 - [BP-1704](https://movai.atlassian.net/browse/BP-1704): Optimize imports
   - Remove messages/__init__.py
   - Move LogsQuery to a separate file
