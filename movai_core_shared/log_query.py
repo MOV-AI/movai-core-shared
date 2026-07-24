@@ -63,7 +63,11 @@ class LogsQuery(BaseQuery):
                 tags = [tags]
             query_parts.append("|".join([f'tags="{tag}:True"' for tag in tags]))
 
-        params["query"] = "{" + ", ".join(f'{k}="{v}"' for k, v in query.items()) + "}"
+        if query:
+            params["query"] = "{" + ", ".join(f'{k}="{v}"' for k, v in query.items()) + "}"
+        else:
+            # query cannot be empty, so we add a default filter to match any container_name
+            params["query"] = '{container_name=~".+"}'
 
         if query_parts:
             params["query"] += "|" + "|".join(query_parts)
