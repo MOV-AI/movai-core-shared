@@ -36,6 +36,8 @@ class LogsQuery(BaseQuery):
 
         if limit is not None:
             params["limit"] = cls.validate_value("limit", limit)
+            if params["limit"] > 300:
+                params["limit"] = 300
 
         if robots is not None:
             query["robot"] = robots
