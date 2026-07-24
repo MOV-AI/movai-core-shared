@@ -4,7 +4,6 @@ import requests
 
 from movai_core_shared.consts import (
     DEFAULT_LOG_LIMIT,
-    DEFAULT_LOG_OFFSET,
 )
 from movai_core_shared.messages.metric_data import LogQueryResponse
 from movai_core_shared.common.time import validate_time
@@ -23,14 +22,12 @@ class LogsQuery(BaseQuery):
     async def get_logs(
         cls,
         limit=DEFAULT_LOG_LIMIT,
-        offset=DEFAULT_LOG_OFFSET,
         robots=None,
         services=None,
         level=None,
         message=None,
         fromDate=None,
         toDate=None,
-        order_dir=None,
         tags: Optional[Union[List[str], str]] = None,
     ) -> LogQueryResponse:
         params = {}
@@ -39,9 +36,6 @@ class LogsQuery(BaseQuery):
 
         if limit is not None:
             params["limit"] = cls.validate_value("limit", limit)
-
-        if offset is not None:
-            params["offset"] = cls.validate_value("offset", offset)
 
         if robots is not None:
             query["robot"] = robots
@@ -100,16 +94,13 @@ class LogsQuery(BaseQuery):
                 }
             )
 
-        if order_dir is not None:
-            params["direction"] = "forward"
-        else:
-            compatible_data.reverse()  # reverse when DESC order
+        compatible_data.reverse()
 
         compatible_response = {
             "success": True,
             "results": {
                 "limit": limit,
-                "offset": offset,
+                "offset": 0,
                 "count": len(response.json().get("data", {}).get("result", [])),
                 "data": compatible_data,
             },
