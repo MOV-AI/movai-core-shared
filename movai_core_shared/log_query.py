@@ -32,7 +32,7 @@ class LogsQuery(BaseQuery):
     ) -> LogQueryResponse:
         params = {}
         query = {}
-        query_parts = ["logfmt"]
+        query_parts = ["logfmt", 'line_format "{{.message}}"']
 
         if limit is not None:
             params["limit"] = cls.validate_value("limit", limit)
@@ -84,21 +84,24 @@ class LogsQuery(BaseQuery):
         data = response.json().get("data", {}).get("result", [])
 
         for msg in data:
-            compatible_data.append(
-                {
-                    "robot": msg["stream"]["robot"],
-                    "level": msg["stream"]["detected_level"],
-                    "service": msg["stream"]["service"],
-                    "runtime": False,
-                    "module": "<string>",
-                    "funcName": "<module>",
-                    "lineno": 1,
-                    "message": msg["stream"]["message"],
-                    "args": None,
-                    "time": int(msg["values"][0][0]) // 1_000_000_000,
-                    "ui": "True",
-                }
-            )
+            for value in msg.get("values", []):
+                compatible_data.append(
+                    {
+                        "robot": msg["stream"]["robot"],
+                        "level": msg["stream"]["detected_level"],
+                        "service": msg["stream"]["service"],
+                        "runtime": False,
+                        "module": "<string>",
+                        "funcName": "<module>",
+                        "lineno": 1,
+                        "message": msg["stream"]["message"]
+                        if "message" in msg["stream"]
+                        else value[1],
+                        "args": None,
+                        "time": int(msg["values"][0][0]) // 1_000_000_000,
+                        "ui": "True",
+                    }
+                )
 
         compatible_data.reverse()
 
