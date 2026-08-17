@@ -1,5 +1,8 @@
 # Changelog
 
+## vTBD
+- [BP-1680](https://movai.atlassian.net/browse/BP-1680): Add envvar `RAISE_FLOW_VALIDATION_ERRORS` to control whether flow validation errors should be raised or simply logged
+
 ## v3.11.2
 - [BP-1854](https://movai.atlassian.net/browse/BP-1854): Fix logs showing up in the wrong robot card (log API responses were being sent to the wrong requests in a fleet)
   - Requests carry an id frame which the server sends back with the response
