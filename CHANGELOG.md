@@ -1,6 +1,6 @@
 # Changelog
 
-## vTBD
+## v3.12.0
 - [BP-1680](https://movai.atlassian.net/browse/BP-1680): Add envvar `RAISE_FLOW_VALIDATION_ERRORS` to control whether flow validation errors should be raised or simply logged
 
 ## v3.11.1
