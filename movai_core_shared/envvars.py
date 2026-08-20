@@ -37,6 +37,11 @@ LOG_HTTP_HOST = os.environ.get("LOG_HTTP_HOST", "http://health-node:8081")
 MOVAI_IPC_PATH = os.getenv("MOVAI_IPC_PATH", "/opt/mov.ai/comm")
 DETACHED_PROCESS_OUTPUT = os.getenv("DETACHED_PROCESS_OUTPUT")
 PLATFORM_METRICS: bool = os.getenv("PLATFORM_METRICS", "False").lower() in ("true", "1", "t")
+PLATFORM_METRICS_SOCKET_PATH = os.getenv(
+    "PLATFORM_METRICS_SOCKET_PATH", "/opt/mov.ai/share/telemetry/movai-platform-metrics.sock"
+)
+MIMIR_URL = os.getenv("MIMIR_URL", "http://mimir:9009/prometheus")
+LOKI_URL = os.getenv("LOKI_URL", "http://loki:3100")
 
 # Read variables from current environment
 APP_PATH = os.getenv("APP_PATH")

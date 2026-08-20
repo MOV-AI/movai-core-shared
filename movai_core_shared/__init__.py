@@ -105,6 +105,9 @@ from movai_core_shared.envvars import (
     ENVIRON_ROS2,
     ENVIRON_GDNODE,
     ENVIRON_GDNODE_INJECT,
+    PLATFORM_METRICS_SOCKET_PATH,
+    MIMIR_URL,
+    LOKI_URL,
 )
 
 from movai_core_shared.exceptions import (
@@ -234,4 +237,7 @@ __all__ = [
     "RECOVERY_STATE_KEY",
     "RECOVERY_TIMEOUT_IN_SECS",
     "RECOVERY_RESPONSE_KEY",
+    "PLATFORM_METRICS_SOCKET_PATH",
+    "MIMIR_URL",
+    "LOKI_URL",
 ]
