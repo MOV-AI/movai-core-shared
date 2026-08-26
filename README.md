@@ -9,7 +9,6 @@ movai-core-shared provides basic functionality that all platform requires, such 
 ## Usage
 
 ### Versioning
-
 | EE     | movai-core-shared branch | Backend version |
 |--------|--------------------------|-----------------|
 | 2.4.1  | releases/3.0             | 3.0.x.y         |
