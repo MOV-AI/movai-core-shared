@@ -138,10 +138,8 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.logger">movai_core_shared.logger module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.Log"><code class="docutils literal notranslate"><span class="pre">Log</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.RemoteHandler"><code class="docutils literal notranslate"><span class="pre">RemoteHandler</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.StdOutHandler"><code class="docutils literal notranslate"><span class="pre">StdOutHandler</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.add_shared_handler_to_root"><code class="docutils literal notranslate"><span class="pre">add_shared_handler_to_root()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.logger.get_remote_handler"><code class="docutils literal notranslate"><span class="pre">get_remote_handler()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-movai_core_shared.recovery">movai_core_shared.recovery module</a><ul>
@@ -1260,26 +1258,6 @@ Proprietary and confidential</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="movai_core_shared.logger.RemoteHandler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.logger.</span></span><span class="sig-name descname"><span class="pre">RemoteHandler</span></span><a class="headerlink" href="#movai_core_shared.logger.RemoteHandler" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StreamHandler</span></code></p>
-<p>This class implemets a log handler which sends
-sends the data to message server for logging in influxdb.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="movai_core_shared.logger.RemoteHandler.emit">
-<span class="sig-name descname"><span class="pre">emit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.RemoteHandler.emit" title="Permalink to this definition"></a></dt>
-<dd><p>Builds a valid log message request from the python log record
-and send it to the local message server</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>record</strong> – The Python log message data record</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="movai_core_shared.logger.StdOutHandler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.logger.</span></span><span class="sig-name descname"><span class="pre">StdOutHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{10:</span> <span class="pre">'\x1b[1;34m',</span> <span class="pre">20:</span> <span class="pre">'\x1b[1;37m',</span> <span class="pre">30:</span> <span class="pre">'\x1b[1;33m',</span> <span class="pre">40:</span> <span class="pre">'\x1b[31;1m',</span> <span class="pre">50:</span> <span class="pre">'\x1b[41;1m'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.StdOutHandler" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">StreamHandler</span></code></p>
@@ -1301,18 +1279,6 @@ output to the stream.</p>
 <dt class="sig sig-object py" id="movai_core_shared.logger.add_shared_handler_to_root">
 <span class="sig-prename descclassname"><span class="pre">movai_core_shared.logger.</span></span><span class="sig-name descname"><span class="pre">add_shared_handler_to_root</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.add_shared_handler_to_root" title="Permalink to this definition"></a></dt>
 <dd><p>Add handler to root so logs can be tailed and redirected to e.g. docker logs.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="movai_core_shared.logger.get_remote_handler">
-<span class="sig-prename descclassname"><span class="pre">movai_core_shared.logger.</span></span><span class="sig-name descname"><span class="pre">get_remote_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.logger.get_remote_handler" title="Permalink to this definition"></a></dt>
-<dd><p>Create a RemoteHandler object and return it</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>log_level</strong> – defines the remote logger log level default value is info</p>
-</dd>
-</dl>
-<p>Returns: ReomoteLogger object</p>
 </dd></dl>
 
 </section>
