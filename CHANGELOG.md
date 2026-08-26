@@ -1,10 +1,10 @@
 # Changelog
 
+## v3.12.1
+- [BP-1733](https://movai.atlassian.net/browse/BP-1733): [New Logging/metric system] Stop redirecting logs/Alerts and metrics to message server and send to loki
+
 ## v3.12.0
 - [BP-1680](https://movai.atlassian.net/browse/BP-1680): Add envvar `RAISE_FLOW_VALIDATION_ERRORS` to control whether flow validation errors should be raised or simply logged
-
-## v3.11.1
-- [BP-1733](https://movai.atlassian.net/browse/BP-1733): [New Logging/metric system] Stop redirecting logs/Alerts and metrics to message server and send to loki
 
 ## v3.11.1
 - [BP-1704](https://movai.atlassian.net/browse/BP-1704): Optimize imports
