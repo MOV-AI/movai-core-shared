@@ -7,7 +7,6 @@ movai-core-shared provides basic functionality that all platform requires, such 
 - structures for messaging
 
 ## Usage
-
 ### Versioning
 | EE     | movai-core-shared branch | Backend version |
 |--------|--------------------------|-----------------|
