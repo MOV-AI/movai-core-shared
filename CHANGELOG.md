@@ -1,5 +1,8 @@
 # Changelog
 
+## vTBD
+- [BP-1780](https://movai.atlassian.net/browse/BP-1780): Add envvars for new metrics clients
+
 ## v3.12.1
 - [BP-1733](https://movai.atlassian.net/browse/BP-1733): [New Logging/metric system] Stop redirecting logs/Alerts and metrics to message server and send to loki
 
