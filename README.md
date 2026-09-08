@@ -21,7 +21,6 @@ movai-core-shared provides basic functionality that all platform requires, such 
 The complete build process:
 - a python module building step which will create a `.whl` file
 
-
 ## build pip module
 
     rm dist/*
