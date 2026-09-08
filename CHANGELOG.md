@@ -1,6 +1,6 @@
 # Changelog
 
-## vTBD
+## v3.12.2
 - [BP-1780](https://movai.atlassian.net/browse/BP-1780): Add envvars for new metrics clients
 
 ## v3.12.1
