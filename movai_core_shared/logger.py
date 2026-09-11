@@ -9,6 +9,7 @@ Developers:
 import sys
 import logging
 import syslog
+import importlib
 
 from movai_core_shared.consts import (
     LOG_TEXT_FORMAT,
@@ -25,6 +26,7 @@ from movai_core_shared.envvars import (
     MOVAI_GENERAL_VERBOSITY_LEVEL,
     MOVAI_CALLBACK_VERBOSITY_LEVEL,
     DETACHED_PROCESS_OUTPUT,
+    TELEMETRY_ENABLE,
 )
 from movai_core_shared.log_handlers.callback_handler import (
     CallbackStdOutHandler,
@@ -103,6 +105,11 @@ logging.getLogger("rosout").addHandler(
 )
 logging.getLogger("rosout").propagate = False
 
+_TELEMETRY_NOTIFICATION_HANDLER_STATE = {
+    "initialized": False,
+    "handler": None,
+}
+
 
 def _get_console_handler(stream_config=None):
     """
@@ -117,6 +124,33 @@ def _get_console_handler(stream_config=None):
         raise ValueError("Unknown stream config for the console logger!")
     console_handler.setLevel(MOVAI_STDOUT_VERBOSITY_LEVEL)
     return console_handler
+
+
+def _load_notifications_handler_installer():
+    module = importlib.import_module(
+        "movai_core_enterprise.telemetry_client.notifications_telemetry_client"
+    )
+    return module.install_notifications_log_handler
+
+
+def _install_optional_notifications_handler():
+    if _TELEMETRY_NOTIFICATION_HANDLER_STATE["initialized"]:
+        return
+
+    _TELEMETRY_NOTIFICATION_HANDLER_STATE["initialized"] = True
+
+    if not TELEMETRY_ENABLE:
+        return
+
+    try:
+        _TELEMETRY_NOTIFICATION_HANDLER_STATE["handler"] = _load_notifications_handler_installer()()
+    except ImportError:
+        return
+    except Exception:
+        logging.getLogger(__name__).debug(
+            "Failed to install notifications telemetry log handler",
+            exc_info=True,
+        )
 
 
 def add_shared_handler_to_root():
@@ -153,6 +187,7 @@ class Log:
         if MOVAI_STDOUT_VERBOSITY_LEVEL != logging.NOTSET:
             logger.addHandler(_get_console_handler(stream_config))
         logger.setLevel(MOVAI_GENERAL_VERBOSITY_LEVEL)
+        _install_optional_notifications_handler()
         return logger
 
     @classmethod

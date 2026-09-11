@@ -3,6 +3,7 @@ import mock
 import sys
 from pathlib import Path
 
+import movai_core_shared.logger as logger_module
 from movai_core_shared.logger import Log
 
 
@@ -126,3 +127,20 @@ class TestLogging(unittest.TestCase):
 
         call = stdout.mock_calls[0]
         self.assertIn("[ui:True] Log with non-serializable /place/holder", call[1][0])
+
+    @mock.patch("movai_core_shared.logger._load_notifications_handler_installer")
+    def test_get_logger_installs_notifications_handler_once(self, installer_loader):
+        installer = mock.Mock()
+        installer_loader.return_value = installer
+
+        previous_state = dict(logger_module._TELEMETRY_NOTIFICATION_HANDLER_STATE)
+        try:
+            logger_module._TELEMETRY_NOTIFICATION_HANDLER_STATE["initialized"] = False
+            logger_module._TELEMETRY_NOTIFICATION_HANDLER_STATE["handler"] = None
+            with mock.patch("movai_core_shared.logger.TELEMETRY_ENABLE", True):
+                Log.get_logger("test_telemetry_logger_1")
+                Log.get_logger("test_telemetry_logger_2")
+
+            installer.assert_called_once_with()
+        finally:
+            logger_module._TELEMETRY_NOTIFICATION_HANDLER_STATE.update(previous_state)
