@@ -3,6 +3,7 @@
 ## v3.12.2
 - [BP-1780](https://movai.atlassian.net/browse/BP-1780): Add envvars for new metrics clients
   - Logger installs the new notifications handler for ui=True logs.
+  - Removed `log_query`, `alert` and `base_query`, made obsolete by the enterprise telemetry clients.
 
 ## v3.12.1
 - [BP-1733](https://movai.atlassian.net/browse/BP-1733): [New Logging/metric system] Stop redirecting logs/Alerts and metrics to message server and send to loki
