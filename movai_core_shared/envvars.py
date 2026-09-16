@@ -37,9 +37,7 @@ LOG_HTTP_HOST = os.environ.get("LOG_HTTP_HOST", "http://health-node:8081")
 MOVAI_IPC_PATH = os.getenv("MOVAI_IPC_PATH", "/opt/mov.ai/comm")
 DETACHED_PROCESS_OUTPUT = os.getenv("DETACHED_PROCESS_OUTPUT")
 PLATFORM_METRICS: bool = os.getenv("PLATFORM_METRICS", "False").lower() in ("true", "1", "t")
-TELEMETRY_ENABLE: bool = os.getenv(
-    "TELEMETRY_ENABLE", os.getenv("PLATFORM_METRICS", "False")
-).lower() in ("true", "1", "t")
+TELEMETRY_ENABLE: bool = os.getenv("TELEMETRY_ENABLE", "True").lower() in ("true", "1", "t")
 MOVAI_TELEMETRY_SOCKET = os.getenv(
     "MOVAI_TELEMETRY_SOCKET",
     os.getenv(
