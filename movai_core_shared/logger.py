@@ -37,7 +37,7 @@ from movai_core_shared.log_handlers.generic_handler import LogAdapter
 # pylint: disable=invalid-name,dangerous-default-value,protected-access,no-member,no-else-raise,too-many-arguments,too-many-locals,too-many-branches
 
 S_FORMATTER = (
-    "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(tags)s][%(lineno)d]: %(message)s"
+    "[%(levelname)s][%(asctime)s][%(module)s][%(funcName)s][%(tags_str)s][%(lineno)d]: %(message)s"
 )
 
 SEVERETY_CODES_MAPPING = {
@@ -74,11 +74,12 @@ class StdOutHandler(logging.StreamHandler):
             # Add/Remove Tags from log formatter
             _formatter = S_FORMATTER
 
-            if isinstance(record.args, dict) and record.args.get("tags"):
-                tags = record.args.get("tags")
-                record.tags = "|".join([f"{k}:{v}" for k, v in tags.items()])
+            if hasattr(record, "tags") and isinstance(record.tags, dict) and record.tags:
+                tags = record.tags
+                record.tags_str = "|".join([f"{k}:{v}" for k, v in tags.items()])
             else:
-                _formatter = _formatter.replace("[%(tags)s]", "")
+                _formatter = _formatter.replace("[%(tags_str)s]", "")
+
             log_format = logging.Formatter(fmt=_formatter, datefmt=LOG_DATE_FORMAT)
             self.setFormatter(fmt=log_format)
 

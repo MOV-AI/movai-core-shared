@@ -39,10 +39,9 @@ class LogAdapter(logging.LoggerAdapter):
         """Method called to extract the tags from the message."""
         raw_tags = dict(kwargs)
         raw_tags.update(self._tags)
-        tags = "|".join([f"{k}:{v}" for k, v in raw_tags.items()])
         kwargs = {"extra": {"tags": raw_tags}}
 
-        return f"[{tags}] {msg}", kwargs
+        return f"{msg}", kwargs
 
     def log(self, level, msg, *args, **kwargs):
         """Custom log func, adding traceback and stacklevel."""
