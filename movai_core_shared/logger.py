@@ -26,7 +26,6 @@ from movai_core_shared.envvars import (
     MOVAI_GENERAL_VERBOSITY_LEVEL,
     MOVAI_CALLBACK_VERBOSITY_LEVEL,
     DETACHED_PROCESS_OUTPUT,
-    TELEMETRY_ENABLE,
 )
 from movai_core_shared.log_handlers.callback_handler import (
     CallbackStdOutHandler,
@@ -138,9 +137,6 @@ def _install_optional_notifications_handler():
         return
 
     _TELEMETRY_NOTIFICATION_HANDLER_STATE["initialized"] = True
-
-    if not TELEMETRY_ENABLE:
-        return
 
     try:
         _TELEMETRY_NOTIFICATION_HANDLER_STATE["handler"] = _load_notifications_handler_installer()()

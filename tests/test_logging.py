@@ -137,9 +137,8 @@ class TestLogging(unittest.TestCase):
         try:
             logger_module._TELEMETRY_NOTIFICATION_HANDLER_STATE["initialized"] = False
             logger_module._TELEMETRY_NOTIFICATION_HANDLER_STATE["handler"] = None
-            with mock.patch("movai_core_shared.logger.TELEMETRY_ENABLE", True):
-                Log.get_logger("test_telemetry_logger_1")
-                Log.get_logger("test_telemetry_logger_2")
+            Log.get_logger("test_telemetry_logger_1")
+            Log.get_logger("test_telemetry_logger_2")
 
             installer.assert_called_once_with()
         finally:
