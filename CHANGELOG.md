@@ -1,7 +1,7 @@
 # Changelog
 
 ## v3.12.2
-- [BP-1780](https://movai.atlassian.net/browse/BP-1780): Add envvars for new metrics clients
+- [BP-1780](https://movai.atlassian.net/browse/BP-1780): Add envvars for new metrics clients.
   - Logger installs the new notifications handler for ui=True logs.
   - Removed `log_query`, `alert` and `base_query`, made obsolete by the enterprise telemetry clients.
 
