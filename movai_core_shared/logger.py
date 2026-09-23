@@ -133,13 +133,16 @@ def _load_notifications_handler_installer():
 
 
 def _install_optional_notifications_handler():
-    if _TELEMETRY_NOTIFICATION_HANDLER_STATE["initialized"]:
+    handler = _TELEMETRY_NOTIFICATION_HANDLER_STATE["handler"]
+    root_logger = logging.getLogger()
+
+    if _TELEMETRY_NOTIFICATION_HANDLER_STATE["initialized"] and handler is not None:
+        if handler not in root_logger.handlers:
+            root_logger.addHandler(handler)
         return
 
-    _TELEMETRY_NOTIFICATION_HANDLER_STATE["initialized"] = True
-
     try:
-        _TELEMETRY_NOTIFICATION_HANDLER_STATE["handler"] = _load_notifications_handler_installer()()
+        handler = _load_notifications_handler_installer()()
     except ImportError:
         return
     except Exception:
@@ -147,6 +150,10 @@ def _install_optional_notifications_handler():
             "Failed to install notifications telemetry log handler",
             exc_info=True,
         )
+        return
+
+    _TELEMETRY_NOTIFICATION_HANDLER_STATE["handler"] = handler
+    _TELEMETRY_NOTIFICATION_HANDLER_STATE["initialized"] = True
 
 
 def add_shared_handler_to_root():
