@@ -1,5 +1,8 @@
 # Changelog
 
+## vTBD
+- [BP-1780](https://movai.atlassian.net/browse/BP-1780): Fix notification handler installation
+
 ## v3.12.3
 - [BP-1828](https://movai.atlassian.net/browse/BP-1828): Add featureflag to scope validations
 
