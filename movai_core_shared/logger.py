@@ -132,13 +132,21 @@ def _load_notifications_handler_installer():
     return module.install_notifications_log_handler
 
 
+def _add_notification_handler_to_root(handler):
+    """Add a notifications handler to root when the installer returned one."""
+    if not isinstance(handler, logging.Handler):
+        return
+
+    root_logger = logging.getLogger()
+    if handler not in root_logger.handlers:
+        root_logger.addHandler(handler)
+
+
 def _install_optional_notifications_handler():
     handler = _TELEMETRY_NOTIFICATION_HANDLER_STATE["handler"]
-    root_logger = logging.getLogger()
 
     if _TELEMETRY_NOTIFICATION_HANDLER_STATE["initialized"] and handler is not None:
-        if handler not in root_logger.handlers:
-            root_logger.addHandler(handler)
+        _add_notification_handler_to_root(handler)
         return
 
     try:
@@ -154,6 +162,7 @@ def _install_optional_notifications_handler():
 
     _TELEMETRY_NOTIFICATION_HANDLER_STATE["handler"] = handler
     _TELEMETRY_NOTIFICATION_HANDLER_STATE["initialized"] = True
+    _add_notification_handler_to_root(handler)
 
 
 def add_shared_handler_to_root():
