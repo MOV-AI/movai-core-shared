@@ -1,6 +1,6 @@
 # Changelog
 
-## vTBD
+## v3.12.3
 - [BP-1828](https://movai.atlassian.net/browse/BP-1828): Add featureflag to scope validations
 
 ## v3.12.2
