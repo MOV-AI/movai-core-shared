@@ -1,5 +1,8 @@
 # Changelog
 
+## vTBD
+- [BP-1828](https://movai.atlassian.net/browse/BP-1828): Add featureflag to scope validations
+
 ## v3.12.2
 - [BP-1780](https://movai.atlassian.net/browse/BP-1780): Add envvars for new metrics clients
   - Logger installs the new notifications handler for ui=True logs.
