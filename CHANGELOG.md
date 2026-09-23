@@ -1,6 +1,6 @@
 # Changelog
 
-## vTBD
+## v3.12.4
 - [BP-1780](https://movai.atlassian.net/browse/BP-1780): Fix notification handler installation
 
 ## v3.12.3
