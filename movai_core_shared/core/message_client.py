@@ -142,12 +142,12 @@ class MessageClient:
         # Add tags to the request data
         request = self._build_request(msg_type, data, creation_time, response_required)
 
-        self._zmq_client.send(request, use_lock=True)
         if response_required:
-            msg = self._zmq_client.receive(use_lock=True)
+            msg = self._zmq_client.request(request)
             response = self._fetch_response(msg)
             return response
 
+        self._zmq_client.send(request, use_lock=True)
         return {}
 
     def forward_request(self, request_msg: dict) -> dict:
@@ -162,12 +162,13 @@ class MessageClient:
         else:
             request = request_msg
 
-        self._zmq_client.send(request, use_lock=True)
         response_required = request["request"].get("response_required")
 
         if response_required:
-            response = self._zmq_client.receive(use_lock=True)
+            response = self._zmq_client.request(request)
             return response
+
+        self._zmq_client.send(request, use_lock=True)
         return {}
 
     def send_msg(self, data: dict, **kwargs) -> None:
@@ -216,12 +217,12 @@ class AsyncMessageClient(MessageClient):
         """
         request = self._build_request(msg_type, data, creation_time, response_required)
 
-        await self._zmq_client.send(request)
         if response_required:
-            msg = await self._zmq_client.receive()
+            msg = await self._zmq_client.request(request)
             response = self._fetch_response(msg)
             return response
 
+        await self._zmq_client.send(request)
         return {}
 
     async def forward_request(self, request_msg: dict) -> dict:
@@ -236,17 +237,17 @@ class AsyncMessageClient(MessageClient):
             request = {"request": request_msg}
         else:
             request = request_msg
-        await self._zmq_client.send(request)
 
         response_required = request["request"].get("response_required")
+        if response_required:
+            response = await self._zmq_client.request(request)
+            return response
+
+        await self._zmq_client.send(request)
         if response_required is None:
             raise MessageFormatError(
                 f"The field response_required is missing from request message {request}."
             )
-
-        if response_required:
-            response = await self._zmq_client.receive()
-            return response
         return {}
 
     async def send_msg(self, data: dict, **kwargs) -> None:

@@ -14,12 +14,23 @@ import asyncio
 import errno
 import threading
 import time
+import uuid
+from typing import Dict, Optional
+
 import zmq
 import zmq.asyncio
 
 from movai_core_shared.core.zmq.zmq_base import ZMQBase
 from movai_core_shared.core.zmq.zmq_helpers import create_msg, extract_reponse
 from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS, MOVAI_ZMQ_RECV_TIMEOUT_MS
+
+
+def _new_request_id() -> bytes:
+    """
+    Generates the id frame which is sent ahead of a request
+    so the client can match responses to requests.
+    """
+    return uuid.uuid4().hex.encode("utf-8")
 
 
 class ZMQClient(ZMQBase):
@@ -118,9 +129,6 @@ class ZMQClient(ZMQBase):
         except Exception as exc:
             self._logger.error("ZMQ failed to send message, got exception of type %s", exc)
             raise exc
-        finally:
-            if use_lock and self._lock.locked():
-                self._lock.release()
 
     def receive(self, use_lock: bool = False) -> dict:
         """
@@ -147,10 +155,35 @@ class ZMQClient(ZMQBase):
         except Exception as exc:
             self._logger.error("ZMQ failed to receive data, got error of type: %s", exc)
             raise exc
-        finally:
-            if use_lock and self._lock.locked():
-                self._lock.release()
         return response
+
+    def request(self, msg: dict) -> dict:
+        """
+        Synchronously sends a request and waits for its response.
+
+        The send and the receive are done under the same lock, so concurrent
+        threads can't take each other's responses. The request id frame
+        makes sure that a late response to an earlier (timed out) request is
+        discarded instead of being returned.
+
+        Args:
+            msg (dict): The request to send.
+        Returns:
+            (dict): The response from the server, an empty dict on timeout or error.
+        """
+        data = create_msg(msg)
+        req_id = _new_request_id()
+        with self._lock:
+            try:
+                self._socket.send_multipart([req_id, data])
+                while True:
+                    buffer = self._socket.recv_multipart()
+                    if buffer[0] == req_id:
+                        return extract_reponse(buffer)
+                    self._logger.debug("ZMQ discarding expired response from %s", self._addr)
+            except zmq.error.ZMQError as exc:
+                self.handle_socket_errors(exc)
+        return {}
 
 
 class AsyncZMQClient(ZMQClient):
@@ -158,6 +191,13 @@ class AsyncZMQClient(ZMQClient):
 
     _socket: zmq.asyncio.Socket
     _context = zmq.asyncio.Context()
+
+    def __init__(self, identity: str, addr: str) -> None:
+        # requests waiting for a response, by request id
+        self._pending: Dict[bytes, asyncio.Future] = {}
+        # task routing the responses to the pending requests
+        self._reader: Optional[asyncio.Task] = None
+        super().__init__(identity, addr)
 
     def init_lock(self) -> None:
         """Initializes the lock the async way."""
@@ -197,9 +237,6 @@ class AsyncZMQClient(ZMQClient):
                 + f"{self._addr} got exception: {exc} "
             )
             raise exc
-        finally:
-            if use_lock:
-                self.release_lock()
 
     async def receive(self, use_lock: bool = False) -> dict:
         """
@@ -231,7 +268,67 @@ class AsyncZMQClient(ZMQClient):
         except Exception as exc:
             self._logger.error("ZMQ failed to receive data, got error of type: %s", exc)
             raise exc
-        finally:
-            if use_lock:
-                self.release_lock()
         return response
+
+    async def request(self, msg: dict) -> dict:
+        """
+        Asynchronously sends a request and waits for its response.
+
+        Several coroutines can have requests in flight on the socket at the
+        same time, each one gets the response with its own request id frame.
+
+        Args:
+            msg (dict): The request to send.
+        Returns:
+            (dict): The response from the server, an empty dict on timeout or error.
+        """
+        data = create_msg(msg)
+        req_id = _new_request_id()
+        loop = asyncio.get_running_loop()
+        future = loop.create_future()
+        self._pending[req_id] = future
+        try:
+            self._start_reader(loop)
+            await self._socket.send_multipart([req_id, data])
+            return await asyncio.wait_for(future, MOVAI_ZMQ_RECV_TIMEOUT_MS / 1000)
+        except asyncio.TimeoutError:
+            # no need to reset the socket, a late response will be discarded by its id
+            self._logger.warning("ZMQ timed out waiting for a response from %s", self._addr)
+        except zmq.error.ZMQError as exc:
+            self.handle_socket_errors(exc)
+        finally:
+            self._pending.pop(req_id, None)
+            if not self._pending and self._reader is not None and self._reader.get_loop() is loop:
+                # nothing left to wait for, don't leave a receive pending on the socket
+                self._reader.cancel()
+                self._reader = None
+        return {}
+
+    def _start_reader(self, loop: asyncio.AbstractEventLoop) -> None:
+        """Starts the task which routes the responses, if it is not running."""
+        if self._reader is None or self._reader.done() or self._reader.get_loop() is not loop:
+            self._reader = loop.create_task(self._read_responses())
+
+    async def _read_responses(self) -> None:
+        """Receives the responses and hands each one to the request waiting for it."""
+        while self._pending:
+            sock = self._socket
+            try:
+                buffer = await sock.recv_multipart()
+            except zmq.error.Again:
+                # RCVTIMEO elapsed, keep receiving while there are pending requests
+                continue
+            except (asyncio.CancelledError, zmq.error.ZMQError) as exc:
+                if sock.closed and sock is not self._socket:
+                    # the socket was reset (closing it cancels the receive), use the new one
+                    continue
+                if isinstance(exc, asyncio.CancelledError):
+                    raise
+                self._logger.error("ZMQ failed to receive from %s: %s", self._addr, exc)
+                return
+
+            future = self._pending.get(buffer[0])
+            if future is None or future.done():
+                self._logger.debug("ZMQ discarding expired response from %s", self._addr)
+                continue
+            future.set_result(extract_reponse(buffer))
