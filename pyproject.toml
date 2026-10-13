@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "movai-core-shared"
-version = "3.11.1.1"
+version = "3.11.2.0"
 authors = [
     {name = "Backend team", email = "backend@mov.ai"},
 ]

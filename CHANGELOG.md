@@ -1,5 +1,9 @@
 # Changelog
 
+## vTBD
+- [BP-1854](https://movai.atlassian.net/browse/BP-1854): Fix logs showing up in the wrong robot card (log API responses were being sent to the wrong requests in a fleet)
+  - Requests carry an id frame which the server sends back with the response
+
 ## v3.11.1
 - [BP-1704](https://movai.atlassian.net/browse/BP-1704): Optimize imports
   - Remove messages/__init__.py
