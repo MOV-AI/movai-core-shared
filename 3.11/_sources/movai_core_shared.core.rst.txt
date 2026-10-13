@@ -1,0 +1,53 @@
+movai\_core\_shared.core package
+================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   movai_core_shared.core.zmq
+
+Submodules
+----------
+
+movai\_core\_shared.core.base\_command module
+---------------------------------------------
+
+.. automodule:: movai_core_shared.core.base_command
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.core.message\_client module
+-----------------------------------------------
+
+.. automodule:: movai_core_shared.core.message_client
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.core.secure module
+--------------------------------------
+
+.. automodule:: movai_core_shared.core.secure
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+movai\_core\_shared.core.securepassword module
+----------------------------------------------
+
+.. automodule:: movai_core_shared.core.securepassword
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: movai_core_shared.core
+   :members:
+   :undoc-members:
+   :show-inheritance:
