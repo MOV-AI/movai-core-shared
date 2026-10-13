@@ -42,7 +42,7 @@ def create_msg(msg: dict):
         return None
 
 
-def extract_reponse(buffer: List[bytes]) -> dict:
+def extract_response(buffer: List[bytes]) -> dict:
     """Extracts the response from the buffer.
 
     Args:

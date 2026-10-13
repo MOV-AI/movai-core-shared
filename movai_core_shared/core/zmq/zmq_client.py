@@ -21,7 +21,8 @@ import zmq
 import zmq.asyncio
 
 from movai_core_shared.core.zmq.zmq_base import ZMQBase
-from movai_core_shared.core.zmq.zmq_helpers import create_msg, extract_reponse
+from movai_core_shared.exceptions import MessageError
+from movai_core_shared.core.zmq.zmq_helpers import create_msg, extract_response
 from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS, MOVAI_ZMQ_RECV_TIMEOUT_MS
 
 
@@ -148,7 +149,7 @@ class ZMQClient(ZMQBase):
             if not buffer:
                 self._logger.debug("ZMQ received empty buffer from %s", self._addr)
                 return response
-            response = extract_reponse(buffer)
+            response = extract_response(buffer)
             return response
         except zmq.error.ZMQError as exc:
             self.handle_socket_errors(exc)
@@ -169,7 +170,9 @@ class ZMQClient(ZMQBase):
         Args:
             msg (dict): The request to send.
         Returns:
-            (dict): The response from the server, an empty dict on timeout or error.
+            (dict): The response from the server, an empty dict on timeout.
+        Raises:
+            MessageError: If sending the request or receiving the response fails.
         """
         data = create_msg(msg)
         req_id = _new_request_id()
@@ -179,10 +182,13 @@ class ZMQClient(ZMQBase):
                 while True:
                     buffer = self._socket.recv_multipart()
                     if buffer[0] == req_id:
-                        return extract_reponse(buffer)
+                        return extract_response(buffer)
                     self._logger.debug("ZMQ discarding expired response from %s", self._addr)
             except zmq.error.ZMQError as exc:
                 self.handle_socket_errors(exc)
+            except Exception as exc:
+                self._logger.error("ZMQ failed to receive response, got error of type: %s", exc)
+                raise MessageError("Failed to receive response from the server: " + str(exc))
         return {}
 
 
@@ -243,7 +249,6 @@ class AsyncZMQClient(ZMQClient):
         Asyncronously receives data from the server.
 
         Args:
-            (dict): A response from the server.
             use_lock (bool): Whether to use the lock.
         Returns:
             (dict): A response from the server.
@@ -258,7 +263,7 @@ class AsyncZMQClient(ZMQClient):
                     buffer = await self._socket.recv_multipart()
             else:
                 buffer = await self._socket.recv_multipart()
-            response = extract_reponse(buffer)
+            response = extract_response(buffer)
         except asyncio.CancelledError as exc:
             # This is a normal exception that is raised when the task is cancelled
             self._socket.close()
@@ -280,7 +285,9 @@ class AsyncZMQClient(ZMQClient):
         Args:
             msg (dict): The request to send.
         Returns:
-            (dict): The response from the server, an empty dict on timeout or error.
+            (dict): The response from the server, an empty dict on timeout.
+        Raises:
+            MessageError: If sending the request fails.
         """
         data = create_msg(msg)
         req_id = _new_request_id()
@@ -296,6 +303,11 @@ class AsyncZMQClient(ZMQClient):
             self._logger.warning("ZMQ timed out waiting for a response from %s", self._addr)
         except zmq.error.ZMQError as exc:
             self.handle_socket_errors(exc)
+        except Exception as exc:
+            self._logger.error(
+                "ZMQ failed to send request to %s, got error of type: %s", self._addr, exc
+            )
+            raise MessageError("Failed to send request to the server.")
         finally:
             self._pending.pop(req_id, None)
             if not self._pending and self._reader is not None and self._reader.get_loop() is loop:
@@ -331,4 +343,4 @@ class AsyncZMQClient(ZMQClient):
             if future is None or future.done():
                 self._logger.debug("ZMQ discarding expired response from %s", self._addr)
                 continue
-            future.set_result(extract_reponse(buffer))
+            future.set_result(extract_response(buffer))
