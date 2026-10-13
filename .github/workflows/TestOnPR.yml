@@ -5,9 +5,8 @@ on:
       - '**/**'
 jobs:
   CI:
-    uses: MOV-AI/.github/.github/workflows/py-workflow.yml@bugfix/safe.directory
+    uses: MOV-AI/.github/.github/workflows/py-workflow.yml@v2.3
     with:
-      PYTHON_VERSION: 3.8.12
       pre_commit: true
       deploy: false
       with_docs: true
