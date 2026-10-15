@@ -282,3 +282,19 @@ class PrimaryKeyError(MovaiException):
 
 class RemapValidationError(MovaiException):
     """Remapping rules violation"""
+
+
+class BackupException(Exception):
+    """Backup operation failed."""
+
+
+class ImportException(Exception):
+    """Import operation failed."""
+
+
+class ExportException(Exception):
+    """Export operation failed."""
+
+
+class RemoveException(Exception):
+    """Remove operation failed."""
