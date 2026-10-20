@@ -1,5 +1,8 @@
 # Changelog
 
+## vTBD
+- [BP-1829](https://movai.atlassian.net/browse/BP-1829): Refactor tools/backup.py
+
 ## v3.12.4
 - [BP-1780](https://movai.atlassian.net/browse/BP-1780): Fix notification handler installation
 
