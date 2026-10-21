@@ -17,7 +17,7 @@ import zmq
 class ZMQBase(ABC):
     """A base class for zmq components."""
 
-    _context = zmq.Context()
+    context = zmq.Context()
 
     def __init__(self, identity: str, addr: str) -> None:
         """Initializes the object and the connection to the server.
@@ -31,7 +31,7 @@ class ZMQBase(ABC):
         self._logger = getLogger(self.__class__.__name__)
         self._identity = identity.encode("utf-8")
         self._addr = addr
-        self._lock = None
+        self.lock = None
         self._socket = None
         self.init_socket()
 
@@ -60,8 +60,8 @@ class ZMQBase(ABC):
         An abstract method which allows every ZMQ component to release the lock by
         it's own needs.
         """
-        if self._lock and self._lock.locked():
-            self._lock.release()
+        if self.lock and self.lock.locked():
+            self.lock.release()
 
     @abstractmethod
     def handle_socket_errors(self, exc):

@@ -29,7 +29,7 @@ class ZMQClient(ZMQBase):
 
     def init_lock(self) -> None:
         """Initializes the lock."""
-        self._lock = threading.Lock()
+        self.lock = threading.Lock()
 
     def init_socket(self) -> None:
         """Initializes the socket and connect to the server."""
@@ -38,8 +38,8 @@ class ZMQClient(ZMQBase):
 
     def reset(self, force: bool = False, use_lock: bool = False) -> None:
         """Resets the socket and reconnects to the server."""
-        if use_lock and self._lock:
-            with self._lock:
+        if use_lock and self.lock:
+            with self.lock:
                 self._reset(force)
         else:
             self._reset(force)
@@ -55,7 +55,7 @@ class ZMQClient(ZMQBase):
             self._socket.close()
             time.sleep(0.1)
 
-        self._socket: zmq.Socket = self._context.socket(self.zmq_socket_type)
+        self._socket: zmq.Socket = self.context.socket(self.zmq_socket_type)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         if self.zmq_socket_type in [zmq.DEALER]:
             self._logger.info("ZMQ connecting DEALER to: %s", self._addr)
@@ -110,8 +110,8 @@ class ZMQClient(ZMQBase):
         """
         try:
             data = create_msg(msg)
-            if use_lock and self._lock:
-                with self._lock:
+            if use_lock and self.lock:
+                with self.lock:
                     self._socket.send(data)
             else:
                 self._socket.send(data)
@@ -119,8 +119,8 @@ class ZMQClient(ZMQBase):
             self._logger.error("ZMQ failed to send message, got exception of type %s", exc)
             raise exc
         finally:
-            if use_lock and self._lock.locked():
-                self._lock.release()
+            if use_lock and self.lock.locked():
+                self.lock.release()
 
     def receive(self, use_lock: bool = False) -> dict:
         """
@@ -132,8 +132,8 @@ class ZMQClient(ZMQBase):
         """
         response = {}
         try:
-            if use_lock and self._lock:
-                with self._lock:
+            if use_lock and self.lock:
+                with self.lock:
                     buffer = self._socket.recv_multipart()
             else:
                 buffer = self._socket.recv_multipart()
@@ -148,8 +148,8 @@ class ZMQClient(ZMQBase):
             self._logger.error("ZMQ failed to receive data, got error of type: %s", exc)
             raise exc
         finally:
-            if use_lock and self._lock.locked():
-                self._lock.release()
+            if use_lock and self.lock.locked():
+                self.lock.release()
         return response
 
 
@@ -161,10 +161,10 @@ class AsyncZMQClient(ZMQClient):
 
     def init_lock(self) -> None:
         """Initializes the lock the async way."""
-        if self._lock is None:
+        if self.lock is None:
             try:
                 asyncio.get_running_loop()
-                self._lock = asyncio.Lock()
+                self.lock = asyncio.Lock()
             except RuntimeError:
                 pass
 
@@ -180,8 +180,8 @@ class AsyncZMQClient(ZMQClient):
         """
         try:
             data = create_msg(msg)
-            if use_lock and self._lock:
-                async with self._lock:
+            if use_lock and self.lock:
+                async with self.lock:
                     await self._socket.send(data)
             else:
                 await self._socket.send(data)
@@ -216,8 +216,8 @@ class AsyncZMQClient(ZMQClient):
         if use_lock:
             self.init_lock()
         try:
-            if use_lock and self._lock:
-                async with self._lock:
+            if use_lock and self.lock:
+                async with self.lock:
                     buffer = await self._socket.recv_multipart()
             else:
                 buffer = await self._socket.recv_multipart()
