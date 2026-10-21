@@ -29,6 +29,7 @@ class ZMQBase(ABC):
                 'tcp://server_addr:port'
         """
         self._logger = getLogger(self.__class__.__name__)
+        self._base_identity = identity
         self._identity = identity.encode("utf-8")
         self._addr = addr
         self.lock = None

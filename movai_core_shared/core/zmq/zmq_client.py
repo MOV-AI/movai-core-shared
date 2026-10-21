@@ -14,6 +14,7 @@ import asyncio
 import errno
 import threading
 import time
+import uuid
 import zmq
 import zmq.asyncio
 
@@ -54,6 +55,12 @@ class ZMQClient(ZMQBase):
                 self._logger.info("ZMQ resetting %s with force", self._addr)
             self._socket.close()
             time.sleep(0.1)
+
+        if self._socket is not None:
+            # The server ignores the new connection while the old one,
+            # with the same identity, isn't closed yet
+            # the old socket may still be sending its messages
+            self._identity = f"{self._base_identity}_{uuid.uuid4().hex}".encode("utf-8")
 
         self._socket: zmq.Socket = self.context.socket(self.zmq_socket_type)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
