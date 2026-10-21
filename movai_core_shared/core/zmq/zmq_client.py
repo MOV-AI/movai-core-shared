@@ -164,7 +164,7 @@ class AsyncZMQClient(ZMQClient):
     """An Async implementation of ZMQ Client"""
 
     _socket: zmq.asyncio.Socket
-    _context = zmq.asyncio.Context()
+    context = zmq.asyncio.Context()
 
     def init_lock(self) -> None:
         """Initializes the lock the async way."""
