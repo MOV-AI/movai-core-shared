@@ -1,5 +1,9 @@
 # Changelog
 
+## vTBD
+- [BP-1884](https://movai.atlassian.net/browse/BP-1884): Prevent transition failure
+  - Add fallback flush to ZMQ to prevent messages from short-lived nodes from getting lost
+
 ## v3.11.3
 - [BP-1680](https://movai.atlassian.net/browse/BP-1680): Add envvar `RAISE_FLOW_VALIDATION_ERRORS` to control whether flow validation errors should be raised or simply logged
 
