@@ -11,7 +11,7 @@
 """
 import json
 from logging import getLogger
-import random
+import uuid
 from typing import List
 
 from movai_core_shared.envvars import DEVICE_NAME, SERVICE_NAME
@@ -76,6 +76,6 @@ def generate_zmq_identity(zmq_type: str) -> str:
     Returns:
         str: The unique identity.
     """
-    random.seed()  # setting the seed for the random number generator
-    identity = f"{DEVICE_NAME}_{SERVICE_NAME}_{zmq_type}_{random.getrandbits(24)}"
+    # A server ignores a client whose identity is already connected, so it must never repeat
+    identity = f"{DEVICE_NAME}_{SERVICE_NAME}_{zmq_type}_{uuid.uuid4().hex}"
     return identity

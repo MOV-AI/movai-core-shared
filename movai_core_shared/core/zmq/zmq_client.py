@@ -41,7 +41,7 @@ class ZMQClient(ZMQBase):
 
     def init_lock(self) -> None:
         """Initializes the lock."""
-        self._lock = threading.Lock()
+        self.lock = threading.Lock()
 
     def init_socket(self) -> None:
         """Initializes the socket and connect to the server."""
@@ -50,8 +50,8 @@ class ZMQClient(ZMQBase):
 
     def reset(self, force: bool = False, use_lock: bool = False) -> None:
         """Resets the socket and reconnects to the server."""
-        if use_lock and self._lock:
-            with self._lock:
+        if use_lock and self.lock:
+            with self.lock:
                 self._reset(force)
         else:
             self._reset(force)
@@ -67,7 +67,13 @@ class ZMQClient(ZMQBase):
             self._socket.close()
             time.sleep(0.1)
 
-        self._socket: zmq.Socket = self._context.socket(self.zmq_socket_type)
+        if self._socket is not None:
+            # The server ignores the new connection while the old one,
+            # with the same identity, isn't closed yet
+            # the old socket may still be sending its messages
+            self._identity = f"{self._base_identity}_{uuid.uuid4().hex}".encode("utf-8")
+
+        self._socket: zmq.Socket = self.context.socket(self.zmq_socket_type)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         if self.zmq_socket_type in [zmq.DEALER]:
             self._logger.info("ZMQ connecting DEALER to: %s", self._addr)
@@ -122,8 +128,8 @@ class ZMQClient(ZMQBase):
         """
         try:
             data = create_msg(msg)
-            if use_lock and self._lock:
-                with self._lock:
+            if use_lock and self.lock:
+                with self.lock:
                     self._socket.send(data)
             else:
                 self._socket.send(data)
@@ -141,8 +147,8 @@ class ZMQClient(ZMQBase):
         """
         response = {}
         try:
-            if use_lock and self._lock:
-                with self._lock:
+            if use_lock and self.lock:
+                with self.lock:
                     buffer = self._socket.recv_multipart()
             else:
                 buffer = self._socket.recv_multipart()
@@ -176,7 +182,7 @@ class ZMQClient(ZMQBase):
         """
         data = create_msg(msg)
         req_id = _new_request_id()
-        with self._lock:
+        with self.lock:
             try:
                 self._socket.send_multipart([req_id, data])
                 while True:
@@ -196,7 +202,7 @@ class AsyncZMQClient(ZMQClient):
     """An Async implementation of ZMQ Client"""
 
     _socket: zmq.asyncio.Socket
-    _context = zmq.asyncio.Context()
+    context = zmq.asyncio.Context()
 
     def __init__(self, identity: str, addr: str) -> None:
         # requests waiting for a response, by request id
@@ -207,10 +213,10 @@ class AsyncZMQClient(ZMQClient):
 
     def init_lock(self) -> None:
         """Initializes the lock the async way."""
-        if self._lock is None:
+        if self.lock is None:
             try:
                 asyncio.get_running_loop()
-                self._lock = asyncio.Lock()
+                self.lock = asyncio.Lock()
             except RuntimeError:
                 pass
 
@@ -226,8 +232,8 @@ class AsyncZMQClient(ZMQClient):
         """
         try:
             data = create_msg(msg)
-            if use_lock and self._lock:
-                async with self._lock:
+            if use_lock and self.lock:
+                async with self.lock:
                     await self._socket.send(data)
             else:
                 await self._socket.send(data)
@@ -258,8 +264,8 @@ class AsyncZMQClient(ZMQClient):
         if use_lock:
             self.init_lock()
         try:
-            if use_lock and self._lock:
-                async with self._lock:
+            if use_lock and self.lock:
+                async with self.lock:
                     buffer = await self._socket.recv_multipart()
             else:
                 buffer = await self._socket.recv_multipart()

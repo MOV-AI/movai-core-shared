@@ -15,10 +15,12 @@ from typing import Dict, Type, TypedDict
 
 from beartype import beartype
 
+from movai_core_shared.core.zmq.zmq_base import ZMQBase
 from movai_core_shared.core.zmq.zmq_client import ZMQClient, AsyncZMQClient
 from movai_core_shared.core.zmq.zmq_subscriber import ZMQSubscriber, AsyncZMQSubscriber
 from movai_core_shared.core.zmq.zmq_publisher import ZMQPublisher, AsyncZMQPublisher
 from movai_core_shared.core.zmq.zmq_helpers import generate_zmq_identity
+from movai_core_shared.envvars import MOVAI_ZMQ_SHUTDOWN_LINGER_MS
 from movai_core_shared.exceptions import ArgumentError
 
 
@@ -85,3 +87,33 @@ class ZMQManager:
     def get_client(cls, server_addr: str, client_type: ZMQType) -> ZMQClient:
         client = cls._get_or_create_zmq_object(server_addr, client_type)
         return client
+
+    @classmethod
+    def shutdown(cls, linger_ms: int = MOVAI_ZMQ_SHUTDOWN_LINGER_MS):
+        """Sends the messages still queued on the synchronous zmq objects, then closes them.
+
+        Blocks until all the queued messages are sent or `linger_ms` elapses.
+
+        Args:
+            linger_ms (int): How long to wait for the queued messages to be sent.
+        """
+        sync_types = (ZMQType.CLIENT, ZMQType.PUBLISHER, ZMQType.SUBSCRIBER)
+        locks = [
+            client.lock
+            for zmq_type in sync_types
+            for client in cls._clients[zmq_type].values()
+            if client.lock is not None
+        ]
+        for lock in locks:
+            lock.acquire()
+        try:
+            if not ZMQBase.context.closed:
+                # closes all the sockets of the context, also the ones not created by the manager
+                ZMQBase.context.destroy(linger=linger_ms)
+        finally:
+            for lock in locks:
+                lock.release()
+
+        # dropping the last reference to a client closes its socket without a linger
+        for zmq_type in sync_types:
+            cls._clients[zmq_type].clear()
