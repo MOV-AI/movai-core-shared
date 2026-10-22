@@ -122,6 +122,11 @@ Proprietary and confidential</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.core.zmq.zmq_base.</span></span><span class="sig-name descname"><span class="pre">ZMQBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_base.ZMQBase" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <p>A base class for zmq components.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.core.zmq.zmq_base.ZMQBase.context">
+<span class="sig-name descname"><span class="pre">context</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;zmq.Context()&gt;</span></em><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_base.ZMQBase.context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="movai_core_shared.core.zmq.zmq_base.ZMQBase.handle_socket_errors">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">handle_socket_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_base.ZMQBase.handle_socket_errors" title="Permalink to this definition"></a></dt>
@@ -189,6 +194,11 @@ Proprietary and confidential</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.core.zmq.zmq_client.</span></span><span class="sig-name descname"><span class="pre">AsyncZMQClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_client.AsyncZMQClient" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#movai_core_shared.core.zmq.zmq_client.ZMQClient" title="movai_core_shared.core.zmq.zmq_client.ZMQClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">ZMQClient</span></code></a></p>
 <p>An Async implementation of ZMQ Client</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="movai_core_shared.core.zmq.zmq_client.AsyncZMQClient.context">
+<span class="sig-name descname"><span class="pre">context</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;zmq.asyncio.Context()&gt;</span></em><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_client.AsyncZMQClient.context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="movai_core_shared.core.zmq.zmq_client.AsyncZMQClient.init_lock">
 <span class="sig-name descname"><span class="pre">init_lock</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_client.AsyncZMQClient.init_lock" title="Permalink to this definition"></a></dt>
@@ -438,6 +448,18 @@ Proprietary and confidential</p>
 <dt class="sig sig-object py" id="movai_core_shared.core.zmq.zmq_manager.ZMQManager.get_client">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#movai_core_shared.core.zmq.zmq_manager.ZMQType" title="movai_core_shared.core.zmq.zmq_manager.ZMQType"><span class="pre">ZMQType</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#movai_core_shared.core.zmq.zmq_client.ZMQClient" title="movai_core_shared.core.zmq.zmq_client.ZMQClient"><span class="pre">ZMQClient</span></a></span></span><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_manager.ZMQManager.get_client" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="movai_core_shared.core.zmq.zmq_manager.ZMQManager.shutdown">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">linger_ms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.core.zmq.zmq_manager.ZMQManager.shutdown" title="Permalink to this definition"></a></dt>
+<dd><p>Sends the messages still queued on the synchronous zmq objects, then closes them.</p>
+<p>Blocks until all the queued messages are sent or <cite>linger_ms</cite> elapses.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>linger_ms</strong> (<em>int</em>) – How long to wait for the queued messages to be sent.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="movai_core_shared.core.zmq.zmq_manager.ZMQManager.validate_server_addr">
