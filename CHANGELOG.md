@@ -1,6 +1,6 @@
 # Changelog
 
-## vTBD
+## v3.11.4
 - [BP-1884](https://movai.atlassian.net/browse/BP-1884): Prevent transition failure
   - Add fallback flush to ZMQ to prevent messages from short-lived nodes from getting lost
 
