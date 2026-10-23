@@ -60,10 +60,6 @@ class ZMQClient(ZMQBase):
             self._socket.close()
             time.sleep(0.1)
 
-        if self.terminating:
-            # the context only terminates once all its sockets are closed
-            return
-
         if self._socket is not None:
             # The server ignores the new connection while the old one,
             # with the same identity, isn't closed yet
@@ -74,9 +70,7 @@ class ZMQClient(ZMQBase):
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         # the default linger is infinite: once closed, a socket that can't deliver
         # its messages would block the context termination at exit forever
-        # a subscriber only sends its subscriptions, they don't need to be delivered
-        linger_ms = 0 if self.zmq_socket_type == zmq.SUB else MOVAI_ZMQ_SHUTDOWN_LINGER_MS
-        self._socket.setsockopt(zmq.LINGER, linger_ms)
+        self._socket.setsockopt(zmq.LINGER, MOVAI_ZMQ_SHUTDOWN_LINGER_MS)
         if self.zmq_socket_type in [zmq.DEALER]:
             self._logger.info("ZMQ connecting DEALER to: %s", self._addr)
             self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_ZMQ_RECV_TIMEOUT_MS))
@@ -104,11 +98,7 @@ class ZMQClient(ZMQBase):
         Raises:
             exc: the exception
         """
-        if self.terminating and exc.errno in (errno.ENOTSOCK, zmq.ETERM):
-            # the context is terminating, e.g. at exit, and waits for its sockets to be closed
-            self._logger.debug("ZMQ %s closing, the context is terminating", self._addr)
-            self.close()
-        elif exc.errno == errno.ENOTSOCK:
+        if exc.errno == errno.ENOTSOCK:
             self._logger.warning("ZMQ socket error: %s got exception: %s.", self._addr, exc)
             if reset_socket:
                 self._logger.warning("Resetting ZMQ %s with potential data loss.", self._addr)
@@ -123,31 +113,6 @@ class ZMQClient(ZMQBase):
                 "ZMQ socket error: %s got unhandled ZMQ exception: %s ", self._addr, exc
             )
 
-    def _closed_by_termination(self) -> bool:
-        """Whether the socket was closed because the context terminates, e.g. at exit.
-
-        Then nothing can be sent or received anymore, as if the process already exited.
-        """
-        if self.terminating and (self._socket is None or self._socket.closed):
-            self._logger.debug("ZMQ %s is closed, the context is terminating", self._addr)
-            return True
-        return False
-
-    def _send(self, data: bytes) -> None:
-        """Sends the data, unless the context is terminating and the socket is closed."""
-        if self._closed_by_termination():
-            return
-        self._socket.send(data)
-        self._close_if_terminating()
-
-    def _receive(self) -> list:
-        """Receives a message, unless the context is terminating and the socket is closed."""
-        if self._closed_by_termination():
-            return []
-        buffer = self._socket.recv_multipart()
-        self._close_if_terminating()
-        return buffer
-
     def send(self, msg: dict, use_lock: bool = False) -> None:
         """
         Synchronously sends a message to the server.
@@ -161,16 +126,9 @@ class ZMQClient(ZMQBase):
             data = create_msg(msg)
             if use_lock and self.lock:
                 with self.lock:
-                    self._send(data)
+                    self._socket.send(data)
             else:
-                self._send(data)
-        except zmq.error.ZMQError as exc:
-            if self.terminating and exc.errno in (errno.ENOTSOCK, zmq.ETERM):
-                # the message is lost, as if it was sent right after the process exited
-                self.handle_socket_errors(exc)
-                return
-            self._logger.error("ZMQ failed to send message, got exception of type %s", exc)
-            raise exc
+                self._socket.send(data)
         except Exception as exc:
             self._logger.error("ZMQ failed to send message, got exception of type %s", exc)
             raise exc
@@ -187,9 +145,9 @@ class ZMQClient(ZMQBase):
         try:
             if use_lock and self.lock:
                 with self.lock:
-                    buffer = self._receive()
+                    buffer = self._socket.recv_multipart()
             else:
-                buffer = self._receive()
+                buffer = self._socket.recv_multipart()
             if not buffer:
                 self._logger.debug("ZMQ received empty buffer from %s", self._addr)
                 return response

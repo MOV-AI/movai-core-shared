@@ -9,6 +9,7 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2023
 """
+import atexit
 from enum import Enum
 from logging import getLogger
 from typing import Dict, Type, TypedDict
@@ -93,13 +94,33 @@ class ZMQManager:
         """Sends the messages still queued on the synchronous zmq objects, then closes them.
 
         Blocks until all the queued messages are sent or `linger_ms` elapses.
-        Called automatically when the interpreter exits, see `ZMQBase.terminate`.
+        Called automatically when the interpreter exits.
 
         Args:
             linger_ms (int): How long to wait for the queued messages to be sent.
         """
-        ZMQBase.terminate(linger_ms)
+        sync_types = (ZMQType.CLIENT, ZMQType.PUBLISHER, ZMQType.SUBSCRIBER)
+        locks = [
+            client.lock
+            for zmq_type in sync_types
+            for client in cls._clients[zmq_type].values()
+            if client.lock is not None
+        ]
+        for lock in locks:
+            lock.acquire()
+        try:
+            if not ZMQBase.context.closed:
+                # closes all the sockets of the context, also the ones not created by the manager
+                ZMQBase.context.destroy(linger=linger_ms)
+        finally:
+            for lock in locks:
+                lock.release()
 
         # dropping the last reference to a client closes its socket without a linger
-        for zmq_type in (ZMQType.CLIENT, ZMQType.PUBLISHER, ZMQType.SUBSCRIBER):
+        for zmq_type in sync_types:
             cls._clients[zmq_type].clear()
+
+
+# pyzmq doesn't terminate the context when the interpreter exits,
+# so the messages still queued (sent right before exiting) would be lost
+atexit.register(ZMQManager.shutdown)
