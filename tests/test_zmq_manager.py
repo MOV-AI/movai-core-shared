@@ -8,22 +8,26 @@ import zmq
 
 # A process that sends a message and exits right away, like a GD node after a transition
 SENDER = """
+import atexit
 import sys
 from movai_core_shared.core.zmq.zmq_manager import ZMQManager, ZMQType
 
-addr, flush, linger_ms = sys.argv[1], sys.argv[2] == "flush", int(sys.argv[3])
+addr, mode = sys.argv[1], sys.argv[2]
 ZMQManager.get_client(addr, ZMQType.CLIENT).send({"msg": "last words"})
-if flush:
-    ZMQManager.shutdown(linger_ms)
+if mode == "shutdown":
+    ZMQManager.shutdown()
+elif mode == "reset":
+    ZMQManager.get_client(addr, ZMQType.CLIENT).reset()
+elif mode == "no_atexit":
+    atexit.unregister(ZMQManager.shutdown)
 """
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-def start_sender(addr: str, flush: bool, linger_ms: int = 5000) -> subprocess.Popen:
-    env = dict(os.environ, PYTHONPATH=REPO_ROOT)
-    args = [sys.executable, "-c", SENDER, addr, "flush" if flush else "no_flush", str(linger_ms)]
-    return subprocess.Popen(args, env=env)
+def start_sender(addr: str, mode: str = "exit", linger_ms: int = 5000) -> subprocess.Popen:
+    env = dict(os.environ, PYTHONPATH=REPO_ROOT, MOVAI_ZMQ_SHUTDOWN_LINGER_MS=str(linger_ms))
+    return subprocess.Popen([sys.executable, "-c", SENDER, addr, mode], env=env)
 
 
 def receive(addr: str, sender: subprocess.Popen, wait_s: float) -> list:
@@ -47,21 +51,36 @@ def addr(tmp_path):
 
 
 class TestZMQManagerShutdown:
-    def test_message_lost_without_shutdown(self, addr):
-        sender = start_sender(addr, flush=False)
+    def test_message_lost_without_shutdown_at_exit(self, addr):
+        sender = start_sender(addr, mode="no_atexit")
         assert receive(addr, sender, wait_s=1) == []
 
-    def test_shutdown_sends_queued_message(self, addr):
-        sender = start_sender(addr, flush=True)
+    def test_queued_message_sent_at_exit(self, addr):
+        sender = start_sender(addr)
         messages = receive(addr, sender, wait_s=1)
         assert len(messages) == 1
         assert b"last words" in messages[0][-1]
         assert sender.returncode == 0
 
-    def test_shutdown_waits_at_most_linger(self, addr):
+    def test_shutdown_sends_queued_message(self, addr):
+        sender = start_sender(addr, mode="shutdown")
+        messages = receive(addr, sender, wait_s=1)
+        assert len(messages) == 1
+        assert b"last words" in messages[0][-1]
+        assert sender.returncode == 0
+
+    def test_exit_waits_at_most_linger(self, addr):
         start = time.time()
-        sender = start_sender(addr, flush=True, linger_ms=300)
+        sender = start_sender(addr, linger_ms=300)
         sender.wait(timeout=10)
         # nobody ever listens: the message is dropped once the linger elapses
+        assert sender.returncode == 0
+        assert time.time() - start < 5
+
+    def test_exit_after_reset_waits_at_most_linger(self, addr):
+        start = time.time()
+        # the socket closed by the reset still holds the message nobody receives
+        sender = start_sender(addr, mode="reset", linger_ms=300)
+        sender.wait(timeout=10)
         assert sender.returncode == 0
         assert time.time() - start < 5
