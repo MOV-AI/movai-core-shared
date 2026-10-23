@@ -1,10 +1,14 @@
 import os
 import subprocess
 import sys
+import threading
 import time
 
 import pytest
 import zmq
+
+from movai_core_shared.core.zmq.zmq_base import ZMQBase
+from movai_core_shared.core.zmq.zmq_client import ZMQClient
 
 # A process that sends a message and exits right away, like a GD node after a transition
 SENDER = """
@@ -12,6 +16,7 @@ import atexit
 import sys
 import threading
 import time
+from movai_core_shared.core.zmq.zmq_base import ZMQBase
 from movai_core_shared.core.zmq.zmq_client import ZMQClient
 from movai_core_shared.core.zmq.zmq_manager import ZMQManager, ZMQType
 
@@ -35,17 +40,90 @@ elif mode == "blocked_with_queued_message":
     threading.Thread(target=client.receive, kwargs={"use_lock": True}, daemon=True).start()
     time.sleep(0.2)
     ZMQManager.shutdown(linger_ms=0)
+elif mode == "after_shutdown":
+    ZMQManager.shutdown(linger_ms=300)
+    # e.g. a log sent by a daemon thread or a later exit handler
+    client.send({"msg": "too late"})
+    assert client.receive() == {}
+    late_client = ZMQClient("late_client", addr)
+    late_client.send({"msg": "too late"})
+    assert late_client.receive() == {}
+elif mode == "idle_socket_without_linger":
+    # like a socket replaced by a reset after the termination set the linger
+    ZMQClient.set_linger = lambda self, linger_ms: None
+    ZMQManager.shutdown(linger_ms=0)
 elif mode == "reset":
     ZMQManager.get_client(addr, ZMQType.CLIENT).reset()
 elif mode == "no_atexit":
-    atexit.unregister(ZMQManager.shutdown)
+    atexit.unregister(ZMQBase.terminate)
+"""
+
+# Only imports the client, not the manager
+STANDALONE_SENDER = """
+import sys
+from movai_core_shared.core.zmq.zmq_client import ZMQClient
+
+assert "movai_core_shared.core.zmq.zmq_manager" not in sys.modules
+client = ZMQClient("standalone_client", sys.argv[1])
+client.send({"msg": "last words"})
+"""
+
+# A busy receive completes between the termination giving up on its lock and terminating
+RACING_RECEIVER = """
+import sys
+import threading
+import time
+import zmq
+from movai_core_shared.core.zmq.zmq_client import ZMQClient
+
+addr = sys.argv[1]
+server = zmq.Context().socket(zmq.ROUTER)
+server.bind(addr)
+client = ZMQClient("racing_client", addr)
+client.send({"msg": "hello"})
+identity, _ = server.recv_multipart()
+receiver = threading.Thread(target=client.receive, kwargs={"use_lock": True}, daemon=True)
+receiver.start()
+time.sleep(0.2)
+
+
+class RacingLock:
+    def __init__(self, lock):
+        self._lock = lock
+
+    def __enter__(self):
+        return self._lock.__enter__()
+
+    def __exit__(self, *args):
+        return self._lock.__exit__(*args)
+
+    def locked(self):
+        return self._lock.locked()
+
+    def release(self):
+        self._lock.release()
+
+    def acquire(self, blocking=True, timeout=-1):
+        acquired = self._lock.acquire(blocking, timeout)
+        if threading.current_thread() is threading.main_thread():
+            # the termination gave up waiting for the lock, then the reply arrives
+            server.send_multipart([identity, b'{"msg": "reply"}'])
+            receiver.join(5)
+        return acquired
+
+
+client.lock = RacingLock(client.lock)
 """
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def start_sender(
-    addr: str, mode: str = "exit", linger_ms: int = 5000, recv_timeout_ms: int = 2500
+    addr: str,
+    mode: str = "exit",
+    linger_ms: int = 5000,
+    recv_timeout_ms: int = 2500,
+    script: str = SENDER,
 ) -> subprocess.Popen:
     env = dict(
         os.environ,
@@ -53,7 +131,7 @@ def start_sender(
         MOVAI_ZMQ_SHUTDOWN_LINGER_MS=str(linger_ms),
         MOVAI_ZMQ_RECV_TIMEOUT_MS=str(recv_timeout_ms),
     )
-    return subprocess.Popen([sys.executable, "-c", SENDER, addr, mode], env=env)
+    return subprocess.Popen([sys.executable, "-c", script, addr, mode], env=env)
 
 
 def receive(addr: str, sender: subprocess.Popen, wait_s: float) -> list:
@@ -139,3 +217,50 @@ class TestZMQManagerShutdown:
         sender.wait(timeout=10)
         assert sender.returncode == 0
         assert time.time() - start < 3
+
+    def test_queued_message_sent_at_exit_without_manager(self, addr):
+        sender = start_sender(addr, script=STANDALONE_SENDER)
+        messages = receive(addr, sender, wait_s=1)
+        assert len(messages) == 1
+        assert b"last words" in messages[0][-1]
+        assert sender.returncode == 0
+
+    def test_exit_when_busy_receive_completes_during_termination(self, addr):
+        start = time.time()
+        sender = start_sender(addr, script=RACING_RECEIVER, recv_timeout_ms=-1)
+        sender.wait(timeout=10)
+        assert sender.returncode == 0
+        assert time.time() - start < 5
+
+    def test_send_and_receive_after_shutdown(self, addr):
+        sender = start_sender(addr, mode="after_shutdown")
+        sender.wait(timeout=10)
+        assert sender.returncode == 0
+
+    def test_shutdown_linger_applies_to_idle_socket(self, addr):
+        start = time.time()
+        # the socket's own linger would keep the message nobody receives for 5 s
+        sender = start_sender(addr, mode="idle_socket_without_linger", linger_ms=5000)
+        sender.wait(timeout=10)
+        assert sender.returncode == 0
+        assert time.time() - start < 3
+
+
+class TestZMQBaseInstances:
+    def test_instances_while_creating_objects(self, addr):
+        stop = threading.Event()
+
+        def create_objects():
+            while not stop.is_set():
+                ZMQClient("short_lived_client", addr)
+
+        creator = threading.Thread(target=create_objects, daemon=True)
+        creator.start()
+        try:
+            end = time.time() + 2
+            while time.time() < end:
+                # raises if another thread adds an object while iterating
+                ZMQBase.instances()
+        finally:
+            stop.set()
+            creator.join(5)
