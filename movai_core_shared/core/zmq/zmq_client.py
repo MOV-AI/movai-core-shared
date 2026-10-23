@@ -70,7 +70,9 @@ class ZMQClient(ZMQBase):
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
         # the default linger is infinite: once closed, a socket that can't deliver
         # its messages would block the context termination at exit forever
-        self._socket.setsockopt(zmq.LINGER, MOVAI_ZMQ_SHUTDOWN_LINGER_MS)
+        # a subscriber only sends its subscriptions, they don't need to be delivered
+        linger_ms = 0 if self.zmq_socket_type == zmq.SUB else MOVAI_ZMQ_SHUTDOWN_LINGER_MS
+        self._socket.setsockopt(zmq.LINGER, linger_ms)
         if self.zmq_socket_type in [zmq.DEALER]:
             self._logger.info("ZMQ connecting DEALER to: %s", self._addr)
             self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_ZMQ_RECV_TIMEOUT_MS))
@@ -108,6 +110,10 @@ class ZMQClient(ZMQBase):
             if reset_socket:
                 self._logger.warning("Resetting ZMQ %s.", self._addr)
                 self.reset()
+        elif exc.errno == zmq.ETERM:
+            # the context is terminating, e.g. at exit, and waits for its sockets to be closed
+            self._logger.debug("ZMQ %s closing, the context is terminating", self._addr)
+            self.close()
         else:
             self._logger.error(
                 "ZMQ socket error: %s got unhandled ZMQ exception: %s ", self._addr, exc
@@ -129,6 +135,11 @@ class ZMQClient(ZMQBase):
                     self._socket.send(data)
             else:
                 self._socket.send(data)
+        except zmq.error.ZMQError as exc:
+            self._logger.error("ZMQ failed to send message, got exception of type %s", exc)
+            if exc.errno == zmq.ETERM:
+                self.handle_socket_errors(exc)
+            raise exc
         except Exception as exc:
             self._logger.error("ZMQ failed to send message, got exception of type %s", exc)
             raise exc

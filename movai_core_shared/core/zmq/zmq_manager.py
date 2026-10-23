@@ -24,6 +24,9 @@ from movai_core_shared.core.zmq.zmq_helpers import generate_zmq_identity
 from movai_core_shared.envvars import MOVAI_ZMQ_SHUTDOWN_LINGER_MS
 from movai_core_shared.exceptions import ArgumentError
 
+# how long the shutdown waits for a client in use
+SHUTDOWN_LOCK_TIMEOUT_S = 0.1
+
 
 class ZMQType(Enum):
     CLIENT = 1
@@ -100,18 +103,18 @@ class ZMQManager:
             linger_ms (int): How long to wait for the queued messages to be sent.
         """
         sync_types = (ZMQType.CLIENT, ZMQType.PUBLISHER, ZMQType.SUBSCRIBER)
-        locks = [
-            client.lock
-            for zmq_type in sync_types
-            for client in cls._clients[zmq_type].values()
-            if client.lock is not None
-        ]
-        for lock in locks:
-            lock.acquire()
+        locks = []
         try:
+            for zmq_type in sync_types:
+                for client in cls._clients[zmq_type].values():
+                    if client.lock is None:
+                        client.close(linger_ms)
+                    elif client.lock.acquire(timeout=SHUTDOWN_LOCK_TIMEOUT_S):
+                        locks.append(client.lock)
+                        client.close(linger_ms)
             if not ZMQBase.context.closed:
-                # closes all the sockets of the context, also the ones not created by the manager
-                ZMQBase.context.destroy(linger=linger_ms)
+                # waits for the closed sockets to send their queued messages, up to their linger
+                ZMQBase.context.term()
         finally:
             for lock in locks:
                 lock.release()

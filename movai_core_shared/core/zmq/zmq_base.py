@@ -11,6 +11,7 @@
 """
 from abc import ABC, abstractmethod
 from logging import getLogger
+from typing import Optional
 import zmq
 
 
@@ -41,6 +42,16 @@ class ZMQBase(ABC):
         # Close all sockets associated with this context and then terminate the context.
         if self._socket:
             self._socket.close()
+
+    def close(self, linger_ms: Optional[int] = None) -> None:
+        """Closes the socket.
+
+        Args:
+            linger_ms (int): How long to keep sending the queued messages,
+                by default the linger of the socket.
+        """
+        if self._socket and not self._socket.closed:
+            self._socket.close(linger=linger_ms)
 
     @abstractmethod
     def init_socket(self):
