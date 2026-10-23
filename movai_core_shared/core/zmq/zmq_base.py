@@ -11,7 +11,8 @@
 """
 from abc import ABC, abstractmethod
 from logging import getLogger
-from typing import Optional
+from typing import List, Optional
+import weakref
 import zmq
 
 
@@ -19,6 +20,8 @@ class ZMQBase(ABC):
     """A base class for zmq components."""
 
     context = zmq.Context()
+    # the context only terminates once the sockets of all the zmq objects using it are closed
+    _instances: "weakref.WeakSet[ZMQBase]" = weakref.WeakSet()
 
     def __init__(self, identity: str, addr: str) -> None:
         """Initializes the object and the connection to the server.
@@ -35,7 +38,15 @@ class ZMQBase(ABC):
         self._addr = addr
         self.lock = None
         self._socket = None
+        ZMQBase._instances.add(self)
         self.init_socket()
+
+    @classmethod
+    def instances(cls) -> List["ZMQBase"]:
+        """Returns the zmq objects alive which use the context of the class."""
+        return [
+            instance for instance in list(ZMQBase._instances) if instance.context is cls.context
+        ]
 
     def __del__(self):
         """closes the socket when the object is destroyed."""
@@ -52,6 +63,19 @@ class ZMQBase(ABC):
         """
         if self._socket and not self._socket.closed:
             self._socket.close(linger=linger_ms)
+
+    def set_linger(self, linger_ms: int) -> None:
+        """Sets how long the socket keeps sending the queued messages once closed.
+
+        Unlike other options, the linger can be set while another thread uses the socket:
+        libzmq stores it atomically, the context termination reads it from another thread.
+        Once the context termination started, it can't be changed anymore.
+
+        Args:
+            linger_ms (int): How long to keep sending the queued messages.
+        """
+        if self._socket and not self._socket.closed:
+            self._socket.setsockopt(zmq.LINGER, linger_ms)
 
     @abstractmethod
     def init_socket(self):

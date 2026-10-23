@@ -29,6 +29,13 @@ class ZMQSubscriber(ZMQClient):
         """
         super().close(linger_ms=0)
 
+    def set_linger(self, linger_ms: int) -> None:
+        """Keeps no linger, a subscriber only sends its subscriptions.
+
+        Args:
+            linger_ms (int): Ignored, there are no messages to send.
+        """
+
 
 class AsyncZMQSubscriber(AsyncZMQClient):
     """An Async implementation of ZMQ subscriber"""

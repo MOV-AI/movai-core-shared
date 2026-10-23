@@ -105,13 +105,17 @@ class ZMQManager:
         sync_types = (ZMQType.CLIENT, ZMQType.PUBLISHER, ZMQType.SUBSCRIBER)
         locks = []
         try:
-            for zmq_type in sync_types:
-                for client in cls._clients[zmq_type].values():
-                    if client.lock is None:
-                        client.close(linger_ms)
-                    elif client.lock.acquire(timeout=SHUTDOWN_LOCK_TIMEOUT_S):
-                        locks.append(client.lock)
-                        client.close(linger_ms)
+            # all the zmq objects using the context, also the ones not created by the manager
+            for zmq_object in ZMQBase.instances():
+                if zmq_object.lock is None:
+                    zmq_object.close(linger_ms)
+                elif zmq_object.lock.acquire(timeout=SHUTDOWN_LOCK_TIMEOUT_S):
+                    locks.append(zmq_object.lock)
+                    zmq_object.close(linger_ms)
+                else:
+                    # busy, e.g. waiting for a message: the termination interrupts it and it
+                    # closes its socket itself, with the linger set before the termination
+                    zmq_object.set_linger(linger_ms)
             if not ZMQBase.context.closed:
                 # waits for the closed sockets to send their queued messages, up to their linger
                 ZMQBase.context.term()

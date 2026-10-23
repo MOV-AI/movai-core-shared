@@ -12,6 +12,7 @@ import atexit
 import sys
 import threading
 import time
+from movai_core_shared.core.zmq.zmq_client import ZMQClient
 from movai_core_shared.core.zmq.zmq_manager import ZMQManager, ZMQType
 
 addr, mode = sys.argv[1], sys.argv[2]
@@ -21,9 +22,19 @@ if mode.startswith("blocked_"):
     idle = ZMQManager.get_client(addr + ".idle", zmq_type)
     threading.Thread(target=idle.receive, kwargs={"use_lock": True}, daemon=True).start()
     time.sleep(0.2)
-ZMQManager.get_client(addr, ZMQType.CLIENT).send({"msg": "last words"})
+if mode == "direct":
+    # created without the manager, it shares the context too
+    client = ZMQClient("direct_client", addr)
+else:
+    client = ZMQManager.get_client(addr, ZMQType.CLIENT)
+client.send({"msg": "last words"})
 if mode == "shutdown":
     ZMQManager.shutdown()
+elif mode == "blocked_with_queued_message":
+    # the message can't be sent, and the client waits for a message forever
+    threading.Thread(target=client.receive, kwargs={"use_lock": True}, daemon=True).start()
+    time.sleep(0.2)
+    ZMQManager.shutdown(linger_ms=0)
 elif mode == "reset":
     ZMQManager.get_client(addr, ZMQType.CLIENT).reset()
 elif mode == "no_atexit":
@@ -109,3 +120,22 @@ class TestZMQManagerShutdown:
         assert b"last words" in messages[0][-1]
         assert sender.returncode == 0
         assert time.time() - start < 5
+
+    def test_exit_with_direct_client(self, addr):
+        start = time.time()
+        sender = start_sender(addr, mode="direct")
+        messages = receive(addr, sender, wait_s=1)
+        assert len(messages) == 1
+        assert b"last words" in messages[0][-1]
+        assert sender.returncode == 0
+        assert time.time() - start < 5
+
+    def test_shutdown_linger_applies_to_blocked_receiver(self, addr):
+        start = time.time()
+        # the socket's own linger would keep the message nobody receives for 5 s
+        sender = start_sender(
+            addr, mode="blocked_with_queued_message", linger_ms=5000, recv_timeout_ms=-1
+        )
+        sender.wait(timeout=10)
+        assert sender.returncode == 0
+        assert time.time() - start < 3
