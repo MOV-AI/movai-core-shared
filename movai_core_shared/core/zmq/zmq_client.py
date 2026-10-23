@@ -23,7 +23,11 @@ import zmq.asyncio
 from movai_core_shared.core.zmq.zmq_base import ZMQBase
 from movai_core_shared.exceptions import MessageError
 from movai_core_shared.core.zmq.zmq_helpers import create_msg, extract_response
-from movai_core_shared.envvars import MOVAI_ZMQ_SEND_TIMEOUT_MS, MOVAI_ZMQ_RECV_TIMEOUT_MS
+from movai_core_shared.envvars import (
+    MOVAI_ZMQ_SEND_TIMEOUT_MS,
+    MOVAI_ZMQ_RECV_TIMEOUT_MS,
+    MOVAI_ZMQ_SHUTDOWN_LINGER_MS,
+)
 
 
 def _new_request_id() -> bytes:
@@ -75,6 +79,9 @@ class ZMQClient(ZMQBase):
 
         self._socket: zmq.Socket = self.context.socket(self.zmq_socket_type)
         self._socket.setsockopt(zmq.IDENTITY, self._identity)
+        # the default linger is infinite: once closed, a socket that can't deliver
+        # its messages would block the context termination at exit forever
+        self._socket.setsockopt(zmq.LINGER, MOVAI_ZMQ_SHUTDOWN_LINGER_MS)
         if self.zmq_socket_type in [zmq.DEALER]:
             self._logger.info("ZMQ connecting DEALER to: %s", self._addr)
             self._socket.setsockopt(zmq.RCVTIMEO, int(MOVAI_ZMQ_RECV_TIMEOUT_MS))

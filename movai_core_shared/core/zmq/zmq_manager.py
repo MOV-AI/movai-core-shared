@@ -9,6 +9,7 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2023
 """
+import atexit
 from enum import Enum
 from logging import getLogger
 from typing import Dict, Type, TypedDict
@@ -93,6 +94,7 @@ class ZMQManager:
         """Sends the messages still queued on the synchronous zmq objects, then closes them.
 
         Blocks until all the queued messages are sent or `linger_ms` elapses.
+        Called automatically when the interpreter exits.
 
         Args:
             linger_ms (int): How long to wait for the queued messages to be sent.
@@ -117,3 +119,8 @@ class ZMQManager:
         # dropping the last reference to a client closes its socket without a linger
         for zmq_type in sync_types:
             cls._clients[zmq_type].clear()
+
+
+# pyzmq doesn't terminate the context when the interpreter exits,
+# so the messages still queued (sent right before exiting) would be lost
+atexit.register(ZMQManager.shutdown)
