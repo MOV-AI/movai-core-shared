@@ -11,9 +11,6 @@ import socket
 from .consts import (
     MESSAGE_SERVER_HOST,
     ADMIN_ROLE,
-    LOGS_INFLUX_DB,
-    METRICS_INFLUX_DB,
-    STRESS_INFLUX_DB,
 )
 
 # Setting for logging verbosity levels
@@ -110,19 +107,6 @@ MESSAGE_SERVER_DEBUG_MODE = os.getenv("MESSAGE_SERVER_DEBUG_MODE", "False").lowe
     "1",
     "t",
 )
-MESSAGE_SERVER_PERIODIC_WRITE = float(os.getenv("MESSAGE_SERVER_PERIODIC_WRITE", "1.0"))
-MESSAGE_SERVER_STRESS_MODE = os.getenv("MESSAGE_SERVER_STRESS_MODE", "False").lower() in (
-    "true",
-    "1",
-    "t",
-)
-
-# DBWriter environment variables
-DBWRITER_EMPTY_THREASHOULD = int(os.getenv("DBWRITER_EMPTY_THREASHOULD", "1000"))
-DBWRITER_IPC_PATH = os.getenv("DBWRITER_IPC_PATH", APP_PATH)
-LOGS_DBWRITER_BIND_ADDR = f"ipc://{DBWRITER_IPC_PATH}/{LOGS_INFLUX_DB}"
-METRICS_DBWRITER_BIND_ADDR = f"ipc://{DBWRITER_IPC_PATH}/{METRICS_INFLUX_DB}"
-STRESS_DBWRITER_BIND_ADDR = f"ipc://{DBWRITER_IPC_PATH}/{STRESS_INFLUX_DB}"
 
 # Custom vars
 ROS1_LIB = f"/opt/ros/{ROS_DISTRO}/lib"

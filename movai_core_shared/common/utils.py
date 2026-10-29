@@ -9,8 +9,6 @@
    Developers:
    - Erez Zomer (erez@mov.ai) - 2022
 """
-import asyncio
-import socket
 from movai_core_shared.envvars import REDIS_MASTER_HOST
 
 # pylint: disable=import-outside-toplevel,unused-import
@@ -51,30 +49,3 @@ def create_principal_name(domain_name: str, account_name: str) -> str:
     """
     principal_name = f"{account_name}@{domain_name}"
     return principal_name
-
-
-def get_ip_address() -> str:
-    """Returns the host(container) ip address.
-
-    Returns:
-        str: The ip address of the host.
-    """
-    hostname = socket.gethostname()
-    ip_addr = socket.gethostbyname(hostname)
-    return ip_addr
-
-
-async def run_blocking_code(executor, blocking_func, *args):
-    """runs a blocking code in another thread to free the main loop for other tasks.
-
-    Args:
-        executor (_type_): A thread or process to execute the code.
-        blocking_func (_type_): The fucntion to execute.
-
-    Returns:
-        Any: The results from the blocking_func
-    """
-    loop = asyncio.get_running_loop()
-    future = loop.run_in_executor(executor, blocking_func, *args)
-    results = await future
-    return results
