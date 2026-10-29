@@ -187,9 +187,6 @@ RESET_PERMISSION = "reset"
 # container_names
 MESSAGE_SERVER_HOST = "message-server"
 
-# inluxdb measurements names:
-STRESS_MEASUREMENT = "stress_logs"
-
 # Message-Server msgs types:
 COMMAND_HANDLER_MSG_TYPE = "command"
 NOTIFICATIONS_HANDLER_MSG_TYPE = "notifications"
