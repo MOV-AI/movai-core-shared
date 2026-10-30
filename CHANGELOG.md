@@ -1,5 +1,9 @@
 # Changelog
 
+## vTBD
+- [BP-1829](https://movai.atlassian.net/browse/BP-1829): Refactor tools/backup.py
+  - Move backup eceptions
+
 ## v3.12.6
 - [BP-1882](https://movai.atlassian.net/browse/BP-1882): Remove dead code from migration from InfluxDB to Mimir/Loki
 
