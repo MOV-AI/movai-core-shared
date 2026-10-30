@@ -185,34 +185,11 @@ EXECUTE_PERMISSION = "execute"
 RESET_PERMISSION = "reset"
 
 # container_names
-INFLUXDB_HOST = "influxdb"
 MESSAGE_SERVER_HOST = "message-server"
 
-
-# inluxdb DB names:
-LOGS_INFLUX_DB = "logs"
-METRICS_INFLUX_DB = "metrics"
-PLATFORM_METRICS_INFLUX_DB = "platform_metrics"
-PLATFORM_ALERTS_INFLUX_DB = "platform_alerts"
-STRESS_INFLUX_DB = "stress"
-INFLUXDB_DB_NAMES = [LOGS_INFLUX_DB, METRICS_INFLUX_DB, STRESS_INFLUX_DB]
-
-# inluxdb measurements names:
-SYSLOG_MEASUREMENT = "syslog"
-LOGS_MEASUREMENT = "app_logs"
-METRICS_MEASUREMENT = "metric_logs"
-STRESS_MEASUREMENT = "stress_logs"
-ALERT_MEASUREMENT = "alert_events"
-
 # Message-Server msgs types:
-LOGS_HANDLER_MSG_TYPE = "logs"
 COMMAND_HANDLER_MSG_TYPE = "command"
-SYSLOGS_HANDLER_MSG_TYPE = "syslog"
-LOGS_QUERY_HANDLER_MSG_TYPE = "logs_query"
-METRICS_HANDLER_MSG_TYPE = "metrics"
-METRICS_QUERY_HANDLER_MSG_TYPE = "metrics_query"
 NOTIFICATIONS_HANDLER_MSG_TYPE = "notifications"
-ALERT_QUERY_HANDLER_MSG_TYPE = "alerts_query"
 
 CALLBACK_STDOUT_COLORS = {
     logging.DEBUG: "\033[36m",

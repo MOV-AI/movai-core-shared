@@ -244,10 +244,6 @@ class MessageFormatError(MessageError):
     """There are missing keys in the message."""
 
 
-class MetricError(MessageError):
-    """Something is wrong with the metric."""
-
-
 class QueryError(MovaiException):
     """Something is wrong with the metric."""
 
@@ -258,10 +254,6 @@ class UnknownRequestError(MovaiException):
 
 class ConfigurationDoesNotExist(DoesNotExist):
     """The requested configuration could not be found."""
-
-
-class DBHandlerError(MovaiException):
-    """General exception in DBHandler."""
 
 
 class TimeError(MovaiException):

@@ -4,6 +4,9 @@
 - [BP-1829](https://movai.atlassian.net/browse/BP-1829): Refactor tools/backup.py
   - Move backup eceptions
 
+## v3.12.6
+- [BP-1882](https://movai.atlassian.net/browse/BP-1882): Remove dead code from migration from InfluxDB to Mimir/Loki
+
 ## v3.12.5
 - [BP-1884](https://movai.atlassian.net/browse/BP-1884): Prevent transition failure
   - Add fallback flush to ZMQ to prevent messages from short-lived nodes from getting lost
