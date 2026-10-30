@@ -78,7 +78,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.CommandError"><code class="docutils literal notranslate"><span class="pre">CommandError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.ConfigurationDoesNotExist"><code class="docutils literal notranslate"><span class="pre">ConfigurationDoesNotExist</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.ConfigurationError"><code class="docutils literal notranslate"><span class="pre">ConfigurationError</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.DBHandlerError"><code class="docutils literal notranslate"><span class="pre">DBHandlerError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">DoesNotExist</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.DomainDoesNotExist"><code class="docutils literal notranslate"><span class="pre">DomainDoesNotExist</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.HandlerNotFoundError"><code class="docutils literal notranslate"><span class="pre">HandlerNotFoundError</span></code></a></li>
@@ -94,7 +93,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.LoginError"><code class="docutils literal notranslate"><span class="pre">LoginError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.MessageError"><code class="docutils literal notranslate"><span class="pre">MessageError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.MessageFormatError"><code class="docutils literal notranslate"><span class="pre">MessageFormatError</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.MetricError"><code class="docutils literal notranslate"><span class="pre">MetricError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.MovaiException"><code class="docutils literal notranslate"><span class="pre">MovaiException</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.NotSupported"><code class="docutils literal notranslate"><span class="pre">NotSupported</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.PasswordASCIIFormatError"><code class="docutils literal notranslate"><span class="pre">PasswordASCIIFormatError</span></code></a></li>
@@ -201,10 +199,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="movai_core_shared.common.html#module-movai_core_shared.common.utils">movai_core_shared.common.utils module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.create_principal_name"><code class="docutils literal notranslate"><span class="pre">create_principal_name()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.get_ip_address"><code class="docutils literal notranslate"><span class="pre">get_ip_address()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.is_enterprise"><code class="docutils literal notranslate"><span class="pre">is_enterprise()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.is_manager"><code class="docutils literal notranslate"><span class="pre">is_manager()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.common.html#movai_core_shared.common.utils.run_blocking_code"><code class="docutils literal notranslate"><span class="pre">run_blocking_code()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="movai_core_shared.common.html#module-movai_core_shared.common">Module contents</a></li>
@@ -372,7 +368,29 @@
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.general_data.print_dict"><code class="docutils literal notranslate"><span class="pre">print_dict()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#movai-core-shared-messages-log-data-module">movai_core_shared.messages.log_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages.log_data">movai_core_shared.messages.log_data module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogFields"><code class="docutils literal notranslate"><span class="pre">LogFields</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogFields.args"><code class="docutils literal notranslate"><span class="pre">LogFields.args</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogFields.format"><code class="docutils literal notranslate"><span class="pre">LogFields.format()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogFields.funcName"><code class="docutils literal notranslate"><span class="pre">LogFields.funcName</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogFields.lineno"><code class="docutils literal notranslate"><span class="pre">LogFields.lineno</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogFields.message"><code class="docutils literal notranslate"><span class="pre">LogFields.message</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogFields.model_config"><code class="docutils literal notranslate"><span class="pre">LogFields.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogFields.model_fields"><code class="docutils literal notranslate"><span class="pre">LogFields.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogFields.module"><code class="docutils literal notranslate"><span class="pre">LogFields.module</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogTags"><code class="docutils literal notranslate"><span class="pre">LogTags</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogTags.level"><code class="docutils literal notranslate"><span class="pre">LogTags.level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogTags.model_config"><code class="docutils literal notranslate"><span class="pre">LogTags.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogTags.model_fields"><code class="docutils literal notranslate"><span class="pre">LogTags.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogTags.robot"><code class="docutils literal notranslate"><span class="pre">LogTags.robot</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogTags.runtime"><code class="docutils literal notranslate"><span class="pre">LogTags.runtime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.log_data.LogTags.service"><code class="docutils literal notranslate"><span class="pre">LogTags.service</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#movai-core-shared-messages-metric-data-module">movai_core_shared.messages.metric_data module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages.notification_data">movai_core_shared.messages.notification_data module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.notification_data.NotificationDataFactory"><code class="docutils literal notranslate"><span class="pre">NotificationDataFactory</span></code></a><ul>
@@ -392,7 +410,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#movai-core-shared-messages-stress-data-module">movai_core_shared.messages.stress_data module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="movai_core_shared.messages.html#module-movai_core_shared.messages.user_data">movai_core_shared.messages.user_data module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.user_data.UserData"><code class="docutils literal notranslate"><span class="pre">UserData</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="movai_core_shared.messages.html#movai_core_shared.messages.user_data.UserData.model_config"><code class="docutils literal notranslate"><span class="pre">UserData.model_config</span></code></a></li>
@@ -548,13 +565,6 @@ Proprietary and confidential</p>
 </dd></dl>
 
 <dl class="py exception">
-<dt class="sig sig-object py" id="movai_core_shared.exceptions.DBHandlerError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">DBHandlerError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.DBHandlerError" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
-<p>General exception in DBHandler.</p>
-</dd></dl>
-
-<dl class="py exception">
 <dt class="sig sig-object py" id="movai_core_shared.exceptions.DoesNotExist">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#movai_core_shared.exceptions.DoesNotExist" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
@@ -657,13 +667,6 @@ Proprietary and confidential</p>
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">MessageFormatError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.MessageFormatError" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MessageError" title="movai_core_shared.exceptions.MessageError"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageError</span></code></a></p>
 <p>There are missing keys in the message.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="movai_core_shared.exceptions.MetricError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">MetricError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.MetricError" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MessageError" title="movai_core_shared.exceptions.MessageError"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageError</span></code></a></p>
-<p>Something is wrong with the metric.</p>
 </dd></dl>
 
 <dl class="py exception">

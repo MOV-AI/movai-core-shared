@@ -68,14 +68,6 @@ movai\_core\_shared.messages.sms\_data module
    :undoc-members:
    :show-inheritance:
 
-movai\_core\_shared.messages.stress\_data module
-------------------------------------------------
-
-.. automodule:: movai_core_shared.messages.stress_data
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 movai\_core\_shared.messages.user\_data module
 ----------------------------------------------
 

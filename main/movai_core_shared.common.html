@@ -245,20 +245,6 @@ account_name (str): the account name of the user.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="movai_core_shared.common.utils.get_ip_address">
-<span class="sig-prename descclassname"><span class="pre">movai_core_shared.common.utils.</span></span><span class="sig-name descname"><span class="pre">get_ip_address</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#movai_core_shared.common.utils.get_ip_address" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the host(container) ip address.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The ip address of the host.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="movai_core_shared.common.utils.is_enterprise">
 <span class="sig-prename descclassname"><span class="pre">movai_core_shared.common.utils.</span></span><span class="sig-name descname"><span class="pre">is_enterprise</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#movai_core_shared.common.utils.is_enterprise" title="Permalink to this definition"></a></dt>
 <dd><p>Check the existence of the movai_core_enterprise package.</p>
@@ -282,26 +268,6 @@ account_name (str): the account name of the user.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="movai_core_shared.common.utils.run_blocking_code">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.common.utils.</span></span><span class="sig-name descname"><span class="pre">run_blocking_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">executor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocking_func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#movai_core_shared.common.utils.run_blocking_code" title="Permalink to this definition"></a></dt>
-<dd><p>runs a blocking code in another thread to free the main loop for other tasks.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>executor</strong> (<em>_type_</em>) – A thread or process to execute the code.</p></li>
-<li><p><strong>blocking_func</strong> (<em>_type_</em>) – The fucntion to execute.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The results from the blocking_func</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Any</p>
 </dd>
 </dl>
 </dd></dl>
