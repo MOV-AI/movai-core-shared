@@ -1,6 +1,6 @@
 # Changelog
 
-## vTBD
+## v3.12.6
 - [BP-1882](https://movai.atlassian.net/browse/BP-1882): Remove dead code from migration from InfluxDB to Mimir/Loki
 
 ## v3.12.5
