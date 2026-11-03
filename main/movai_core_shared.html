@@ -75,12 +75,15 @@
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.AlreadyExist"><code class="docutils literal notranslate"><span class="pre">AlreadyExist</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.ArgumentError"><code class="docutils literal notranslate"><span class="pre">ArgumentError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.AuthorizationError"><code class="docutils literal notranslate"><span class="pre">AuthorizationError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.BackupException"><code class="docutils literal notranslate"><span class="pre">BackupException</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.CommandError"><code class="docutils literal notranslate"><span class="pre">CommandError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.ConfigurationDoesNotExist"><code class="docutils literal notranslate"><span class="pre">ConfigurationDoesNotExist</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.ConfigurationError"><code class="docutils literal notranslate"><span class="pre">ConfigurationError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">DoesNotExist</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.DomainDoesNotExist"><code class="docutils literal notranslate"><span class="pre">DomainDoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.ExportException"><code class="docutils literal notranslate"><span class="pre">ExportException</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.HandlerNotFoundError"><code class="docutils literal notranslate"><span class="pre">HandlerNotFoundError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.ImportException"><code class="docutils literal notranslate"><span class="pre">ImportException</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.InitializationError"><code class="docutils literal notranslate"><span class="pre">InitializationError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.InvalidCredentials"><code class="docutils literal notranslate"><span class="pre">InvalidCredentials</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.InvalidStructure"><code class="docutils literal notranslate"><span class="pre">InvalidStructure</span></code></a></li>
@@ -101,6 +104,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.PrimaryKeyError"><code class="docutils literal notranslate"><span class="pre">PrimaryKeyError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.QueryError"><code class="docutils literal notranslate"><span class="pre">QueryError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RemapValidationError"><code class="docutils literal notranslate"><span class="pre">RemapValidationError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RemoveException"><code class="docutils literal notranslate"><span class="pre">RemoveException</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RestrictedPathError"><code class="docutils literal notranslate"><span class="pre">RestrictedPathError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RobotRunning"><code class="docutils literal notranslate"><span class="pre">RobotRunning</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#movai_core_shared.exceptions.RoleAlreadyExist"><code class="docutils literal notranslate"><span class="pre">RoleAlreadyExist</span></code></a></li>
@@ -544,6 +548,13 @@ Proprietary and confidential</p>
 </dd></dl>
 
 <dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.BackupException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">BackupException</span></span><a class="headerlink" href="#movai_core_shared.exceptions.BackupException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Backup operation failed.</p>
+</dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="movai_core_shared.exceptions.CommandError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">CommandError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.CommandError" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
@@ -579,10 +590,24 @@ Proprietary and confidential</p>
 </dd></dl>
 
 <dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.ExportException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">ExportException</span></span><a class="headerlink" href="#movai_core_shared.exceptions.ExportException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Export operation failed.</p>
+</dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="movai_core_shared.exceptions.HandlerNotFoundError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">HandlerNotFoundError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.HandlerNotFoundError" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
 <p>The message has no suitable handler.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.ImportException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">ImportException</span></span><a class="headerlink" href="#movai_core_shared.exceptions.ImportException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Import operation failed.</p>
 </dd></dl>
 
 <dl class="py exception">
@@ -723,6 +748,13 @@ Proprietary and confidential</p>
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">RemapValidationError</span></span><a class="headerlink" href="#movai_core_shared.exceptions.RemapValidationError" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#movai_core_shared.exceptions.MovaiException" title="movai_core_shared.exceptions.MovaiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">MovaiException</span></code></a></p>
 <p>Remapping rules violation</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="movai_core_shared.exceptions.RemoveException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">movai_core_shared.exceptions.</span></span><span class="sig-name descname"><span class="pre">RemoveException</span></span><a class="headerlink" href="#movai_core_shared.exceptions.RemoveException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Remove operation failed.</p>
 </dd></dl>
 
 <dl class="py exception">
