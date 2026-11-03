@@ -1,6 +1,6 @@
 # Changelog
 
-## vTBD
+## v3.12.7
 - [BP-1829](https://movai.atlassian.net/browse/BP-1829): Refactor tools/backup.py
   - Move backup eceptions
 
