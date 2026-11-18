@@ -1,5 +1,9 @@
 # Changelog
 
+## vTBD
+- [BP-1942](https://movai.atlassian.net/browse/BP-1942): Installing a new Slave updates manager Redis
+  - `is_manager` uses `FLEET_ROLE`
+
 ## v3.12.7
 - [BP-1829](https://movai.atlassian.net/browse/BP-1829): Refactor tools/backup.py
   - Move backup eceptions
