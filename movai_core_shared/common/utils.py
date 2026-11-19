@@ -11,18 +11,26 @@
 """
 import asyncio
 import socket
-from movai_core_shared.envvars import REDIS_MASTER_HOST
+from movai_core_shared.envvars import FLEET_ROLE
 
 # pylint: disable=import-outside-toplevel,unused-import
 
 
 def is_manager() -> bool:
-    """Identify if this robot is the manager host machine.
+    """Identify if this robot is the manager host machine (fleet manager or standalone).
+
+    Uses the ``FLEET_ROLE`` environment variable, set by movai-service on every
+    container.
 
     Returns:
         bool: true if the fuction runs on a manager host machine, false otherwise.
+
     """
-    return REDIS_MASTER_HOST in (None, "redis-master")
+
+    if FLEET_ROLE not in ("manager", "worker"):
+        raise ValueError(f"Invalid FLEET_ROLE: {FLEET_ROLE}")
+
+    return FLEET_ROLE == "manager"
 
 
 def is_enterprise() -> bool:
