@@ -1,6 +1,6 @@
 # Changelog
 
-## vTBD
+## v3.11.5
 - [BP-1942](https://movai.atlassian.net/browse/BP-1942): Installing a new Slave updates manager Redis
   - `is_manager` uses `FLEET_ROLE`
 
