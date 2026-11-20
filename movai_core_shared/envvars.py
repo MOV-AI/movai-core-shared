@@ -160,6 +160,8 @@ DEFAULT_JWT_REFRESH_DELTA_DAYS = int(os.getenv("DEFAULT_JWT_REFRESH_DELTA_DAYS",
 # General Vars
 DEFAULT_ROLE_NAME = os.getenv("DEFAULT_ROLE_NAME", ADMIN_ROLE)
 FLEET_NAME = os.getenv("FLEET_NAME", "movai")
+# "manager" or "worker", set by movai-service on every container
+FLEET_ROLE = os.getenv("FLEET_ROLE", "").strip()
 DEVICE_NAME = os.getenv("DEVICE_NAME", "UNDEFINED_ROBOT_NAME")
 SERVICE_NAME = os.getenv("HOSTNAME", socket.gethostname())
 
