@@ -261,7 +261,9 @@ account_name (str): the account name of the user.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="movai_core_shared.common.utils.is_manager">
 <span class="sig-prename descclassname"><span class="pre">movai_core_shared.common.utils.</span></span><span class="sig-name descname"><span class="pre">is_manager</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#movai_core_shared.common.utils.is_manager" title="Permalink to this definition"></a></dt>
-<dd><p>Identify if this robot is the manager host machine.</p>
+<dd><p>Identify if this robot is the manager host machine (fleet manager or standalone).</p>
+<p>Uses the <code class="docutils literal notranslate"><span class="pre">FLEET_ROLE</span></code> environment variable, set by movai-service on every
+container.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>true if the fuction runs on a manager host machine, false otherwise.</p>
