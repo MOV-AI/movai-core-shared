@@ -12,6 +12,7 @@ from movai_core_shared.envvars import (
 )
 from movai_core_shared.messages.metric_data import AlertQueryResponse
 from movai_core_shared.core.message_client import AsyncMessageClient
+from movai_core_shared.exceptions import MessageError, QueryError
 from movai_core_shared.common.utils import is_manager
 from movai_core_shared.common.time import validate_time
 
@@ -84,7 +85,16 @@ class AlertQuery(BaseQuery):
         }
 
         query_response = await message_client.send_request(
-            ALERT_QUERY_HANDLER_MSG_TYPE, query_data, None, True
+            ALERT_QUERY_HANDLER_MSG_TYPE, query_data, None, True, raise_on_timeout=True
         )
 
-        return AlertQueryResponse(**(query_response["response"]))
+        response = query_response.get("response", {})
+        if not response:
+            raise MessageError(f"No response from message-server at {server_addr}")
+        if not response.get("success", False):
+            raise QueryError(
+                f"Alerts query failed: {response.get('error', 'Unknown error')}: "
+                f"{response.get('reason', '')}"
+            )
+
+        return AlertQueryResponse(**response)
