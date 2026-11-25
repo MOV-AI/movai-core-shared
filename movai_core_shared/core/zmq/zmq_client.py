@@ -21,7 +21,7 @@ import zmq
 import zmq.asyncio
 
 from movai_core_shared.core.zmq.zmq_base import ZMQBase
-from movai_core_shared.exceptions import MessageError
+from movai_core_shared.exceptions import MessageError, MessageTimeoutError
 from movai_core_shared.core.zmq.zmq_helpers import create_msg, extract_response
 from movai_core_shared.envvars import (
     MOVAI_ZMQ_SEND_TIMEOUT_MS,
@@ -171,7 +171,7 @@ class ZMQClient(ZMQBase):
             raise exc
         return response
 
-    def request(self, msg: dict) -> dict:
+    def request(self, msg: dict, raise_on_timeout: bool = False) -> dict:
         """
         Synchronously sends a request and waits for its response.
 
@@ -182,10 +182,13 @@ class ZMQClient(ZMQBase):
 
         Args:
             msg (dict): The request to send.
+            raise_on_timeout (bool): Whether to raise an exception if the request times out.
         Returns:
-            (dict): The response from the server, an empty dict on timeout.
+            (dict): The response from the server, an empty dict on timeout
+                (unless raise_on_timeout is True).
         Raises:
             MessageError: If sending the request or receiving the response fails.
+            MessageTimeoutError: If the request times out and raise_on_timeout is True.
         """
         data = create_msg(msg)
         req_id = _new_request_id()
@@ -197,6 +200,13 @@ class ZMQClient(ZMQBase):
                     if buffer[0] == req_id:
                         return extract_response(buffer)
                     self._logger.debug("ZMQ discarding expired response from %s", self._addr)
+            except zmq.error.Again as exc:
+                # RCVTIMEO (or SNDTIMEO) elapsed, logs and resets the socket like any ZMQError
+                self.handle_socket_errors(exc)
+                if raise_on_timeout:
+                    raise MessageTimeoutError(
+                        f"Timed out after {MOVAI_ZMQ_RECV_TIMEOUT_MS} ms waiting for {self._addr}"
+                    ) from None
             except zmq.error.ZMQError as exc:
                 self.handle_socket_errors(exc)
             except Exception as exc:
@@ -288,7 +298,7 @@ class AsyncZMQClient(ZMQClient):
             raise exc
         return response
 
-    async def request(self, msg: dict) -> dict:
+    async def request(self, msg: dict, raise_on_timeout: bool = False) -> dict:
         """
         Asynchronously sends a request and waits for its response.
 
@@ -297,10 +307,13 @@ class AsyncZMQClient(ZMQClient):
 
         Args:
             msg (dict): The request to send.
+            raise_on_timeout (bool): Whether to raise an exception if the request times out.
         Returns:
-            (dict): The response from the server, an empty dict on timeout.
+            (dict): The response from the server, an empty dict on timeout
+                (unless raise_on_timeout is True).
         Raises:
             MessageError: If sending the request fails.
+            MessageTimeoutError: If the request times out and raise_on_timeout is True.
         """
         data = create_msg(msg)
         req_id = _new_request_id()
@@ -314,6 +327,10 @@ class AsyncZMQClient(ZMQClient):
         except asyncio.TimeoutError:
             # no need to reset the socket, a late response will be discarded by its id
             self._logger.warning("ZMQ timed out waiting for a response from %s", self._addr)
+            if raise_on_timeout:
+                raise MessageTimeoutError(
+                    f"Timed out after {MOVAI_ZMQ_RECV_TIMEOUT_MS} ms waiting for {self._addr}"
+                ) from None
         except zmq.error.ZMQError as exc:
             self.handle_socket_errors(exc)
         except Exception as exc:

@@ -1,5 +1,9 @@
 # Changelog
 
+## vTBD
+- [BP-1955](https://movai.atlassian.net/browse/BP-1955): UI failing to fetch logs
+  - Add exception handling to log/alert query ZMQ timeout errors
+
 ## v3.11.5
 - [BP-1942](https://movai.atlassian.net/browse/BP-1942): Installing a new Slave updates manager Redis
   - `is_manager` uses `FLEET_ROLE`

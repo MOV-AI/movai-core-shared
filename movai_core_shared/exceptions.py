@@ -244,6 +244,10 @@ class MessageFormatError(MessageError):
     """There are missing keys in the message."""
 
 
+class MessageTimeoutError(MessageError, TimeoutError):
+    """No response arrived from the server within the receive timeout."""
+
+
 class MetricError(MessageError):
     """Something is wrong with the metric."""
 

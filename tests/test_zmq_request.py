@@ -18,6 +18,7 @@ from movai_core_shared.core.message_client import AsyncMessageClient, MessageCli
 from movai_core_shared.core.zmq import zmq_client
 from movai_core_shared.core.zmq.zmq_client import AsyncZMQClient, ZMQClient
 from movai_core_shared.core.zmq.zmq_server import ZMQServer
+from movai_core_shared.exceptions import MessageError, MessageTimeoutError
 
 RECV_TIMEOUT_MS = 1000
 
@@ -189,3 +190,45 @@ def test_sync_late_response_is_not_returned_to_next_request(server_addr):
     response = client.request(make_request("next", delay=0.8))
 
     assert response_id(response) == "next"
+
+
+@pytest.mark.asyncio
+async def test_async_raise_on_timeout(server_addr):
+    client = AsyncZMQClient("async_raise", server_addr)
+
+    with pytest.raises(MessageTimeoutError):
+        await client.request(make_request("slow", delay=1.5), raise_on_timeout=True)
+    # raising must not skip the cleanup: the late response of "slow" is still discarded
+    response = await client.request(make_request("next", delay=0.8))
+
+    assert response_id(response) == "next"
+    assert not client._pending
+
+
+def test_sync_raise_on_timeout(server_addr):
+    client = ZMQClient("sync_raise", server_addr)
+
+    with pytest.raises(MessageTimeoutError):
+        client.request(make_request("slow", delay=1.5), raise_on_timeout=True)
+    response = client.request(make_request("next", delay=0.8))
+
+    assert response_id(response) == "next"
+
+
+@pytest.mark.asyncio
+async def test_async_message_client_raise_on_timeout(server_addr):
+    client = AsyncMessageClient(server_addr)
+
+    with pytest.raises(MessageTimeoutError):
+        await client.send_request(
+            "test", {"id": "slow", "delay": 1.5}, response_required=True, raise_on_timeout=True
+        )
+
+
+def test_message_client_raise_on_timeout(server_addr):
+    client = MessageClient(server_addr)
+
+    with pytest.raises(MessageTimeoutError):
+        client.send_request(
+            "test", {"id": "slow", "delay": 1.5}, response_required=True, raise_on_timeout=True
+        )

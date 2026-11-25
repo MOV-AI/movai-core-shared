@@ -21,6 +21,8 @@ from movai_core_shared.exceptions import ArgumentError, MessageFormatError
 if TYPE_CHECKING:
     from movai_core_shared.core.zmq.zmq_client import ZMQClient
 
+# pylint: disable=too-many-arguments
+
 
 class MessageClient:
     """
@@ -128,6 +130,7 @@ class MessageClient:
         data: dict,
         creation_time: Optional[datetime] = None,
         response_required: bool = False,
+        raise_on_timeout: bool = False,
     ) -> dict:
         """
         Wrap the data into a message request and sent it to the robot message server
@@ -138,12 +141,14 @@ class MessageClient:
             creation_time (datetime, optional): The time where the request is created.
                 Defaults to now.
             response_required (bool): whether to wait for response, Default False.
+            raise_on_timeout (bool): raise MessageTimeoutError instead of returning
+                an empty response on timeout, Default False.
         """
         # Add tags to the request data
         request = self._build_request(msg_type, data, creation_time, response_required)
 
         if response_required:
-            msg = self._zmq_client.request(request)
+            msg = self._zmq_client.request(request, raise_on_timeout=raise_on_timeout)
             response = self._fetch_response(msg)
             return response
 
@@ -204,6 +209,7 @@ class AsyncMessageClient(MessageClient):
         data: dict,
         creation_time: Optional[datetime] = None,
         response_required: bool = False,
+        raise_on_timeout: bool = False,
     ) -> dict:
         """
         Wrap the data into a message request and sent it asynchonously to the robot message server
@@ -214,11 +220,13 @@ class AsyncMessageClient(MessageClient):
             data (dict): The message data to be sent to the robot message server.
             creation_time (str): The time where the request is created.
             response_required (bool): whether to wait for response, Default False.
+            raise_on_timeout (bool): raise MessageTimeoutError instead of returning
+                an empty response on timeout, Default False.
         """
         request = self._build_request(msg_type, data, creation_time, response_required)
 
         if response_required:
-            msg = await self._zmq_client.request(request)
+            msg = await self._zmq_client.request(request, raise_on_timeout=raise_on_timeout)
             response = self._fetch_response(msg)
             return response
 
